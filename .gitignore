@@ -8,7 +8,7 @@
 */libs/*
 .bat
 *.vcxproj*
-
+*.lnk
 
 # User-specific files
 *.suo
