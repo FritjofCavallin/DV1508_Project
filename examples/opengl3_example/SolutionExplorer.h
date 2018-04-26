@@ -15,6 +15,10 @@ public:
 	const char* SolutionExplorer::CChar(std::string& s){ return s.data(); };
 	char* SolutionExplorer::Char(std::string& s){ return &s[0]; };
 	std::string AddSpace(std::string base, int comp = 0);
+
+	//styles:
+	void Style_VS();
+
 protected:
 	//ImGui
 	int winPosX, winPosY, winSizeX, winSizeY;

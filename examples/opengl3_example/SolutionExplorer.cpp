@@ -16,13 +16,10 @@ void SolutionExplorer::draw(){
 	ImGui::SetWindowSize(ImVec2(winSizeX, winSizeY));
 
 	//---------------------------------------------
-	//add file button
+	//header buttons
 
 	ImGui::PushID(0);
-	//color:
-	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.2f));
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.4f));
+	Style_VS();
 	//fin:
 	ImGui::Button("Properties"); ImGui::SameLine();
 	ImGui::Button("Add File");
@@ -36,10 +33,7 @@ void SolutionExplorer::draw(){
 	ImGui::Separator();
 
 	ImGui::PushID(0);
-	//color:
-	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.2f));
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.4f));
+	Style_VS();
 	//fin:
 	ImGui::Button(CChar(AddSpace("Effect_name")));
 	ImGui::PopStyleColor(3);
@@ -49,16 +43,14 @@ void SolutionExplorer::draw(){
 	//drop-down 1 (emitters)
 
 	if(firstCall) ImGui::SetNextTreeNodeOpen(true);
-	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(1.f, 1.f, 1.f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(0.3f, 0.3f, 1.f, 1.0f));
 	//ImGui::PushStyleColor(); //hover effect
 	if(ImGui::TreeNode(CChar(AddSpace("Emitters")))){
 		ImGui::PopStyleColor(1 /*2*/);
 
 		for(int i = 0; i < 3; i++){	//replace with size of emitterTimelineVec
-			ImGui::PushID(i);	//why do we need ID? can be removed...
-			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.2f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.4f));
+			ImGui::PushID(i);
+			Style_VS();
 			ImGui::Button(CChar(AddSpace("Emitter" + std::to_string(i))));
 			ImGui::PopStyleColor(3);
 			ImGui::PopID();
@@ -73,7 +65,7 @@ void SolutionExplorer::draw(){
 	//drop-down 2 (particles)
 
 	if(firstCall) ImGui::SetNextTreeNodeOpen(true);
-	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(1.f, 1.f, 1.f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(0.3f, 0.3f, 1.f, 1.0f));
 	if(ImGui::TreeNode(CChar(AddSpace("Particles")))){
 		ImGui::PopStyleColor(1 /*2*/);
 
@@ -96,4 +88,10 @@ std::string SolutionExplorer::AddSpace(std::string base, int comp){
 	for(int i = 0; i < spaces; ++i) base += " ";
 
 	return base;
+}
+
+void SolutionExplorer::Style_VS(){
+	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.2f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.4f));
 }
