@@ -11,6 +11,8 @@ public:
 	virtual ~SolutionExplorer();
 
 	virtual void draw();
+	const char* SolutionExplorer::CChar(std::string& s);
+	char* SolutionExplorer::Char(std::string& s);
 
 protected:
 	//ImGui
