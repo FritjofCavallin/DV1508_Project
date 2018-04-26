@@ -17,7 +17,8 @@ public:
 	std::string AddSpace(std::string base, int comp = 0);
 
 	//styles:
-	void Style_VS();
+	void Style_VS_s();
+	void Style_VS_f();
 
 protected:
 	//ImGui
@@ -27,6 +28,6 @@ protected:
 	//std::vector<Timeline*> emitterTimelineVec;
 	//std::vector<Timeline*> particleTimelineVec;
 
-	bool firstCall;
+	bool firstDraw;
 };
 
