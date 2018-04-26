@@ -11,13 +11,16 @@ public:
 	virtual ~SolutionExplorer();
 
 	virtual void draw();
-	const char* SolutionExplorer::CChar(std::string& s);
-	char* SolutionExplorer::Char(std::string& s);
+
+	const char* SolutionExplorer::CChar(std::string& s){ return s.data(); };
+	char* SolutionExplorer::Char(std::string& s){ return &s[0]; };
 
 protected:
 	//ImGui
 	int winPosX, winPosY, winSizeX, winSizeY;
 
-	//std::vector<Timeline*> timelineVec;
+	//Timeline* effect;
+	//std::vector<Timeline*> emitterTimelineVec;
+	//std::vector<Timeline*> particleTimelineVec;
 };
 

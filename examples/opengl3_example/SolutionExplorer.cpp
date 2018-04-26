@@ -13,25 +13,6 @@ void SolutionExplorer::draw(){
 	ImGui::SetWindowPos(ImVec2(winPosX, winPosY));
 	ImGui::SetWindowSize(ImVec2(winSizeX, winSizeY));
 
-	//ImGui::Columns(1, "solutionTree");
-	//if(ImGui::TreeNode("Effect_name")){
-	//	if(ImGui::TreeNode("Emitters")){
-	//		ImGui::BulletText("Emitter1");
-	//		ImGui::BulletText("Emitter2");
-	//		ImGui::BulletText("Emitter3");
-	//		ImGui::TreePop();
-	//	}
-	//	if(ImGui::TreeNode("Particles")){
-	//		ImGui::BulletText("Particle1");
-	//		ImGui::BulletText("Particle2");
-	//		ImGui::BulletText("Particle3");
-	//		ImGui::TreePop();
-	//	}
-	//	ImGui::TreePop();
-	//}
-	//ImGui::NextColumn();
-	//ImGui::Columns(1);
-
 	ImGui::PushID(0);
 	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
@@ -39,12 +20,16 @@ void SolutionExplorer::draw(){
 	ImGui::Button("Effect_name");
 	ImGui::PopStyleColor(3);
 	ImGui::PopID();
+	
+	//---------------------------------------------
 
-	//ImGui::Columns(1, "solutionTree");
-	//if(ImGui::TreeNode("Effect_name")){
+	ImGui::SetNextTreeNodeOpen(true);
+	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(1.f, 1.f, 1.f, 1.0f));
 	if(ImGui::TreeNode("Emitters")){
-		for(int i = 0; i < 3; i++){	//replace with size of timelineVec
-			ImGui::PushID(i);
+		ImGui::PopStyleColor();
+
+		for(int i = 0; i < 3; i++){	//replace with size of emitterTimelineVec
+			ImGui::PushID(i);	//why do we need ID? can be removed...
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.2f));
@@ -55,20 +40,23 @@ void SolutionExplorer::draw(){
 		}
 		ImGui::TreePop();
 	}
-	if(ImGui::TreeNode("Particles")){
+	else{
+		ImGui::PopStyleColor();
+	}
 
+	//---------------------------------------------
+
+	ImGui::SetNextTreeNodeOpen(true);
+	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(1.f, 1.f, 1.f, 1.0f));
+	if(ImGui::TreeNode("Particles")){
+		ImGui::PopStyleColor();
+
+		//...
 		ImGui::TreePop();
 	}
-	//	ImGui::TreePop();
-	//}
+	else{
+		ImGui::PopStyleColor();
+	}
 
 	ImGui::End();
-}
-
-const char* SolutionExplorer::CChar(std::string& s){
-	return s.data();
-}
-
-char* SolutionExplorer::Char(std::string& s){
-	return &s[0];
 }
