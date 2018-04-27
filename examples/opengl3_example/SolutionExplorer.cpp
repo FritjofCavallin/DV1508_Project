@@ -113,12 +113,19 @@ void SolutionExplorer::draw(){
 	}
 
 	//---------------------------------------------
-	//New file pop-up window (cant be in seperate function)
+	//New file pop-up window
 
 	if(drawNewFilePopup) ImGui::OpenPopup("NewFileWindow");
 	if(ImGui::BeginPopupModal("NewFileWindow")){
 		drawNewFilePopup = false;
-		ImGui::Text("TEEEEEST\n\n");
+
+		ImGui::Text("All those beautiful files will be deleted.\nThis operation cannot be undone!\n\n");
+		ImGui::Separator();
+
+		if(ImGui::Button("OK", ImVec2(120, 0))){ ImGui::CloseCurrentPopup(); }
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if(ImGui::Button("Cancel", ImVec2(120, 0))){ ImGui::CloseCurrentPopup(); }
 		ImGui::EndPopup();
 	}
 
