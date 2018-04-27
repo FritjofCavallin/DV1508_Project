@@ -19,11 +19,15 @@ struct GPUParticle
 */
 class Particle
 {
-	float _time;
+public:
+	float _spawnTime;
 	glm::vec2 _initSize;
+	glm::vec3 _initDir;
+	glm::vec3 _velocity;
 	
 	//texture []
-	float texBlend[];
+	//float texBlend[];
+
 };
 
 #endif

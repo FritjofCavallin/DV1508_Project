@@ -10,6 +10,9 @@
 #include <GLFW/glfw3.h>
 
 #include "UI.h"
+#include "Particles/ParticleEffect.h"
+#include "examples/TestParticles.h"
+#include <memory>
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -68,6 +71,7 @@ int main(int, char**)
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	UI ui;
+	std::unique_ptr<ParticleEffect> effect(new ParticleEffect(simpleEffect()));
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -77,6 +81,7 @@ int main(int, char**)
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
+		effect->update();
         ImGui_ImplGlfwGL3_NewFrame();
 		//ImGui::NewFrame();
 
