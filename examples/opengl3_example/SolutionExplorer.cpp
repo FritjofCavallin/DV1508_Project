@@ -19,8 +19,8 @@ void SolutionExplorer::draw(){
 	//header buttons
 
 	ImGui::PushID(0);
-	Style_VS_s();
-	if(ImGui::Button("Properties"))
+	Style_VS_Text_s();
+	if(ImGui::Button(" Properties "))
 		ImGui::OpenPopup("miniMenu1");
 	if(ImGui::BeginPopup("miniMenu1")){
 		ImGui::Selectable("alpha");
@@ -33,15 +33,30 @@ void SolutionExplorer::draw(){
 	ImGui::SameLine();
 
 	ImGui::PushID(0);
-	if(ImGui::Button("Add File"))
+	if(ImGui::Button("  Add File  "))
 		ImGui::OpenPopup("miniMenu2");
 	if(ImGui::BeginPopup("miniMenu2")){
-		if(ImGui::Selectable("New file")){/*some func*/}
-		if(ImGui::Selectable("Existing file")){/*some func*/ }
+		if(ImGui::Selectable("New file"))
+			AddNewFile();
+		if(ImGui::Selectable("Existing file"))
+			AddExistingFile();
 		ImGui::EndPopup();
 	}
-	Style_VS_f();
 	ImGui::PopID();
+
+	ImGui::SameLine();
+
+	ImGui::PushID(0);
+	if(ImGui::Button("  Save  "))
+		ImGui::OpenPopup("miniMenu3");
+	if(ImGui::BeginPopup("miniMenu3")){
+		ImGui::Selectable("alpha");
+		ImGui::Selectable("beta");
+		ImGui::Selectable("gamma");
+		ImGui::EndPopup();
+	}
+	ImGui::PopID();
+	Style_VS_Text_f();
 
 	//---------------------------------------------
 	//effect button
@@ -50,46 +65,45 @@ void SolutionExplorer::draw(){
 	ImGui::Separator();
 
 	ImGui::PushID(0);
-	Style_VS_s();
+	Style_VS_Text_s();
 	ImGui::Button(CChar(AddSpace("Effect_name")));
-	Style_VS_f();
+	Style_VS_Text_f();
 	ImGui::PopID();
 	
 	//---------------------------------------------
 	//drop-down 1 (emitters)
 
 	if(firstDraw) ImGui::SetNextTreeNodeOpen(true);
-	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(0.3f, 0.3f, 1.f, 1.0f));
-	//ImGui::PushStyleColor(); //hover effect
+	Style_VS_Node_s();
 	if(ImGui::TreeNode(CChar(AddSpace("Emitters")))){
-		ImGui::PopStyleColor(1 /*2*/);
+		Style_VS_Node_f();
 
 		for(int i = 0; i < 3; i++){	//replace with size of emitterTimelineVec
 			ImGui::PushID(i);
-			Style_VS_s();
+			Style_VS_Text_s();
 			ImGui::Button(CChar(AddSpace("Emitter" + std::to_string(i))));
-			Style_VS_f();
+			Style_VS_Text_f();
 			ImGui::PopID();
 		}
 		ImGui::TreePop();
 	}
 	else{
-		ImGui::PopStyleColor(1 /*2*/);
+		Style_VS_Node_f();
 	}
 
 	//---------------------------------------------
 	//drop-down 2 (particles)
 
 	if(firstDraw) ImGui::SetNextTreeNodeOpen(true);
-	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(0.3f, 0.3f, 1.f, 1.0f));
+	Style_VS_Node_s();
 	if(ImGui::TreeNode(CChar(AddSpace("Particles")))){
-		ImGui::PopStyleColor(1 /*2*/);
+		Style_VS_Node_f();
 
 		//...
 		ImGui::TreePop();
 	}
 	else{
-		ImGui::PopStyleColor(1 /*2*/);
+		Style_VS_Node_f();
 	}
 
 	//---------------------------------------------
@@ -106,12 +120,45 @@ std::string SolutionExplorer::AddSpace(std::string base, int comp){
 	return base;
 }
 
-void SolutionExplorer::Style_VS_s(){
+void SolutionExplorer::AddNewFile(){
+	ImGui::OpenPopup("NewFile");
+	if(ImGui::BeginPopupModal("NewFile", NULL, ImGuiWindowFlags_NoTitleBar)){
+		ImGui::Text("All those beautiful files will be deleted.\nThis operation cannot be undone!\n\n");
+		ImGui::Separator();
+
+		static bool dont_ask_me_next_time = false;
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+		ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
+		ImGui::PopStyleVar();
+
+		if(ImGui::Button("OK", ImVec2(120, 0))){ ImGui::CloseCurrentPopup(); }
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if(ImGui::Button("Cancel", ImVec2(120, 0))){ ImGui::CloseCurrentPopup(); }
+		ImGui::EndPopup();
+	}
+}
+
+void SolutionExplorer::AddExistingFile(){
+	//empty
+}
+
+void SolutionExplorer::Style_VS_Text_s(){
 	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.2f));
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.4f));
 }
+void SolutionExplorer::Style_VS_Text_f(){
+	ImGui::PopStyleColor(3);
+}
 
-void SolutionExplorer::Style_VS_f(){
+void SolutionExplorer::Style_VS_Node_s(){
+	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(0.3f, 0.3f, 1.f, 1.0f));
+
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.0f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.0f));
+
+}
+void SolutionExplorer::Style_VS_Node_f(){
 	ImGui::PopStyleColor(3);
 }
