@@ -35,5 +35,6 @@ protected:
 
 	//might want to add next-frame-do-stuff list
 	bool firstDraw;
+	bool drawNewFilePopup;
 };
 

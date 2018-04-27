@@ -5,11 +5,13 @@ SolutionExplorer::SolutionExplorer(){
 	winSizeX = 300, winSizeY = 454;
 
 	firstDraw = true;
+	drawNewFilePopup = false;
 }
 
 SolutionExplorer::~SolutionExplorer(){}
 
 void SolutionExplorer::draw(){
+
 	ImGui::Begin("SolutionExplorer", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 	ImGui::SetWindowPos(ImVec2(winPosX, winPosY));
@@ -36,8 +38,9 @@ void SolutionExplorer::draw(){
 	if(ImGui::Button("  Add File  "))
 		ImGui::OpenPopup("miniMenu2");
 	if(ImGui::BeginPopup("miniMenu2")){
-		if(ImGui::Selectable("New file"))
-			AddNewFile();
+		if(ImGui::Selectable("New file")){
+			drawNewFilePopup = true;
+		}
 		if(ImGui::Selectable("Existing file"))
 			AddExistingFile();
 		ImGui::EndPopup();
@@ -94,7 +97,10 @@ void SolutionExplorer::draw(){
 	//---------------------------------------------
 	//drop-down 2 (particles)
 
-	if(firstDraw) ImGui::SetNextTreeNodeOpen(true);
+	if(firstDraw){
+		ImGui::SetNextTreeNodeOpen(true);
+		firstDraw = false;
+	}
 	Style_VS_Node_s();
 	if(ImGui::TreeNode(CChar(AddSpace("Particles")))){
 		Style_VS_Node_f();
@@ -107,9 +113,18 @@ void SolutionExplorer::draw(){
 	}
 
 	//---------------------------------------------
+	//New file pop-up window (cant be in seperate function)
+
+	if(drawNewFilePopup) ImGui::OpenPopup("NewFileWindow");
+	if(ImGui::BeginPopupModal("NewFileWindow")){
+		drawNewFilePopup = false;
+		ImGui::Text("TEEEEEST\n\n");
+		ImGui::EndPopup();
+	}
+
+	//---------------------------------------------
 
 	ImGui::End();
-	firstDraw = false;
 }
 
 std::string SolutionExplorer::AddSpace(std::string base, int comp){
@@ -121,22 +136,7 @@ std::string SolutionExplorer::AddSpace(std::string base, int comp){
 }
 
 void SolutionExplorer::AddNewFile(){
-	ImGui::OpenPopup("NewFile");
-	if(ImGui::BeginPopupModal("NewFile", NULL, ImGuiWindowFlags_NoTitleBar)){
-		ImGui::Text("All those beautiful files will be deleted.\nThis operation cannot be undone!\n\n");
-		ImGui::Separator();
 
-		static bool dont_ask_me_next_time = false;
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-		ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
-		ImGui::PopStyleVar();
-
-		if(ImGui::Button("OK", ImVec2(120, 0))){ ImGui::CloseCurrentPopup(); }
-		ImGui::SetItemDefaultFocus();
-		ImGui::SameLine();
-		if(ImGui::Button("Cancel", ImVec2(120, 0))){ ImGui::CloseCurrentPopup(); }
-		ImGui::EndPopup();
-	}
 }
 
 void SolutionExplorer::AddExistingFile(){
