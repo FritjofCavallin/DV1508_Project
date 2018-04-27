@@ -18,6 +18,8 @@ static void glfw_error_callback(int error, const char* description)
 
 int main(int, char**)
 {
+	const ImVec2 windowSize = { 1920, 1080 };
+
     // Setup window
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
@@ -28,7 +30,7 @@ int main(int, char**)
 #if __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-    GLFWwindow* window = glfwCreateWindow(1920, 1080, "ImGui GLFW+OpenGL3 example", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(windowSize.x, windowSize.y, "ImGui GLFW+OpenGL3 example", NULL, NULL);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
     gl3wInit();
@@ -78,7 +80,7 @@ int main(int, char**)
         ImGui_ImplGlfwGL3_NewFrame();
 		//ImGui::NewFrame();
 
-		ui.draw();
+		ui.draw(windowSize);
 
 		if (false)	// true: show demo windows
 		{

@@ -2,11 +2,11 @@
 
 #include "UIContainer.h"
 
-class SolutionExplorer : public UIContainer
+class Timelines : public UIContainer
 {
 public:
-	SolutionExplorer();
-	virtual ~SolutionExplorer();
+	Timelines();
+	virtual ~Timelines();
 	virtual void draw(ImVec2 pos, ImVec2 size);
 };
 
