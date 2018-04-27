@@ -11,6 +11,8 @@ public:
 	virtual ~SolutionExplorer();
 
 	virtual void draw();
+	void AddNewFile();
+	void AddExistingFile();
 
 	const char* SolutionExplorer::CChar(std::string& s){ return s.data(); };
 	char* SolutionExplorer::Char(std::string& s){ return &s[0]; };

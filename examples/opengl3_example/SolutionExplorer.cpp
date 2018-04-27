@@ -20,9 +20,26 @@ void SolutionExplorer::draw(){
 
 	ImGui::PushID(0);
 	Style_VS_s();
-	//fin:
-	ImGui::Button("Properties"); ImGui::SameLine();
-	ImGui::Button("Add File");
+	if(ImGui::Button("Properties"))
+		ImGui::OpenPopup("miniMenu1");
+	if(ImGui::BeginPopup("miniMenu1")){
+		ImGui::Selectable("alpha");
+		ImGui::Selectable("beta");
+		ImGui::Selectable("gamma");
+		ImGui::EndPopup();
+	}
+	ImGui::PopID();
+
+	ImGui::SameLine();
+
+	ImGui::PushID(0);
+	if(ImGui::Button("Add File"))
+		ImGui::OpenPopup("miniMenu2");
+	if(ImGui::BeginPopup("miniMenu2")){
+		if(ImGui::Selectable("New file")){/*some func*/}
+		if(ImGui::Selectable("Existing file")){/*some func*/ }
+		ImGui::EndPopup();
+	}
 	Style_VS_f();
 	ImGui::PopID();
 
@@ -34,7 +51,6 @@ void SolutionExplorer::draw(){
 
 	ImGui::PushID(0);
 	Style_VS_s();
-	//fin:
 	ImGui::Button(CChar(AddSpace("Effect_name")));
 	Style_VS_f();
 	ImGui::PopID();
