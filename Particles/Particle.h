@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef GLM
+
 #include "glm/vec4.hpp"
 #include "glm/geometric.hpp"
 
@@ -14,3 +16,5 @@ struct Particle
 	//texture []
 	float texBlend[];
 };
+
+#endif
