@@ -3,7 +3,7 @@
 #include "Previewer.h"
 #include "Properties.h"
 #include "SolutionExplorer.h"
-#include "Timelines.h"
+#include "UITimelines.h"
 #include "UIDivider.h"
 
 
@@ -22,7 +22,7 @@ UI::UI()
 				new UIDivider(UIDivider::DivisionDirection::VERTICAL, 0.3f,
 					new SolutionExplorer(),
 					new Properties())),
-			new Timelines())
+			new UITimelines())
 	);
 }
 

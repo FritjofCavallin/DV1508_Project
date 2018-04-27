@@ -14,5 +14,13 @@ public:
 
 	ParticleEffect(Timeline *timeline);
 	~ParticleEffect();
+
+
+	void update();
+
+private:
+
+
+	void applyEffectTimeline();
 };
 

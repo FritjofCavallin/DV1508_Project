@@ -11,3 +11,10 @@ ParticleEffect::ParticleEffect(Timeline *timeline)
 ParticleEffect::~ParticleEffect()
 {
 }
+
+
+
+void ParticleEffect::update()
+{
+
+}

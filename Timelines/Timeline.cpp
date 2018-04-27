@@ -2,7 +2,7 @@
 
 
 
-Timeline::Timeline(Type type)
+Timeline::Timeline(type::Timeline type)
 	: _type(type), _particleLink(nullptr)
 {
 }
