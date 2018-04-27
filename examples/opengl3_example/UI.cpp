@@ -36,6 +36,37 @@ UI::~UI()
 
 void UI::draw(ImVec2 windowSize)
 {
+	ImGui::BeginMainMenuBar();
+	if (ImGui::BeginMenu("main"))
+	{
+		ImGui::MenuItem("blah", nullptr, nullptr);
+		ImGui::MenuItem("bleh", nullptr, nullptr);
+		ImGui::MenuItem("dfsdg", nullptr, nullptr);
+		if (ImGui::BeginMenu("menu"))
+		{
+			ImGui::MenuItem("1", nullptr, nullptr);
+			ImGui::MenuItem("2", nullptr, nullptr);
+			ImGui::MenuItem("3", nullptr, nullptr);
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenu("menu"))
+	{
+		ImGui::MenuItem("123", nullptr, nullptr);
+		ImGui::MenuItem("456", nullptr, nullptr);
+		ImGui::MenuItem("789", nullptr, nullptr);
+		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenu("bar"))
+	{
+		ImGui::MenuItem("abc", nullptr, nullptr);
+		ImGui::MenuItem("defghijk", nullptr, nullptr);
+		ImGui::MenuItem("lmnopqrstuvwxyz", nullptr, nullptr);
+		ImGui::EndMenu();
+	}
+	ImGui::EndMainMenuBar();
+
 	for (auto& c : _containers)
-		c->draw(ImVec2(0, 26), windowSize);
+		c->draw(ImVec2(0, 18), windowSize);
 }
