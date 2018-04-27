@@ -15,19 +15,22 @@ ParticleManager::~ParticleManager()
 
 void ParticleManager::update()
 {
-
+	for (ParticleEffect *e : _effects)
+		e->update();
 }
 
 
 
 void ParticleManager::runEffect(Timeline *t)
 {
-	if (t->_type == Timeline::Effect)
+	if (t->_type == type::Effect)
 		_effects.push_back(new ParticleEffect(t));
 }
 void ParticleManager::stopEffect(Timeline *t)
 {
-	if (t->_type == Timeline::Effect)
+	//Don't call during update!!!
+	
+	if (t->_type == type::Effect)
 	{
 		for (size_t i = 0; i < _effects.size(); i++)
 		{

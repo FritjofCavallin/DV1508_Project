@@ -1,15 +1,15 @@
-#include "Timelines.h"
+#include "UITimelines.h"
 
-Timelines::Timelines()
+UITimelines::UITimelines()
 {
 }
 
 
-Timelines::~Timelines()
+UITimelines::~UITimelines()
 {
 }
 
-void Timelines::draw(ImVec2 pos, ImVec2 size)
+void UITimelines::draw(ImVec2 pos, ImVec2 size)
 {
 	// Common stuff
 	ImGui::Begin("Timelines", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
