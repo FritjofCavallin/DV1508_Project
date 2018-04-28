@@ -5,6 +5,8 @@ Properties::Properties(){
 	winSizeX = 600, winSizeY = 454;
 
 	//currBlock = nullptr;
+
+	firstDraw = true;
 }
 
 
@@ -18,12 +20,38 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
 
+	if(firstDraw){
+		winPos = pos;
+		winSize = size;
+	}
+
 	if(/*currBlock == nullptr*/true){
 		//show help prompt
+
 	}
 	else{
 		//show block properties
 	}
 
+	firstDraw = false;
 	ImGui::End();
+}
+
+std::string Properties::AddSpace(std::string base, int comp){
+	//1 space = 7 pixels wide
+	int spaces = (int)((winSize.x - comp - base.length()) / 7);
+	for(int i = 0; i < spaces; ++i) base += " ";
+
+	return base;
+}
+
+std::string Properties::CenterString(std::string base, int comp){
+	std::string newStr = "";
+	int spaces = (int)((winSize.x - comp - base.length()) / (7*2));
+
+	for(int i = 0; i < spaces; ++i) newStr += " ";
+	newStr += base;
+	for(int i = 0; i < spaces; ++i) newStr += " ";
+
+	return newStr;
 }
