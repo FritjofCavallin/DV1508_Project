@@ -27,7 +27,8 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 
 	if(/*currBlock == nullptr*/true){
 		//show help prompt
-		ImGui::Text(CChar(CenterString("Hover over me")));
+		ImGui::Text(CChar(CenterString("KILL ME NOW")));
+		//ImGui::Text("KILL ME NOW");
 	}
 	else{
 		//show block properties
@@ -39,7 +40,7 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 
 std::string Properties::AddSpace(std::string base, int comp){
 	//1 space = 7 pixels wide
-	int spaces = (int)((winSize.x - comp - base.length()) / 7);
+	int spaces = (int)((winSize.x - comp - (base.length()*7)) / 7);
 	for(int i = 0; i < spaces; ++i) base += " ";
 
 	return base;
@@ -47,11 +48,12 @@ std::string Properties::AddSpace(std::string base, int comp){
 
 std::string Properties::CenterString(std::string base, int comp){
 	std::string newStr = "";
-	int spaces = (int)((winSize.x - comp - base.length()) / (7*2));
+	int a = base.length();
+	int b = comp;
+	int spaces = (int)(((winSize.x - comp - (base.length()*7)) / 2) / 7);	//OBS! fkd
 
 	for(int i = 0; i < spaces; ++i) newStr += " ";
 	newStr += base;
-	for(int i = 0; i < spaces; ++i) newStr += " ";
 
 	return newStr;
 }

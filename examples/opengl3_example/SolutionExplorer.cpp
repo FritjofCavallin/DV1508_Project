@@ -155,7 +155,7 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size){
 
 std::string SolutionExplorer::AddSpace(std::string base, int comp){
 	//1 space = 7 pixels wide
-	int spaces = (int)((winSize.x - comp - base.length()) / 7);
+	int spaces = (int)((winSize.x - comp - (base.length()*7)) / 7);
 	for(int i = 0; i < spaces; ++i) base += " ";
 
 	return base;
