@@ -12,6 +12,7 @@
 #include "UI.h"
 #include "Particles/ParticleEffect.h"
 #include "examples/TestParticles.h"
+#include "misc/RandFunction.h"
 #include <memory>
 #include <iostream>
 
@@ -38,6 +39,7 @@ int main(int, char**)
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
     gl3wInit();
+	seedRand();
 
     // Setup ImGui binding
     ImGui::CreateContext();
@@ -90,8 +92,7 @@ int main(int, char**)
 		}
         ImGui_ImplGlfwGL3_NewFrame();
 		//ImGui::NewFrame();
-
-		
+				
 		ui.draw(windowSize);
 
 		if (false)	// true: show demo windows
