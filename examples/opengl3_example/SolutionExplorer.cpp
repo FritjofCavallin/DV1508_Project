@@ -69,7 +69,10 @@ void SolutionExplorer::draw(){
 
 	ImGui::PushID(0);
 	Style_VS_Text_s();
-	ImGui::Button(CChar(AddSpace("Effect_name")));
+	if(ImGui::Selectable(CChar(AddSpace("Effect_name")), false, ImGuiSelectableFlags_AllowDoubleClick))
+		if(ImGui::IsMouseDoubleClicked(0))
+			OpenFileInWorkspace(/*effect*/);
+
 	Style_VS_Text_f();
 	ImGui::PopID();
 	
@@ -84,7 +87,10 @@ void SolutionExplorer::draw(){
 		for(int i = 0; i < 3; i++){	//replace with size of emitterTimelineVec
 			ImGui::PushID(i);
 			Style_VS_Text_s();
-			ImGui::Button(CChar(AddSpace("Emitter" + std::to_string(i))));
+			if(ImGui::Selectable(CChar(AddSpace("Emitter" + std::to_string(i))), false, ImGuiSelectableFlags_AllowDoubleClick))
+				if(ImGui::IsMouseDoubleClicked(0))
+					OpenFileInWorkspace(/*emitterTimelineVec.at(i)*/);
+
 			Style_VS_Text_f();
 			ImGui::PopID();
 		}
@@ -115,17 +121,27 @@ void SolutionExplorer::draw(){
 	//---------------------------------------------
 	//New file pop-up window
 
-	if(drawNewFilePopup) ImGui::OpenPopup("NewFileWindow");
-	if(ImGui::BeginPopupModal("NewFileWindow")){
+	if(drawNewFilePopup) ImGui::OpenPopup("Create New File");
+	if(ImGui::BeginPopupModal("Create New File")){
 		drawNewFilePopup = false;
 
-		ImGui::Text("All those beautiful files will be deleted.\nThis operation cannot be undone!\n\n");
-		ImGui::Separator();
+		static int fileTypeChoice = 0;
+		ImGui::RadioButton("Particle", &fileTypeChoice, 0); ImGui::SameLine();
+		ImGui::RadioButton("Emitter", &fileTypeChoice, 1);
 
-		if(ImGui::Button("OK", ImVec2(120, 0))){ ImGui::CloseCurrentPopup(); }
+		static char str0[256] = "";
+		ImGui::InputText("File name", str0, IM_ARRAYSIZE(str0));
+
+		static ImGuiComboFlags openChoiceFlags = 0;
+		if(ImGui::CheckboxFlags("Open file in workspace", (unsigned int*)&openChoiceFlags, ImGuiComboFlags_NoArrowButton)){ }
+
+		if(ImGui::Button("OK", ImVec2(120, 0))){
+			AddNewFile(str0, fileTypeChoice, (openChoiceFlags == 32 ? true : false));
+			ImGui::CloseCurrentPopup();
+		}
 		ImGui::SetItemDefaultFocus();
 		ImGui::SameLine();
-		if(ImGui::Button("Cancel", ImVec2(120, 0))){ ImGui::CloseCurrentPopup(); }
+		if(ImGui::Button("Cancel", ImVec2(120, 0))) ImGui::CloseCurrentPopup();
 		ImGui::EndPopup();
 	}
 
@@ -142,29 +158,35 @@ std::string SolutionExplorer::AddSpace(std::string base, int comp){
 	return base;
 }
 
-void SolutionExplorer::AddNewFile(){
-
+void SolutionExplorer::AddNewFile(std::string name, bool isEmitter, bool open){
+	//...
 }
 
 void SolutionExplorer::AddExistingFile(){
 	//empty
 }
 
+void SolutionExplorer::OpenFileInWorkspace(/*Timeline* file*/){
+	//...
+}
+
+//VS_Text
 void SolutionExplorer::Style_VS_Text_s(){
 	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.2f));
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.4f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.2f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.4f));
 }
 void SolutionExplorer::Style_VS_Text_f(){
-	ImGui::PopStyleColor(3);
+	ImGui::PopStyleColor(5);
 }
 
+//VS_Node
 void SolutionExplorer::Style_VS_Node_s(){
 	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(0.3f, 0.3f, 1.f, 1.0f));
-
 	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.0f));
 	ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.0f));
-
 }
 void SolutionExplorer::Style_VS_Node_f(){
 	ImGui::PopStyleColor(3);

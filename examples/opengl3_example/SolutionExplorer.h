@@ -11,8 +11,9 @@ public:
 	virtual ~SolutionExplorer();
 
 	virtual void draw();
-	void AddNewFile();
+	void AddNewFile(std::string name, bool isEmitter, bool open);
 	void AddExistingFile();
+	void OpenFileInWorkspace(/*Timeline* file*/);
 
 	const char* SolutionExplorer::CChar(std::string& s){ return s.data(); };
 	char* SolutionExplorer::Char(std::string& s){ return &s[0]; };
