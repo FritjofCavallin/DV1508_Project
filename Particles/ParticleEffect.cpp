@@ -29,6 +29,7 @@ void ParticleEffect::update()
 	float emittTime = std::fmodf(_time, _timeline->duration());
 	BlockList list = _timeline->fetchBlocks(emittTime);
 
+	// For every active emitter: spawn particles
 	for (unsigned int i = 0; i < list._size; i++)
 	{
 		Timeline *emitter = reinterpret_cast<EffectBlock*>(list._blocks[i])->_emitter;
@@ -46,9 +47,12 @@ void ParticleEffect::update()
 		e->spawnParticles(emittTime);
 	}
 
+	// Increment timestep after particles are spawned
+	// as new particels will take a constant step anyway
 	incrementTime(EMIT_STEP);
 	emittTime = std::fmodf(_time, _timeline->duration());
 
+	// Update particles
 	for (auto e : _emitters)
 		e.second->updateParticles(emittTime);
 }
