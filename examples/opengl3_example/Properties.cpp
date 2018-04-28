@@ -27,8 +27,8 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 
 	if(/*currBlock == nullptr*/true){
 		//show help prompt
-		ImGui::Text(CChar(CenterString("KILL ME NOW")));
-		//ImGui::Text("KILL ME NOW");
+		ImGui::Text("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		ImGui::Text(CChar(CenterString("Select timeline block to display its properties")));
 	}
 	else{
 		//show block properties
