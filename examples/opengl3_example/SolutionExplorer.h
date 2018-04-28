@@ -16,7 +16,6 @@ public:
 	void AddExistingFile();
 	void OpenFileInWorkspace(/*Timeline* file*/);
 
-	const char* CChar(std::string& s){ return s.data(); };
 	char* Char(std::string& s){ return &s[0]; };
 	std::string AddSpace(std::string base, int comp = 0);
 

@@ -10,7 +10,6 @@ public:
 	virtual ~Properties();
 	virtual void draw(ImVec2 pos, ImVec2 size);
 
-	const char* CChar(std::string& s){ return s.data(); };
 	char* Char(std::string& s){ return &s[0]; };
 	std::string AddSpace(std::string base, int comp = 0);
 	std::string CenterString(std::string base, int comp = 0);
