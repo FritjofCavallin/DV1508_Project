@@ -48,8 +48,6 @@ std::string Properties::AddSpace(std::string base, int comp){
 
 std::string Properties::CenterString(std::string base, int comp){
 	std::string newStr = "";
-	int a = base.length();
-	int b = comp;
 	int spaces = (int)(((winSize.x - comp - (base.length()*7)) / 2) / 7);	//OBS! fkd
 
 	for(int i = 0; i < spaces; ++i) newStr += " ";
