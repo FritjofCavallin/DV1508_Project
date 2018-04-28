@@ -71,8 +71,8 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size){
 
 	ImGui::PushID(0);
 	Style_VS_Text_s();
-	std::string title("Effect_name");
-	if(ImGui::Selectable(CChar(AddSpace(title)), false, ImGuiSelectableFlags_AllowDoubleClick))
+
+	if(ImGui::Selectable(AddSpace("Effect_name").c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
 		if(ImGui::IsMouseDoubleClicked(0))
 			OpenFileInWorkspace(/*effect*/);
 
@@ -84,16 +84,14 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size){
 
 	if(firstDraw) ImGui::SetNextTreeNodeOpen(true);
 	Style_VS_Node_s();
-	title = std::string("Effect_name");
-	if(ImGui::TreeNode(CChar(AddSpace(title)))){
+	if(ImGui::TreeNode(AddSpace("Emitters").c_str())){
 		Style_VS_Node_f();
 
 		for(int i = 0; i < 3; i++){	//replace with size of emitterTimelineVec
 			ImGui::PushID(i);
 			Style_VS_Text_s();
 
-			title = std::string("Emitter" + std::to_string(i));
-			if(ImGui::Selectable(CChar(AddSpace(title)), false, ImGuiSelectableFlags_AllowDoubleClick))
+			if(ImGui::Selectable(AddSpace("Emitter" + std::to_string(i)).c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
 				if(ImGui::IsMouseDoubleClicked(0))
 					OpenFileInWorkspace(/*emitterTimelineVec.at(i)*/);
 
@@ -114,8 +112,7 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size){
 		firstDraw = false;
 	}
 	Style_VS_Node_s();
-	title = "Particles";
-	if(ImGui::TreeNode(CChar(AddSpace(title)))){
+	if(ImGui::TreeNode(AddSpace("Particles").c_str())){
 		Style_VS_Node_f();
 
 		//...
@@ -157,9 +154,9 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size){
 	ImGui::End();
 }
 
-std::string& SolutionExplorer::AddSpace(std::string &base, int comp){
+std::string SolutionExplorer::AddSpace(std::string base, int comp){
 	//1 space = 7 pixels wide
-	int spaces = (int)((winSize.x - comp - base.length()) / 7);
+	int spaces = (int)((winSize.x - comp - (base.length()*7)) / 7);
 	for(int i = 0; i < spaces; ++i) base += " ";
 
 	return base;
