@@ -17,6 +17,18 @@ Timeline::~Timeline()
 
 
 
+void Timeline::addBlock(Block *b, unsigned int channel)
+{
+	if (channel >= _channel.size())
+		return; // Channel index to large (see MAX_CHANNEL const)
+	if (b->typeFit() != _type)
+		return; //Wrong timeline for block
+
+	//Should be inserted properly!
+	_channel[channel]->_data.push_back(b);
+}
+
+
 BlockList Timeline::fetchBlocks(float relativeTime)
 {
 	BlockList list;

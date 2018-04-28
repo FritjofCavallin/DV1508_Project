@@ -55,6 +55,7 @@ public:
 	Timeline(type::Timeline type);
 	~Timeline();
 
+	void addBlock(Block *b, unsigned int channel);
 
 	/* Fetch possible blocks affecting the particle effect at the time relative to the timeline
 	*/
