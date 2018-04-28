@@ -8,5 +8,11 @@ public:
 	Properties();
 	virtual ~Properties();
 	virtual void draw(ImVec2 pos, ImVec2 size);
+
+private:
+	//ImGui
+	int winPosX, winPosY, winSizeX, winSizeY;
+
+	//Block* currBlock;
 };
 
