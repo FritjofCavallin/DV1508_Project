@@ -1,5 +1,5 @@
 #include "ForceBlock.h"
-#include "Particles/ParticleEffect.h"
+#include "../../Particles/Constants.h"
 
 
 ForceBlock::ForceBlock(TimeInterval t)

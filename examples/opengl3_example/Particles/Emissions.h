@@ -2,10 +2,10 @@
 
 #include <vector>
 #include "Particle.h"
-#include "Timelines/Timeline.h"
+#include "../Timelines/Timeline.h"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
-#include "Timelines/EmittBlocks/SpawnBlock.h"
+#include "../Timelines/EmittBlocks/SpawnBlock.h"
 
 class ParticleEffect;
 

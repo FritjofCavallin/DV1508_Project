@@ -11,8 +11,8 @@
 
 #include "UI.h"
 #include "Particles/ParticleEffect.h"
-#include "examples/TestParticles.h"
-#include "misc/RandFunction.h"
+#include "Test/TestParticles.h"
+#include "Other/RandFunction.h"
 #include <memory>
 #include <iostream>
 

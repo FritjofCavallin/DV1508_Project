@@ -1,6 +1,6 @@
 #include "Emissions.h"
 #include "ParticleEffect.h"
-#include "misc/RandFunction.h"
+#include "../Other/RandFunction.h"
 #include "glm/geometric.hpp"
 #include "Constants.h"
 

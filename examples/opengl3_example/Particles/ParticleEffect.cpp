@@ -1,6 +1,6 @@
 #include "ParticleEffect.h"
 #include "Emissions.h"
-#include "Timelines/EffectBlock.h"
+#include "../Timelines/EffectBlock.h"
 #include <sstream>
 
 ParticleEffect::ParticleEffect()

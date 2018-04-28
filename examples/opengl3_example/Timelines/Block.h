@@ -1,7 +1,7 @@
 #pragma once
 
 #include "TimelineType.h"
-#include "Particles/Particle.h"
+#include "../Particles/Particle.h"
 #include "TimeInterval.h"
 
 /* Block in the timeline that affects a certain param in the effect. 
