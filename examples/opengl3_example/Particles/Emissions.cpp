@@ -27,10 +27,15 @@ size_t Emission::numActive()
 		_cycleEnd - _cycleBegin;
 }
 
-void Emission::updateParticle(float emitterTime, unsigned int index)
+void Emission::updateParticle(unsigned int index)
 {
 	Timeline *ref = _emitter->_particleLink;
-	if (_effect->elapsedSince(_particleInfo[index]._spawnTime) >= (ref ? ref->_time.duration() : 5.f))
+	float particleTime = _effect->elapsedSince(_particleInfo[index]._spawnTime);
+	if (_effect->_time < _particleInfo[index]._spawnTime)
+	{
+		int a = 0;
+	}
+	if (particleTime >= (ref ? ref->_time.duration() : 5.f))
 	{
 		//Destroy particle
 		incrementCycleBegin();
@@ -48,32 +53,32 @@ void Emission::updateParticle(float emitterTime, unsigned int index)
 	_data[index]._size = _particleInfo[index]._initSize;
 
 	for (unsigned int i = 0; i < active._size; i++)
-		active._blocks[i]->applyParticle(emitterTime, _particleInfo[index], _data[index]);
+		active._blocks[i]->applyParticle(particleTime, _particleInfo[index], _data[index]);
 
 	stepParticle(index, EMIT_STEP);
 	// Do some more calcs (e.g. texture assignments)..
 }
 
-void Emission::updateParticles(float emitterTime)
+void Emission::updateParticles()
 {
 	// Update particels
 	bool looped = _cycleEnd < _cycleBegin;
 	size_t end = looped ? _particleInfo.size() : _cycleEnd;
 	for (size_t i = _cycleBegin; i < end; i++)
-		updateParticle(emitterTime, i);
+		updateParticle(i);
 	// Update the cycled list if necesary
 	if (looped)
 	{
 		for (size_t i = 0; i < _cycleEnd; i++)
-			updateParticle(emitterTime, i);
+			updateParticle(i);
 	}
 }
 void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime)
 {
 	float duration = _emitter->_particleLink ?
 		_emitter->_particleLink->_time.duration() :
-		PARTICLE_DEF_DUR;
-	// Emitt n particles (average n/time in the linear curve)
+		PARTICLE_DEFAULT_DUR;
+	// Emitt n particles (interpolate particle emission: n/frame)
 	float n = glm::mix(spawner->_params._initAmount, spawner->_params._endAmount, (blockTime + EMIT_STEP*0.5) / duration);
 	float dTime = EMIT_STEP / (n + 1.f);
 	// Lazy solution, emitted particles is floored.
@@ -118,5 +123,5 @@ void Emission::spawnParticles(float emitterTime)
 		}
 	}
 	for (unsigned int i = 0; i < spawners._size; i++)
-		spawnParticle((SpawnBlock*)spawners._blocks[i], list, emitterTime - spawners._blocks[i]->_time._startTime);
+		spawnParticle((SpawnBlock*)spawners._blocks[i], list, spawners._blocks[i]->_time.toRelative(emitterTime));
 }

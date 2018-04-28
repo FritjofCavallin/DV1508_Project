@@ -13,7 +13,6 @@ ParticleEffect::ParticleEffect(Timeline *timeline)
 {
 }
 
-
 ParticleEffect::~ParticleEffect()
 {
 }
@@ -51,11 +50,10 @@ void ParticleEffect::update()
 	// Increment timestep after particles are spawned,
 	// new particels will take a constant step anyway
 	incrementTime(EMIT_STEP);
-	emittTime = std::fmodf(_time, _timeline->_time.duration());
 
 	// Update particles
 	for (auto e : _emitters)
-		e.second->updateParticles(emittTime);
+		e.second->updateParticles();
 }
 
 

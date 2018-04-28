@@ -25,8 +25,8 @@ public:
 	void spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime);
 	void spawnParticles(float emitterTime);
 
-	void updateParticle(float emitterTime, unsigned int index);
-	void updateParticles(float emitterTime);
+	void updateParticle(unsigned int index);
+	void updateParticles();
 
 
 	/*Get number of active particles */

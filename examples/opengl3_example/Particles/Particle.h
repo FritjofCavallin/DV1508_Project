@@ -1,6 +1,4 @@
 #pragma once
-#define GLM
-#ifdef GLM
 
 #include "glm/vec4.hpp"
 #include "glm/geometric.hpp"
@@ -29,5 +27,3 @@ public:
 	//float texBlend[];
 
 };
-
-#endif
