@@ -87,6 +87,7 @@ void SolutionExplorer::draw(){
 		for(int i = 0; i < 3; i++){	//replace with size of emitterTimelineVec
 			ImGui::PushID(i);
 			Style_VS_Text_s();
+
 			if(ImGui::Selectable(CChar(AddSpace("Emitter" + std::to_string(i))), false, ImGuiSelectableFlags_AllowDoubleClick))
 				if(ImGui::IsMouseDoubleClicked(0))
 					OpenFileInWorkspace(/*emitterTimelineVec.at(i)*/);
