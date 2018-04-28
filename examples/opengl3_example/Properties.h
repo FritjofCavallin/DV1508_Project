@@ -10,8 +10,18 @@ public:
 	virtual ~Properties();
 	virtual void draw(ImVec2 pos, ImVec2 size);
 
-	std::string AddSpace(std::string base, int comp);
-	std::string CenterString(std::string base, int comp);
+	const char* CChar(std::string& s){ return s.data(); };
+	char* Char(std::string& s){ return &s[0]; };
+	std::string AddSpace(std::string base, int comp = 0);
+	std::string CenterString(std::string base, int comp = 0);
+
+	//styles:
+	void Style_VS_Text_s();
+	void Style_VS_Text_f();
+
+	void Style_VS_Node_s();
+	void Style_VS_Node_f();
+
 private:
 	//ImGui
 	int winPosX, winPosY, winSizeX, winSizeY;

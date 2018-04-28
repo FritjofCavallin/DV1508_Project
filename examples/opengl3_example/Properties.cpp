@@ -27,7 +27,7 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 
 	if(/*currBlock == nullptr*/true){
 		//show help prompt
-
+		ImGui::Text(CChar(CenterString("Hover over me")));
 	}
 	else{
 		//show block properties
@@ -54,4 +54,26 @@ std::string Properties::CenterString(std::string base, int comp){
 	for(int i = 0; i < spaces; ++i) newStr += " ";
 
 	return newStr;
+}
+
+//VS_Text
+void Properties::Style_VS_Text_s(){
+	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.2f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.4f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.2f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)ImColor::HSV(0.f, 0.f, 1.f, 0.4f));
+}
+void Properties::Style_VS_Text_f(){
+	ImGui::PopStyleColor(5);
+}
+
+//VS_Node
+void Properties::Style_VS_Node_s(){
+	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(0.3f, 0.3f, 1.f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.0f));
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f, 0.0f));
+}
+void Properties::Style_VS_Node_f(){
+	ImGui::PopStyleColor(3);
 }
