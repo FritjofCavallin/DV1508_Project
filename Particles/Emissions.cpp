@@ -2,9 +2,10 @@
 #include "ParticleEffect.h"
 #include "misc/RandFunction.h"
 #include "glm/geometric.hpp"
+#include "Constants.h"
 
 Emission::Emission(ParticleEffect* effect, Timeline *emitter)
-	: _emitter(emitter), _particleInfo(), _data(), _effect(effect)
+	: _emitter(emitter), _particleInfo(PARTICLES_EMITTED_MAX), _data(PARTICLES_EMITTED_MAX), _effect(effect)
 {
 }
 
@@ -18,10 +19,18 @@ void Emission::stepParticle(unsigned int index, float timeStep)
 	_data[index]._position += timeStep * _particleInfo[index]._velocity;
 }
 
+
+size_t Emission::numActive()
+{
+	return _cycleEnd < _cycleBegin ?
+		_particleInfo.size() - _cycleBegin + _cycleEnd : //Looped count
+		_cycleEnd - _cycleBegin;
+}
+
 void Emission::updateParticle(float emitterTime, unsigned int index)
 {
 	Timeline *ref = _emitter->_particleLink;
-	if (_effect->elapsedSince(_particleInfo[index]._spawnTime) >= (ref ? ref->duration() : 5.f))
+	if (_effect->elapsedSince(_particleInfo[index]._spawnTime) >= (ref ? ref->_time.duration() : 5.f))
 	{
 		//Destroy particle
 		incrementCycleBegin();
@@ -47,18 +56,26 @@ void Emission::updateParticle(float emitterTime, unsigned int index)
 
 void Emission::updateParticles(float emitterTime)
 {
-	if (_cycleEnd < _cycleBegin)
+	// Update particels
+	bool looped = _cycleEnd < _cycleBegin;
+	size_t end = looped ? _particleInfo.size() : _cycleEnd;
+	for (size_t i = _cycleBegin; i < end; i++)
+		updateParticle(emitterTime, i);
+	// Update the cycled list if necesary
+	if (looped)
 	{
-		for (unsigned int i = _cycleBegin; i < _particleInfo.size(); i++)
+		for (size_t i = 0; i < _cycleEnd; i++)
 			updateParticle(emitterTime, i);
 	}
 }
 void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime)
 {
-	float duration = _emitter->_particleLink->duration();
+	float duration = _emitter->_particleLink ?
+		_emitter->_particleLink->_time.duration() :
+		PARTICLE_DEF_DUR;
 	// Emitt n particles (average n/time in the linear curve)
 	float n = glm::mix(spawner->_params._initAmount, spawner->_params._endAmount, (blockTime + EMIT_STEP*0.5) / duration);
-	float dTime = 0.016f / (n + 1.f);
+	float dTime = EMIT_STEP / (n + 1.f);
 	// Lazy solution, emitted particles is floored.
 	// Remainder needs to be stored for next update so the number of particles emitted is correct...
 	for (float i = 0; i < n; i++) 
@@ -101,5 +118,5 @@ void Emission::spawnParticles(float emitterTime)
 		}
 	}
 	for (unsigned int i = 0; i < spawners._size; i++)
-		spawnParticle((SpawnBlock*)spawners._blocks[i], list, emitterTime - spawners._blocks[i]->_startTime);
+		spawnParticle((SpawnBlock*)spawners._blocks[i], list, emitterTime - spawners._blocks[i]->_time._startTime);
 }

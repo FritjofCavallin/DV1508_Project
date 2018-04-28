@@ -12,7 +12,7 @@ public:
 	glm::vec3 _forceDir;
 	float _forceApplied;
 
-	ForceBlock();
+	ForceBlock(TimeInterval t);
 	virtual ~ForceBlock();
 
 	virtual void applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart);

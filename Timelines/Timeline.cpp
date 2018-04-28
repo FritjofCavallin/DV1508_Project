@@ -2,8 +2,8 @@
 
 
 
-Timeline::Timeline(type::Timeline type)
-	: _type(type), _particleLink(nullptr), _startTime(0.f), _endTime(3.f), _channel(MAX_CHANNELS)
+Timeline::Timeline(type::Timeline type, const std::string &name, TimeInterval t)
+	: _type(type), _name(name), _particleLink(nullptr), _time(0.f, 3.f), _channel(MAX_CHANNELS)
 {
 
 	for (size_t i = 0; i < _channel.size(); i++)
@@ -37,7 +37,7 @@ BlockList Timeline::fetchBlocks(float relativeTime)
 	{
 		for (Block *b : c->_data)
 		{
-			if (b->_startTime >= relativeTime && b->_endTime < relativeTime)
+			if (b->_time._startTime <= relativeTime && relativeTime < b->_time._endTime)
 				list.push(b);
 		}
 	}

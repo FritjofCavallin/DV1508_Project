@@ -12,7 +12,7 @@ public:
 	*/
 	Timeline *_emitter;
 
-	EffectBlock(Timeline *emitter);
+	EffectBlock(Timeline *emitter, TimeInterval t);
 	virtual ~EffectBlock();
 	
 	/* The timeline type the block is associated with

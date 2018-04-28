@@ -2,12 +2,10 @@
 
 #include "Timelines/Timeline.h"
 #include <map>
-
+#include "Constants.h"
+#include <string>
 
 class Emission;
-
-const float EMIT_STEP = 0.016f;
-const float MAX_DURATION = 100.f;
 
 /* Displayed particle effect constantly updated.
 */
@@ -27,6 +25,8 @@ public:
 
 
 	void update();
+	
+	std::string getStatus();
 
 private:
 

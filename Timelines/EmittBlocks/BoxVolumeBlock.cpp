@@ -2,7 +2,8 @@
 #include "misc/RandFunction.h"
 
 
-BoxVolumeBlock::BoxVolumeBlock()
+BoxVolumeBlock::BoxVolumeBlock(TimeInterval t)
+	: Block(t)
 {
 }
 

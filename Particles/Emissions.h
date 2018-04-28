@@ -28,6 +28,10 @@ public:
 	void updateParticle(float emitterTime, unsigned int index);
 	void updateParticles(float emitterTime);
 
+
+	/*Get number of active particles */
+	size_t numActive();
+
 private:
 	ParticleEffect *_effect;
 	size_t _cycleBegin, _cycleEnd;

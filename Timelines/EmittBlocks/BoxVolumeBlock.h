@@ -11,7 +11,7 @@ public:
 	*/
 	glm::vec3 _volumeSize;
 
-	BoxVolumeBlock();
+	BoxVolumeBlock(TimeInterval t);
 	virtual ~BoxVolumeBlock();
 
 	virtual void applyEmitter(Particle &part, GPUParticle &gpuPart);

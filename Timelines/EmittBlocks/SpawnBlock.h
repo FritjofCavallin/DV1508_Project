@@ -5,6 +5,8 @@
 */
 struct InitialEmissionParams
 {
+	InitialEmissionParams();
+
 	float _initAmount, _endAmount;
 	glm::vec2 _minSize, _maxSize;
 	float _minRotation, _maxRotation;
@@ -18,7 +20,8 @@ public:
 
 	InitialEmissionParams _params;
 
-	SpawnBlock();
+	SpawnBlock(TimeInterval t);
+	SpawnBlock(TimeInterval t, InitialEmissionParams &p);
 	virtual ~SpawnBlock();
 
 

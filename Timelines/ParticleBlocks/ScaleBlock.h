@@ -9,9 +9,9 @@ public:
 
 	/* Parameters
 	*/
-	glm::vec3 _scaleBegin, _scaleEnd;
+	glm::vec2 _scaleBegin, _scaleEnd;
 
-	ScaleBlock();
+	ScaleBlock(TimeInterval t);
 	virtual ~ScaleBlock();
 
 	virtual void applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart);

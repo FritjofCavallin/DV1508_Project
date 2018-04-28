@@ -3,6 +3,7 @@
 #include "Block.h"
 #include "Channel.h"
 #include "TimelineType.h"
+#include "TimeInterval.h"
 
 /* Maximum number of channels supported in a timeline
 */
@@ -40,19 +41,19 @@ class Timeline
 public:
 	
 	type::Timeline _type;
+	/* Name identifier*/
+	std::string _name;
 	/* If emitter timeline, this is the linked particle (can be NULL) */
 	Timeline *_particleLink;
-	/* Start and endtime of the timeline in absolute values related to parented timelines
-	*/
-	float _startTime, _endTime;
-	/* Get the duration of the timeline in seconds. */
-	float duration() { return _endTime - _startTime; }
-	/* Convert parent time parameter to relative time for the timeline. */
-	float toRelative(float parentTime) { return parentTime - _startTime; }
+
+	/* Time interval in absolute values related to parented timelines */
+	TimeInterval _time;
+	
+
 	/* Channels containing the blocks controlling the params. */
 	std::vector<Channel*> _channel;
 
-	Timeline(type::Timeline type);
+	Timeline(type::Timeline type, const std::string &name, TimeInterval t);
 	~Timeline();
 
 	void addBlock(Block *b, unsigned int channel);

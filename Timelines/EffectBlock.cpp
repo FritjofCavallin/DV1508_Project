@@ -2,8 +2,8 @@
 #include "misc/RandFunction.h"
 
 
-EffectBlock::EffectBlock(Timeline *emitter)
-	: _emitter(emitter)
+EffectBlock::EffectBlock(Timeline *emitter, TimeInterval t)
+	: Block(t), _emitter(emitter)
 {
 }
 

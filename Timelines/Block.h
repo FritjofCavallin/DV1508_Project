@@ -2,6 +2,7 @@
 
 #include "TimelineType.h"
 #include "Particles/Particle.h"
+#include "TimeInterval.h"
 
 /* Block in the timeline that affects a certain param in the effect. 
 */
@@ -9,16 +10,11 @@ class Block
 {
 public:
 
-	Block();
+	Block(TimeInterval t);
 	virtual ~Block();
 
-	/* Start and endtime of the block in absolute values related to it's parent timeline 
-	*/
-	float _startTime, _endTime;
-	/* Get the duration of the block in seconds. */
-	float duration() { return _endTime - _startTime; }
-	/* Convert parent time parameter to relative time for the block. */
-	float toRelative(float parentTime) { return parentTime - _startTime; }
+	/* Time interval in absolute values related to parented timelines. */
+	TimeInterval _time;
 
 	/* The timeline type the block is associated with
 	*/
