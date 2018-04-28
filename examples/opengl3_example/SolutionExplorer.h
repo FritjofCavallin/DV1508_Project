@@ -29,7 +29,7 @@ public:
 
 protected:
 	//ImGui
-	int winPosX, winPosY, winSizeX, winSizeY;
+	ImVec2 winPos, winSize;
 
 	//Timeline* effect;
 	//std::vector<Timeline*> emitterTimelineVec;

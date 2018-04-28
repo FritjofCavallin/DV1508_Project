@@ -1,24 +1,23 @@
 #include "SolutionExplorer.h"
 
 SolutionExplorer::SolutionExplorer(){
-	winPosX = 0, winPosY = 626;
-	winSizeX = 300, winSizeY = 454;
-
 	firstDraw = true;
 	drawNewFilePopup = false;
 }
 
 SolutionExplorer::~SolutionExplorer(){}
 
-void SolutionExplorer::draw(){
-
-void SolutionExplorer::draw(ImVec2 pos, ImVec2 size)
-{
+void SolutionExplorer::draw(ImVec2 pos, ImVec2 size){
 	// Common stuff
 	ImGui::Begin("SolutionExplorer", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
+
+	if(firstDraw){
+		winPos = pos;
+		winSize = size;
+	}
 
 	//---------------------------------------------
 	//header buttons
@@ -38,7 +37,7 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size)
 	ImGui::SameLine();
 
 	ImGui::PushID(0);
-	if(ImGui::Button("  Add File  "))
+	if(ImGui::Button(" Add File "))
 		ImGui::OpenPopup("miniMenu2");
 	if(ImGui::BeginPopup("miniMenu2")){
 		if(ImGui::Selectable("New file")){
@@ -53,7 +52,7 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size)
 	ImGui::SameLine();
 
 	ImGui::PushID(0);
-	if(ImGui::Button("  Save  "))
+	if(ImGui::Button(" Save "))
 		ImGui::OpenPopup("miniMenu3");
 	if(ImGui::BeginPopup("miniMenu3")){
 		ImGui::Selectable("alpha");
@@ -156,7 +155,7 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size)
 
 std::string SolutionExplorer::AddSpace(std::string base, int comp){
 	//1 space = 7 pixels wide
-	int spaces = (int)((winSizeX - comp - base.length()) / 7);
+	int spaces = (int)((winSize.x - comp - base.length()) / 7);
 	for(int i = 0; i < spaces; ++i) base += " ";
 
 	return base;
