@@ -2,10 +2,10 @@
 
 #include <vector>
 #include "Particle.h"
-#include "Timelines/Timeline.h"
+#include "../Timelines/Timeline.h"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
-#include "Timelines/EmittBlocks/SpawnBlock.h"
+#include "../Timelines/EmittBlocks/SpawnBlock.h"
 
 class ParticleEffect;
 
@@ -25,8 +25,8 @@ public:
 	void spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime);
 	void spawnParticles(float emitterTime);
 
-	void updateParticle(float emitterTime, unsigned int index);
-	void updateParticles(float emitterTime);
+	void updateParticle(unsigned int index);
+	void updateParticles();
 
 
 	/*Get number of active particles */

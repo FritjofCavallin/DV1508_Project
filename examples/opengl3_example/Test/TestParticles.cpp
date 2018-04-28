@@ -1,7 +1,7 @@
 #include "TestParticles.h"
-#include "Timelines/EmittBlocks/SpawnBlock.h"
-#include "Timelines/EffectBlock.h"
-#include "Timelines/ParticleBlocks/ScaleBlock.h"
+#include "../Timelines/EmittBlocks/SpawnBlock.h"
+#include "../Timelines/EffectBlock.h"
+#include "../Timelines/ParticleBlocks/ScaleBlock.h"
 
 Timeline *simpleEffect()
 {

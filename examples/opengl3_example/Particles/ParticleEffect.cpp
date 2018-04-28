@@ -1,6 +1,6 @@
 #include "ParticleEffect.h"
 #include "Emissions.h"
-#include "Timelines/EffectBlock.h"
+#include "../Timelines/EffectBlock.h"
 #include <sstream>
 
 ParticleEffect::ParticleEffect()
@@ -12,7 +12,6 @@ ParticleEffect::ParticleEffect(Timeline *timeline)
 	: _timeline(timeline), _time(0.f), _loopTime(MAX_DURATION)
 {
 }
-
 
 ParticleEffect::~ParticleEffect()
 {
@@ -51,11 +50,10 @@ void ParticleEffect::update()
 	// Increment timestep after particles are spawned,
 	// new particels will take a constant step anyway
 	incrementTime(EMIT_STEP);
-	emittTime = std::fmodf(_time, _timeline->_time.duration());
 
 	// Update particles
 	for (auto e : _emitters)
-		e.second->updateParticles(emittTime);
+		e.second->updateParticles();
 }
 
 

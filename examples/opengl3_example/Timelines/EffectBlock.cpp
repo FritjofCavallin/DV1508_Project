@@ -1,5 +1,5 @@
 #include "EffectBlock.h"
-#include "misc/RandFunction.h"
+#include "../Other/RandFunction.h"
 
 
 EffectBlock::EffectBlock(Timeline *emitter, TimeInterval t)
