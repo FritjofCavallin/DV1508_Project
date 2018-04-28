@@ -2,11 +2,11 @@
 
 #include "UIContainer.h"
 
-class Previewer : public UIContainer
+class UITimelines : public UIContainer
 {
 public:
-	Previewer();
-	virtual ~Previewer();
+	UITimelines();
+	virtual ~UITimelines();
 	virtual void draw(ImVec2 pos, ImVec2 size);
 };
 

@@ -12,13 +12,13 @@ Previewer::~Previewer()
 }
 
 
-void Previewer::draw()
+void Previewer::draw(ImVec2 pos, ImVec2 size)
 {
 	// Common stuff
 	ImGui::Begin("Previewer", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
-	ImGui::SetWindowPos(ImVec2(0, 26));
-	ImGui::SetWindowSize(ImVec2(900, 600));
+	ImGui::SetWindowPos(pos);
+	ImGui::SetWindowSize(size);
 
 
 

@@ -7,6 +7,6 @@ class UIContainer
 public:
 	UIContainer();
 	virtual ~UIContainer();
-	virtual void draw() = 0;
+	virtual void draw(ImVec2 pos, ImVec2 size) = 0;
 };
 

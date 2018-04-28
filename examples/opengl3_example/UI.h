@@ -12,6 +12,6 @@ private:
 public:
 	UI();
 	~UI();
-	void draw();
+	void draw(ImVec2 windowSize);
 };
 

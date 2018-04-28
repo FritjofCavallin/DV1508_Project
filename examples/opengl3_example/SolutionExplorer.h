@@ -10,7 +10,8 @@ public:
 	SolutionExplorer();
 	virtual ~SolutionExplorer();
 
-	virtual void draw();
+	virtual void draw(ImVec2 pos, ImVec2 size);
+
 	void AddNewFile(std::string name, bool isEmitter, bool open);
 	void AddExistingFile();
 	void OpenFileInWorkspace(/*Timeline* file*/);
