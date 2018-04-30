@@ -1,6 +1,4 @@
 #pragma once
-#define GLM
-#ifdef GLM
 
 #include "glm/vec4.hpp"
 #include "glm/geometric.hpp"
@@ -19,11 +17,13 @@ struct GPUParticle
 */
 class Particle
 {
-	float _time;
+public:
+	float _spawnTime;
 	glm::vec2 _initSize;
+	glm::vec3 _initDir;
+	glm::vec3 _velocity;
 	
 	//texture []
-	float texBlend[];
-};
+	//float texBlend[];
 
-#endif
+};

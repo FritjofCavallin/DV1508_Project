@@ -10,6 +10,11 @@
 #include <GLFW/glfw3.h>
 
 #include "UI.h"
+#include "Particles/ParticleEffect.h"
+#include "Test/TestParticles.h"
+#include "Other/RandFunction.h"
+#include <memory>
+#include <iostream>
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -34,6 +39,7 @@ int main(int, char**)
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
     gl3wInit();
+	seedRand();
 
     // Setup ImGui binding
     ImGui::CreateContext();
@@ -68,7 +74,8 @@ int main(int, char**)
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	UI ui;
-
+	std::unique_ptr<ParticleEffect> effect(new ParticleEffect(simpleEffect()));
+	double statusTick = 0.f;
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
@@ -77,9 +84,15 @@ int main(int, char**)
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
+		effect->update();
+		if (glfwGetTime() > statusTick) //Print status every second
+		{
+			std::cout << effect->getStatus();
+			statusTick++;
+		}
         ImGui_ImplGlfwGL3_NewFrame();
 		//ImGui::NewFrame();
-
+				
 		ui.draw(windowSize);
 
 		if (false)	// true: show demo windows

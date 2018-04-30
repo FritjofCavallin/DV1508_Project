@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Timelines/Timeline.h"
+#include "../Timelines/Timeline.h"
 #include "ParticleEffect.h"
 
 class ParticleManager

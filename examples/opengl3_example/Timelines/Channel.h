@@ -7,10 +7,11 @@
 class Channel
 {
 public:
-
 	std::vector<Block*> _data; // vector = simple solution, could be improved if needed
 
 	Channel();
 	~Channel();
+
+
 };
 

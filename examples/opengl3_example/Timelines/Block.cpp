@@ -2,7 +2,8 @@
 
 
 
-Block::Block()
+Block::Block(TimeInterval t)
+	: _time(t)
 {
 }
 
