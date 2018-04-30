@@ -15,7 +15,7 @@ public:
 	void AddNewFile(std::string name, bool isEmitter, bool open);
 	void AddExistingFile();
 	void OpenFileInWorkspace(/*Timeline* file*/);
-
+	 
 	std::string AddSpace(std::string base, int comp = 0);
 
 	//styles:
