@@ -70,5 +70,5 @@ void UI::draw(ImVec2 windowSize)
 	ImGui::EndMainMenuBar();
 
 	for (auto& c : _containers)
-		c->draw(ImVec2(0, 18), windowSize);
+		c->draw(ImVec2(0, 18), ImVec2(windowSize.x, windowSize.y - 18));
 }
