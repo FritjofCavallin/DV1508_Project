@@ -17,7 +17,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 	// Common stuff
 	ImGui::Begin("Timelines", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings /*| ImGuiWindowFlags_NoTitleBar*/);
+		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar /*| ImGuiWindowFlags_NoTitleBar*/);
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
 
@@ -34,7 +34,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		// Store reference to current timeline
 		Timeline* timeline = data->getOpenTimeline(i);
 
-		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, timelineHeight), true, ImGuiWindowFlags_MenuBar);
+		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, timelineHeight + (i == 0 ? 3.0f : 0.0f)), true, ImGuiWindowFlags_MenuBar);
 
 		if (ImGui::BeginMenuBar())
 		{
