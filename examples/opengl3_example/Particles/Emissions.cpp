@@ -7,6 +7,8 @@
 Emission::Emission(ParticleEffect* effect, Timeline *emitter)
 	: _emitter(emitter), _particleInfo(PARTICLES_EMITTED_MAX), _data(PARTICLES_EMITTED_MAX), _effect(effect)
 {
+	_cycleBegin = 0;
+	_cycleEnd = 0;
 }
 
 
