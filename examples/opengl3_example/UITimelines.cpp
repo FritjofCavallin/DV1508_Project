@@ -1,4 +1,5 @@
 #include "UITimelines.h"
+#include "Timelines/Timeline.h"
 
 UITimelines::UITimelines(Data* data)
 {
@@ -20,46 +21,54 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
 
-	ImGui::PopStyleVar();	// Restore padding
-
 	if (ImGui::BeginMenuBar())
 	{
 		ImGui::Text("Timelines");
 		ImGui::EndMenuBar();
 	}
 
-	ImGui::BeginChild("Timeline 1", ImVec2(ImGui::GetContentRegionAvail().x, 200), true, ImGuiWindowFlags_MenuBar);
-
-	if (ImGui::BeginMenuBar())
+	float timelineHeight = (ImGui::GetContentRegionAvail().y - (ImGui::GetStyle().WindowPadding.y + 1.0f) * (data->getOpenCount())) / data->getOpenCount();
+	// Draw all open timelines
+	for (int i = 0; i < data->getOpenCount(); ++i)
 	{
-		ImGui::Text("Timeline 1");
-		
-		ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.1f);
-		if (ImGui::Button("+", ImVec2(20, 0)))
+		// Store reference to current timeline
+		Timeline* timeline = data->getOpenTimeline(i);
+
+		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, timelineHeight), true, ImGuiWindowFlags_MenuBar);
+
+		if (ImGui::BeginMenuBar())
 		{
-			// Add block
+			ImGui::Text(timeline->_name.c_str());
+
+			//ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.1f);
+			if (ImGui::Button("+", ImVec2(20, 0)))
+			{
+				// Add block
+			}
+
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+				ImGui::TextUnformatted("Add block");
+				ImGui::PopTextWrapPos();
+				ImGui::EndTooltip();
+			}
+
+			ImGui::EndMenuBar();
 		}
 
-		if (ImGui::IsItemHovered())
+		for (int i = 0; i < 2; ++i)
 		{
-			ImGui::BeginTooltip();
-			ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-			ImGui::TextUnformatted("Add block");
-			ImGui::PopTextWrapPos();
-			ImGui::EndTooltip();
+			ImGui::SetCursorPos(ImVec2(20 + 20 * i, 15 * i));
+			if (ImGui::Button("Block", ImVec2(100 + i * 4, 30 + i * 2))) {}
+
 		}
 
-		ImGui::EndMenuBar();
+		ImGui::EndChild();
 	}
-
-	for (int i = 0; i < 2; ++i)
-	{
-		ImGui::SetCursorPos(ImVec2(20 + 20 * i, 15 * i));
-		if (ImGui::Button("Block", ImVec2(100 + i * 4, 30 + i * 2))) { }
-
-	}
-	
-	ImGui::EndChild();
 
 	ImGui::End();
+
+	ImGui::PopStyleVar();	// Restore padding
 }
