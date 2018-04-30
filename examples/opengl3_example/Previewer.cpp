@@ -1,11 +1,9 @@
 #include "Previewer.h"
 
-
-
-Previewer::Previewer()
+Previewer::Previewer(Data * data)
 {
+	this->data = data;
 }
-
 
 Previewer::~Previewer()
 {

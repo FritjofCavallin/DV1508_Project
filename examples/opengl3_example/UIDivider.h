@@ -9,7 +9,7 @@ class UIDivider : public UIContainer
 public:
 	enum DivisionDirection { HORIZONTAL, VERTICAL };
 
-	UIDivider(DivisionDirection dir, float ratio, UIContainer* first, UIContainer* second);
+	UIDivider(DivisionDirection dir, float ratio, Data* data, UIContainer* first, UIContainer* second);
 	virtual ~UIDivider();
 	virtual void draw(ImVec2 pos, ImVec2 size);
 private:

@@ -13,6 +13,8 @@ Timeline::Timeline(type::Timeline type, const std::string &name, TimeInterval t)
 
 Timeline::~Timeline()
 {
+	for (auto c : _channel)
+		delete c;
 }
 
 

@@ -9,4 +9,6 @@ Channel::Channel()
 
 Channel::~Channel()
 {
+	for (auto b : _data)
+		delete b;
 }

@@ -5,7 +5,7 @@
 class Previewer : public UIContainer
 {
 public:
-	Previewer();
+	Previewer(Data* data);
 	virtual ~Previewer();
 	virtual void draw(ImVec2 pos, ImVec2 size);
 };

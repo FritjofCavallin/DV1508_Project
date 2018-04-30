@@ -13,6 +13,9 @@
 #include "Particles/ParticleEffect.h"
 #include "Test/TestParticles.h"
 #include "Other/RandFunction.h"
+#include "Timelines/Data.h"
+#include "Timelines/ParticleBlocks/ForceBlock.h"
+#include "Timelines/EmittBlocks/BoxVolumeBlock.h"
 #include <memory>
 #include <iostream>
 
@@ -73,7 +76,32 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	UI ui;
+	Data data;
+	
+	// Add test data
+	Timeline* ptm = new Timeline(type::Particle, "Cool Particle Timeline", TimeInterval(0.0f, 5.0f));
+	ptm->addBlock(new ForceBlock(TimeInterval(1.0f, 3.5f)), 0);
+	Timeline* ptm2 = new Timeline(type::Particle, "Cool Particle Timeline 2", TimeInterval(0.0f, 5.0f));
+	ptm2->addBlock(new ForceBlock(TimeInterval(1.0f, 3.5f)), 0);
+	Timeline* ptm3 = new Timeline(type::Particle, "Cool Particle Timeline 3", TimeInterval(0.0f, 5.0f));
+	ptm3->addBlock(new ForceBlock(TimeInterval(1.0f, 3.5f)), 0);
+	Timeline* mtm = new Timeline(type::Emitter, "My Emitter Timeline", TimeInterval(0.0f, 5.0f));
+	mtm->addBlock(new BoxVolumeBlock(TimeInterval(1.0f, 3.5f)), 0);
+	Timeline* ftm = new Timeline(type::Effect, "Effect Timeline", TimeInterval(0.0f, 5.0f));
+	data.addParticleTimeline(ptm);
+	data.addParticleTimeline(ptm2);
+	data.addParticleTimeline(ptm3);
+	data.addEmitterTimeline(mtm);
+	data.setEffect(ftm);
+
+	data.openTimeline(ptm);
+	data.openTimeline(ptm2);
+	data.openTimeline(ptm3);
+	data.openTimeline(mtm);
+	data.openTimeline(ftm);
+
+	UI ui(&data);
+
 	std::unique_ptr<ParticleEffect> effect(new ParticleEffect(simpleEffect()));
 	double statusTick = 0.f;
     // Main loop

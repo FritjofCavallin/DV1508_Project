@@ -1,7 +1,8 @@
 #include "UIDivider.h"
 
-UIDivider::UIDivider(DivisionDirection dir, float ratio, UIContainer* first, UIContainer* second)
+UIDivider::UIDivider(DivisionDirection dir, float ratio, Data* data, UIContainer* first, UIContainer* second)
 {
+	this->data = data;
 	this->dir = dir;
 	this->ratio = ratio;
 	this->first = first;

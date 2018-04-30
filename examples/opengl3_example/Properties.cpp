@@ -1,6 +1,7 @@
 #include "Properties.h"
 
-Properties::Properties(){
+Properties::Properties(Data* data){
+	this->data = data;
 	winPosX = 300, winPosY = 626;
 	winSizeX = 600, winSizeY = 454;
 
