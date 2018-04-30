@@ -26,6 +26,11 @@ int Data::getEmitterCount()
 	return emitterTimelines.size();
 }
 
+int Data::getOpenCount()
+{
+	return openTimelines.size();
+}
+
 void Data::addParticleTimeline(Timeline* particleTimeline, int index)
 {
 	addTimeline(particleTimeline, index, particleTimelines, type::Particle);
@@ -52,19 +57,28 @@ void Data::removeEmitterTimeline(int index)
 	removeTimeline(index, emitterTimelines);
 }
 
-const std::list<Timeline*>& Data::getParticleTimelines()
+std::list<Timeline*>& Data::getParticleTimelines()
 {
 	return particleTimelines;
 }
 
-const std::list<Timeline*>& Data::getEmitterTimelines()
+std::list<Timeline*>& Data::getEmitterTimelines()
 {
 	return emitterTimelines;
 }
 
-const Timeline* Data::getEffectTimeline()
+Timeline* Data::getEffectTimeline()
 {
 	return effectTimeline;
+}
+
+Timeline* Data::getOpenTimeline(int index)
+{
+	auto it = openTimelines.begin();
+	for (int i = 0; i < index; ++i)
+		++it;
+
+	return *it;
 }
 
 void Data::openTimeline(Timeline* timeline)

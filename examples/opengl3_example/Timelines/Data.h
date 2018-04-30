@@ -14,6 +14,7 @@ public:
 
 	int getParticleCount();
 	int getEmitterCount();
+	int getOpenCount();
 
 	// Add a particle timeline. If index >= 0, insert at specified index and push existing timelines back. If index < 0, insert at end.
 	void addParticleTimeline(Timeline* particleTimeline, int index = -1);
@@ -25,9 +26,10 @@ public:
 	void removeParticleTimeline(int index);
 	void removeEmitterTimeline(int index);
 
-	const std::list<Timeline*>& getParticleTimelines();
-	const std::list<Timeline*>& getEmitterTimelines();
-	const Timeline* getEffectTimeline();
+	std::list<Timeline*>& getParticleTimelines();
+	std::list<Timeline*>& getEmitterTimelines();
+	Timeline* getEffectTimeline();
+	Timeline* getOpenTimeline(int index);
 
 	// Adds a timeline to the open list. The timeline must be part of the database.
 	void openTimeline(Timeline* timeline);
