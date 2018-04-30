@@ -175,7 +175,10 @@ std::string SolutionExplorer::AddSpace(std::string base, int comp){
 }
 
 void SolutionExplorer::AddNewFile(std::string name, bool isEmitter, bool open){
-	//...
+	Timeline* newTimeline = new Timeline((isEmitter ? type::Timeline::Emitter : type::Timeline::Particle), name, TimeInterval());
+
+	if(isEmitter) data->addEmitterTimeline(newTimeline);
+	else data->addParticleTimeline(newTimeline);
 }
 
 void SolutionExplorer::AddExistingFile(){
@@ -183,7 +186,7 @@ void SolutionExplorer::AddExistingFile(){
 }
 
 void SolutionExplorer::OpenFileInWorkspace(Timeline* file){
-	//...
+	data->openTimeline(file);
 }
 
 //VS_Text
