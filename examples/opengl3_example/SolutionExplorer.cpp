@@ -22,134 +22,145 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size){
 
 	//---------------------------------------------
 	//header buttons
-
-	ImGui::PushID(0);
-	Style_VS_Text_s();
-	if(ImGui::Button(" Properties "))
-		ImGui::OpenPopup("miniMenu1");
-	if(ImGui::BeginPopup("miniMenu1")){
-		ImGui::Selectable("alpha");
-		ImGui::Selectable("beta");
-		ImGui::Selectable("gamma");
-		ImGui::EndPopup();
-	}
-	ImGui::PopID();
-
-	ImGui::SameLine();
-
-	ImGui::PushID(0);
-	if(ImGui::Button(" Add File "))
-		ImGui::OpenPopup("miniMenu2");
-	if(ImGui::BeginPopup("miniMenu2")){
-		if(ImGui::Selectable("New file")){
-			drawNewFilePopup = true;
+	{
+		ImGui::PushID(0);
+		Style_VS_Text_s();
+		if(ImGui::Button(" Properties "))
+			ImGui::OpenPopup("miniMenu1");
+		if(ImGui::BeginPopup("miniMenu1")){
+			ImGui::Selectable("alpha");
+			ImGui::Selectable("beta");
+			ImGui::Selectable("gamma");
+			ImGui::EndPopup();
 		}
-		if(ImGui::Selectable("Existing file"))
-			AddExistingFile();
-		ImGui::EndPopup();
+		ImGui::PopID();
+
+		ImGui::SameLine();
+
+		ImGui::PushID(0);
+		if(ImGui::Button(" Add File "))
+			ImGui::OpenPopup("miniMenu2");
+		if(ImGui::BeginPopup("miniMenu2")){
+			if(ImGui::Selectable("New file")){
+				drawNewFilePopup = true;
+			}
+			if(ImGui::Selectable("Existing file"))
+				AddExistingFile();
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+
+		ImGui::SameLine();
+
+		ImGui::PushID(0);
+		if(ImGui::Button(" Save "))
+			ImGui::OpenPopup("miniMenu3");
+		if(ImGui::BeginPopup("miniMenu3")){
+			ImGui::Selectable("alpha");
+			ImGui::Selectable("beta");
+			ImGui::Selectable("gamma");
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+		Style_VS_Text_f();
 	}
-	ImGui::PopID();
-
-	ImGui::SameLine();
-
-	ImGui::PushID(0);
-	if(ImGui::Button(" Save "))
-		ImGui::OpenPopup("miniMenu3");
-	if(ImGui::BeginPopup("miniMenu3")){
-		ImGui::Selectable("alpha");
-		ImGui::Selectable("beta");
-		ImGui::Selectable("gamma");
-		ImGui::EndPopup();
-	}
-	ImGui::PopID();
-	Style_VS_Text_f();
-
 	//---------------------------------------------
 	//effect button
+	{
+		ImGui::Columns(1, "explorer", false);
+		ImGui::Separator();
 
-	ImGui::Columns(1, "explorer", false);
-	ImGui::Separator();
+		Style_VS_Text_s();
 
-	ImGui::PushID(0);
-	Style_VS_Text_s();
+		if(ImGui::Selectable(AddSpace(data->getEffectTimeline()->_name).c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
+			if(ImGui::IsMouseDoubleClicked(0))
+				OpenFileInWorkspace(data->getEffectTimeline());
 
-	if(ImGui::Selectable(AddSpace("Effect_name").c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
-		if(ImGui::IsMouseDoubleClicked(0))
-			OpenFileInWorkspace(/*effect*/);
-
-	Style_VS_Text_f();
-	ImGui::PopID();
-	
+		Style_VS_Text_f();
+	}
 	//---------------------------------------------
 	//drop-down 1 (emitters)
+	{
+		if(firstDraw) ImGui::SetNextTreeNodeOpen(true);
+		Style_VS_Node_s();
+		if(ImGui::TreeNode(AddSpace("Emitters").c_str())){
+			Style_VS_Node_f();
 
-	if(firstDraw) ImGui::SetNextTreeNodeOpen(true);
-	Style_VS_Node_s();
-	if(ImGui::TreeNode(AddSpace("Emitters").c_str())){
-		Style_VS_Node_f();
+			std::list<Timeline*> emitters = data->getEmitterTimelines();
 
-		for(int i = 0; i < 3; i++){	//replace with size of emitterTimelineVec
-			ImGui::PushID(i);
-			Style_VS_Text_s();
+			for(int i = 0; i < data->getEmitterCount(); ++i){
+				Style_VS_Text_s();
 
-			if(ImGui::Selectable(AddSpace("Emitter" + std::to_string(i)).c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
-				if(ImGui::IsMouseDoubleClicked(0))
-					OpenFileInWorkspace(/*emitterTimelineVec.at(i)*/);
+				if(ImGui::Selectable(AddSpace(emitters.front()->_name).c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
+					if(ImGui::IsMouseDoubleClicked(0))
+						OpenFileInWorkspace(emitters.front());
+				emitters.pop_front();
 
-			Style_VS_Text_f();
-			ImGui::PopID();
+				Style_VS_Text_f();
+			}
+			ImGui::TreePop();
 		}
-		ImGui::TreePop();
+		else{
+			Style_VS_Node_f();
+		}
 	}
-	else{
-		Style_VS_Node_f();
-	}
-
 	//---------------------------------------------
 	//drop-down 2 (particles)
+	{
+		if(firstDraw){
+			ImGui::SetNextTreeNodeOpen(true);
+			firstDraw = false;
+		}
+		Style_VS_Node_s();
+		if(ImGui::TreeNode(AddSpace("Particles").c_str())){
+			Style_VS_Node_f();
 
-	if(firstDraw){
-		ImGui::SetNextTreeNodeOpen(true);
-		firstDraw = false;
-	}
-	Style_VS_Node_s();
-	if(ImGui::TreeNode(AddSpace("Particles").c_str())){
-		Style_VS_Node_f();
+			std::list<Timeline*> particles = data->getParticleTimelines();
 
-		//...
-		ImGui::TreePop();
-	}
-	else{
-		Style_VS_Node_f();
-	}
+			for(int i = 0; i < data->getParticleCount(); ++i){
+				Style_VS_Text_s();
 
+				if(ImGui::Selectable(AddSpace(particles.front()->_name).c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
+					if(ImGui::IsMouseDoubleClicked(0))
+						OpenFileInWorkspace(particles.front());
+				particles.pop_front();
+
+				Style_VS_Text_f();
+			}
+
+			ImGui::TreePop();
+		}
+		else{
+			Style_VS_Node_f();
+		}
+	}
 	//---------------------------------------------
 	//New file pop-up window
+	{
+		if(drawNewFilePopup) ImGui::OpenPopup("Create New File");
+		if(ImGui::BeginPopupModal("Create New File")){
+			drawNewFilePopup = false;
 
-	if(drawNewFilePopup) ImGui::OpenPopup("Create New File");
-	if(ImGui::BeginPopupModal("Create New File")){
-		drawNewFilePopup = false;
+			static int fileTypeChoice = 0;
+			ImGui::RadioButton("Particle", &fileTypeChoice, 0); ImGui::SameLine();
+			ImGui::RadioButton("Emitter", &fileTypeChoice, 1);
 
-		static int fileTypeChoice = 0;
-		ImGui::RadioButton("Particle", &fileTypeChoice, 0); ImGui::SameLine();
-		ImGui::RadioButton("Emitter", &fileTypeChoice, 1);
+			static char str0[256] = "";
+			ImGui::InputText("File name", str0, IM_ARRAYSIZE(str0));
 
-		static char str0[256] = "";
-		ImGui::InputText("File name", str0, IM_ARRAYSIZE(str0));
+			static ImGuiComboFlags openChoiceFlags = 0;
+			if(ImGui::CheckboxFlags("Open file in workspace", (unsigned int*)&openChoiceFlags, ImGuiComboFlags_NoArrowButton)){}
 
-		static ImGuiComboFlags openChoiceFlags = 0;
-		if(ImGui::CheckboxFlags("Open file in workspace", (unsigned int*)&openChoiceFlags, ImGuiComboFlags_NoArrowButton)){ }
-
-		if(ImGui::Button("OK", ImVec2(120, 0))){
-			AddNewFile(str0, fileTypeChoice, (openChoiceFlags == 32 ? true : false));
-			ImGui::CloseCurrentPopup();
+			if(ImGui::Button("OK", ImVec2(120, 0))){
+				AddNewFile(str0, fileTypeChoice, (openChoiceFlags == 32 ? true : false));
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SetItemDefaultFocus();
+			ImGui::SameLine();
+			if(ImGui::Button("Cancel", ImVec2(120, 0))) ImGui::CloseCurrentPopup();
+			ImGui::EndPopup();
 		}
-		ImGui::SetItemDefaultFocus();
-		ImGui::SameLine();
-		if(ImGui::Button("Cancel", ImVec2(120, 0))) ImGui::CloseCurrentPopup();
-		ImGui::EndPopup();
 	}
-
 	//---------------------------------------------
 
 	ImGui::End();
@@ -171,7 +182,7 @@ void SolutionExplorer::AddExistingFile(){
 	//empty
 }
 
-void SolutionExplorer::OpenFileInWorkspace(/*Timeline* file*/){
+void SolutionExplorer::OpenFileInWorkspace(Timeline* file){
 	//...
 }
 

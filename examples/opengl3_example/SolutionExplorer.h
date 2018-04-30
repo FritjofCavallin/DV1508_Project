@@ -14,7 +14,7 @@ public:
 
 	void AddNewFile(std::string name, bool isEmitter, bool open);
 	void AddExistingFile();
-	void OpenFileInWorkspace(/*Timeline* file*/);
+	void OpenFileInWorkspace(Timeline* file);
 	 
 	std::string AddSpace(std::string base, int comp = 0);
 
@@ -29,11 +29,6 @@ protected:
 	//ImGui
 	ImVec2 winPos, winSize;
 
-	//Timeline* effect;
-	//std::vector<Timeline*> emitterTimelineVec;
-	//std::vector<Timeline*> particleTimelineVec;
-
-	//might want to add next-frame-do-stuff list
 	bool firstDraw;
 	bool drawNewFilePopup;
 };
