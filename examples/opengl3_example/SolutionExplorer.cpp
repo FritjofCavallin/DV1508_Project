@@ -1,6 +1,7 @@
 #include "SolutionExplorer.h"
 
-SolutionExplorer::SolutionExplorer(){
+SolutionExplorer::SolutionExplorer(Data* data){
+	this->data = data;
 	firstDraw = true;
 	drawNewFilePopup = false;
 }

@@ -13,6 +13,7 @@
 #include "Particles/ParticleEffect.h"
 #include "Test/TestParticles.h"
 #include "Other/RandFunction.h"
+#include "Timelines/Data.h"
 #include <memory>
 #include <iostream>
 
@@ -73,7 +74,9 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	UI ui;
+	Data data;
+	UI ui(&data);
+
 	std::unique_ptr<ParticleEffect> effect(new ParticleEffect(simpleEffect()));
 	double statusTick = 0.f;
     // Main loop

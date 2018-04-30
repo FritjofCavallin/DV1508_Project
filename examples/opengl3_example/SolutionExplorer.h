@@ -7,7 +7,7 @@
 class SolutionExplorer : public UIContainer
 {
 public:
-	SolutionExplorer();
+	SolutionExplorer(Data* data);
 	virtual ~SolutionExplorer();
 
 	virtual void draw(ImVec2 pos, ImVec2 size);

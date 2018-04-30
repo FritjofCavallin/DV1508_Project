@@ -1,7 +1,8 @@
 #include "UITimelines.h"
 
-UITimelines::UITimelines()
+UITimelines::UITimelines(Data* data)
 {
+	this->data = data;
 }
 
 
@@ -51,8 +52,12 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		ImGui::EndMenuBar();
 	}
 
+	for (int i = 0; i < 2; ++i)
+	{
+		ImGui::SetCursorPos(ImVec2(20 + 20 * i, 15 * i));
+		if (ImGui::Button("Block", ImVec2(100 + i * 4, 30 + i * 2))) { }
 
-	if (ImGui::Button("Block", ImVec2(100, 30))) { }
+	}
 	
 	ImGui::EndChild();
 

@@ -6,7 +6,7 @@
 class Properties : public UIContainer
 {
 public:
-	Properties();
+	Properties(Data* data);
 	virtual ~Properties();
 	virtual void draw(ImVec2 pos, ImVec2 size);
 

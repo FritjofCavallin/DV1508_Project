@@ -7,7 +7,7 @@
 #include "UIDivider.h"
 
 
-UI::UI()
+UI::UI(Data* data)
 {
 	//_containers.reserve(4);
 	//_containers.push_back(new Previewer());
@@ -15,14 +15,16 @@ UI::UI()
 	//_containers.push_back(new SolutionExplorer());
 	//_containers.push_back(new Timelines());
 
+	this->data = data;
+
 	_containers.push_back(
-		new UIDivider(UIDivider::DivisionDirection::VERTICAL, 0.45f, 
-			new UIDivider(UIDivider::DivisionDirection::HORIZONTAL, 0.6f, 
-				new Previewer(),
-				new UIDivider(UIDivider::DivisionDirection::VERTICAL, 0.3f,
-					new SolutionExplorer(),
-					new Properties())),
-			new UITimelines())
+		new UIDivider(UIDivider::DivisionDirection::VERTICAL, 0.45f, data,
+			new UIDivider(UIDivider::DivisionDirection::HORIZONTAL, 0.6f, data,
+				new Previewer(data),
+				new UIDivider(UIDivider::DivisionDirection::VERTICAL, 0.3f, data,
+					new SolutionExplorer(data),
+					new Properties(data))),
+			new UITimelines(data))
 	);
 }
 
