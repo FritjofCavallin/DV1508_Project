@@ -58,9 +58,9 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::EndMenuBar();
 		}
 
-		for (int i = 0; i < 2; ++i)
+		for (int i = 0; i < 1; ++i)
 		{
-			ImGui::SetCursorPos(ImVec2(20 + 20 * i, 15 * i));
+			ImGui::SetCursorPos(ImVec2(50 + 20 * i, 60 + 15 * i));
 			if (ImGui::Button("Block", ImVec2(100 + i * 4, 30 + i * 2))) {}
 
 		}
