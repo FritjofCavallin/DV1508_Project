@@ -84,7 +84,7 @@ int main(int, char**)
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
-		effect->update();
+		//effect->update();
 		if (glfwGetTime() > statusTick) //Print status every second
 		{
 			std::cout << effect->getStatus();
