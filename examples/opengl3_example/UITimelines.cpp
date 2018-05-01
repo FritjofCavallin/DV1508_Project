@@ -80,6 +80,13 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 		float timelineWidth = ImGui::GetContentRegionAvail().x;
 
+		ImVec4 color = ImVec4(0.1, 0, 0.2, 1);
+		if (timeline->_type == type::Emitter)
+			color = ImVec4(0, 0.2, 0.3, 1);
+		else if (timeline->_type == type::Effect)
+			color = ImVec4(0, 0, 0.3, 1);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, color);
+
 		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(timelineWidth, timelineHeight + (i == 0 ? 3.0f : 0.0f)), true, ImGuiWindowFlags_MenuBar);
 
 		if (ImGui::BeginMenuBar())
@@ -267,7 +274,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			{
 				float x = pos.x + 3 + (curr - timeStart) * percent;
 				float y = pos.y + 19 + (timelineHeight + 3) * (i + 1);
-				ImGui::SetCursorPos(ImVec2(x - pos.x - 5, timelineHeight - 15));
+				ImGui::SetCursorPos(ImVec2(x - pos.x - 5, timelineHeight - 15 - 1 * i));
 				ImGui::Text("%1.0f", curr);
 				draw_list->AddLine(ImVec2(x, y), ImVec2(x, y - 5), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
 				for (unsigned int d = 0; d < 10; ++d)
@@ -285,6 +292,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			}
 			//draw_list->PopClipRect();
 		}
+		ImGui::PopStyleColor();
 
 		ImGui::EndChild();
 	}
