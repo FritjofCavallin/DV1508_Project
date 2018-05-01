@@ -16,6 +16,9 @@ public:
 	/* Time interval in absolute values related to parented timelines. */
 	TimeInterval _time;
 
+	// Returns true if the time intervals of the two blocks overlap.
+	bool overlaps(Block* other);
+
 	/* The timeline type the block is associated with
 	*/
 	virtual type::Timeline typeFit() = 0;

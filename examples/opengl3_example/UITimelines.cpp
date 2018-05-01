@@ -69,10 +69,10 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::Text(timeline->_name.c_str());
 
 			//ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.1f);
-			std::string text = "+";
+			std::string text = "  +  ";
 			if (_addingNewBlock == i)
-				text = "-";
-			if (ImGui::Button(text.c_str(), ImVec2(20, 0)))
+				text = "  -  ";
+			if (ImGui::Button(text.c_str(), ImVec2(45, 0)))
 			{
 				if (_addingNewBlock == i)
 					_addingNewBlock = -1;
@@ -94,7 +94,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 		if (_addingNewBlock == i)
 		{
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1, 0.10, 0.20, 1));
+			//ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1, 0.10, 0.20, 1));
 			ImGui::BeginChild("test", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_ChildWindow);
 
 			bool holdingButton = false;
@@ -130,7 +130,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					ImGui::EndTooltip();
 				}
 
-				//if (b != blockNames[timeline->_type]->size() - 1)
+				if (b != blockNames[timeline->_type]->size() - 1)
 					ImGui::SameLine();
 			}
 
@@ -148,7 +148,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				ImGui::Text("Now move it and release to place it in a channel");
 
 			// Starts moving and closes the adding menu
-			if (abs(_moveDist.x) > 4 || abs(_moveDist.y) > 4)
+			if (abs(_moveDist.x) > 20 || abs(_moveDist.y) > 20)
 			{
 				switch (timeline->_type)
 				{
@@ -186,14 +186,32 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			}
 
 			ImGui::EndChild();
-			ImGui::PopStyleColor();
+			//ImGui::PopStyleColor();
 		}
-
-		for (int i = 0; i < 1; ++i)
+		else
 		{
-			ImGui::SetCursorPos(ImVec2(50 + 20 * i, 60 + 15 * i));
-			if (ImGui::Button("Block", ImVec2(100 + i * 4, 30 + i * 2))) {}
+			//for (int i = 0; i < 1; ++i)
+			float channelHeight = (int)ImGui::GetContentRegionAvail().y / timeline->_channel.size();
+			float menubarHeight = 21.0f;
+			float timelineDuration = timeline->_time.duration();
 
+			// For every channel
+			for (int c = 0; c < timeline->_channel.size(); ++c)
+			{
+				// For every block in channel
+				for (int b = 0; b < timeline->_channel[c]->_data.size(); ++b)
+				{
+					// Block main body
+					float blockStart = timeline->_channel[c]->_data[b]->_time._startTime;
+					float blockEnd = timeline->_channel[c]->_data[b]->_time._endTime;
+
+					float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
+					float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
+
+					ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * c));
+					if (ImGui::Button("Block", ImVec2(blockWidth, channelHeight * 0.8f))) {}
+				}
+			}
 		}
 
 		ImGui::EndChild();
