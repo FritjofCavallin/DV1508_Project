@@ -81,6 +81,7 @@ int main(int, char**)
 	// Add test data
 	Timeline* ptm = new Timeline(type::Particle, "Cool Particle Timeline", TimeInterval(0.0f, 5.0f));
 	ptm->addBlock(new ForceBlock(TimeInterval(1.0f, 3.5f)), 0);
+	ptm->addBlock(new ForceBlock(TimeInterval(1.1f, 3.8f)), 0);
 	Timeline* ptm2 = new Timeline(type::Particle, "Cool Particle Timeline 2", TimeInterval(0.0f, 5.0f));
 	ptm2->addBlock(new ForceBlock(TimeInterval(1.0f, 3.5f)), 0);
 	Timeline* ptm3 = new Timeline(type::Particle, "Cool Particle Timeline 3", TimeInterval(0.0f, 5.0f));
