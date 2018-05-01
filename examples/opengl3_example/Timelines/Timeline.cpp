@@ -3,7 +3,7 @@
 #include "Timeline.h"
 
 Timeline::Timeline(type::Timeline type, const std::string &name, TimeInterval t)
-	: _type(type), _name(name), _particleLink(nullptr), _time(0.f, 3.f)
+	: _type(type), _name(name), _particleLink(nullptr), _time(t)
 {
 		_channel.push_back(new Channel());
 }
@@ -139,8 +139,8 @@ void Timeline::channelCleanup()
 		}
 	}
 
-	// Ensure there is an empty channel at the end of the vector
-	if (!_channel[_channel.size() - 1]->isEmpty())
+	// Ensure there is an empty channel at the end of the vector, as long as there is space
+	if (!_channel[_channel.size() - 1]->isEmpty() && _channel.size() < MAX_CHANNELS)
 	{
 		_channel.push_back(new Channel());
 	}

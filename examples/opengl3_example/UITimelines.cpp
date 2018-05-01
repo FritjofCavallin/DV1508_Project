@@ -58,11 +58,26 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::EndMenuBar();
 		}
 
-		for (int i = 0; i < 1; ++i)
-		{
-			ImGui::SetCursorPos(ImVec2(50 + 20 * i, 60 + 15 * i));
-			if (ImGui::Button("Block", ImVec2(100 + i * 4, 30 + i * 2))) {}
+		float channelHeight = (int) ImGui::GetContentRegionAvail().y / timeline->_channel.size();
+		float menubarHeight = 21.0f;
+		float timelineDuration = timeline->_time.duration();
 
+		// For every channel
+		for (int c = 0; c < timeline->_channel.size(); ++c)
+		{
+			// For every block in channel
+			for (int b = 0; b < timeline->_channel[c]->_data.size(); ++b)
+			{
+				// Block main body
+				float blockStart = timeline->_channel[c]->_data[b]->_time._startTime;
+				float blockEnd = timeline->_channel[c]->_data[b]->_time._endTime;
+
+				float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
+				float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
+
+				ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * c));
+				if (ImGui::Button("Block", ImVec2(blockWidth, channelHeight * 0.8f))) {}
+			}
 		}
 
 		ImGui::EndChild();
