@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <string>
+
 #include "UITimelines.h"
 #include "Timelines/Timeline.h"
 
@@ -58,26 +61,47 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::EndMenuBar();
 		}
 
-		float channelHeight = (int) ImGui::GetContentRegionAvail().y / timeline->_channel.size();
-		float menubarHeight = 21.0f;
+		float channelHeight = (int) std::min(ImGui::GetContentRegionAvail().y / timeline->_channel.size(), 150.0f);
 		float timelineDuration = timeline->_time.duration();
+
 
 		// For every channel
 		for (int c = 0; c < timeline->_channel.size(); ++c)
 		{
+			ImGui::PushID(c);
 			// For every block in channel
 			for (int b = 0; b < timeline->_channel[c]->_data.size(); ++b)
 			{
-				// Block main body
-				float blockStart = timeline->_channel[c]->_data[b]->_time._startTime;
-				float blockEnd = timeline->_channel[c]->_data[b]->_time._endTime;
+				Block* block = timeline->_channel[c]->_data[b];
+
+				float blockStart = block->_time._startTime;
+				float blockEnd = block->_time._endTime;
 
 				float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
 				float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
 
+
+				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, handleColor);
+				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, handleActiveColor);
+				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, handleHoveredColor);
+
+				// Left handle
+				ImGui::PushID(b);
+				drawHandle(true, block, timeline, c, channelHeight);
+
+				// Right handle
+				ImGui::PushID(b);
+				drawHandle(false, block, timeline, c, channelHeight);
+
+				ImGui::PopID();
+				ImGui::PopID();
+				ImGui::PopStyleColor(3);
+
+				// Block main body
 				ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * c));
-				if (ImGui::Button("Block", ImVec2(blockWidth, channelHeight * 0.8f))) {}
+				if (ImGui::Button(std::to_string(block->_time._endTime).c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * 0.8f))) {}
 			}
+			ImGui::PopID();
 		}
 
 		ImGui::EndChild();
@@ -86,4 +110,51 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 	ImGui::End();
 
 	ImGui::PopStyleVar();	// Restore padding
+}
+
+void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int channelIndex, float channelHeight)
+{
+	bool* draggingBool = left ? &(block->draggingLeft) : &(block->draggingRight);
+	float* editedTimeValue = left ? &(block->_time._startTime) : &(block->_time._endTime);
+	ImGuiIO& io = ImGui::GetIO();
+	float timelineDuration = timeline->_time.duration();
+
+	float blockStart = block->_time._startTime;
+	float blockEnd = block->_time._endTime;
+
+	float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
+	float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
+
+	dragDistance = ImGui::GetMouseDragDelta(0.0f);
+
+	// If left mouse button is not pressed
+	if (*draggingBool && io.MouseDownDuration[0] < 0.0f)
+	{
+		*draggingBool = false;
+	}
+	if (*draggingBool == true)
+	{
+		ImGui::SetMouseCursor(4);
+
+		// Update start time
+		*editedTimeValue = (block->dragStart + dragDistance.x) * timelineDuration / ImGui::GetContentRegionAvail().x;
+		timeline->_channel[channelIndex]->correctBlockDuration(block, timeline->_time, left);
+	}
+	if (left)
+		ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * channelIndex));
+	else
+		ImGui::SetCursorPos(ImVec2(blockStartPos + blockWidth - blockHandleWidth, menubarHeight + channelHeight * channelIndex));
+
+	if (ImGui::Button("", ImVec2(blockHandleWidth, channelHeight))) {}
+	if (ImGui::IsItemHovered() || ImGui::IsItemFocused())
+		ImGui::SetMouseCursor(4);
+	if (ImGui::IsItemActive() && !*draggingBool)
+	{
+		if (dragDistance.x != 0.0f || dragDistance.y != 0.0f)
+		{
+			*draggingBool = true;
+			block->dragStart = blockStartPos + (left ? 0.0f : blockWidth);
+
+		}
+	}
 }

@@ -26,5 +26,10 @@ public:
 
 	virtual void applyParticle(float emitterTime, Particle &part, GPUParticle &gpuPart) {};
 	virtual void applyEmitter(Particle &part, GPUParticle &gpuPart) {};
+
+	// Used by UI
+	bool draggingLeft = false;
+	bool draggingRight = false;
+	float dragStart = 0.0f;
 };
 

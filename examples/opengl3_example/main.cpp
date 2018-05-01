@@ -80,8 +80,10 @@ int main(int, char**)
 	
 	// Add test data
 	Timeline* ptm = new Timeline(type::Particle, "Cool Particle Timeline", TimeInterval(0.0f, 5.0f));
-	ptm->addBlock(new ForceBlock(TimeInterval(1.0f, 3.5f)), 0);
-	ptm->addBlock(new ForceBlock(TimeInterval(1.1f, 3.8f)), 0);
+	ptm->addBlock(new ForceBlock(TimeInterval(0.1f, 1.099f)), 0);
+	ptm->addBlock(new ForceBlock(TimeInterval(1.1f, 1.9f)), 0);
+	ptm->addBlock(new ForceBlock(TimeInterval(2.0f, 3.5f)), 0);
+	ptm->addBlock(new ForceBlock(TimeInterval(3.61f, 5.0f)), 0);
 	Timeline* ptm2 = new Timeline(type::Particle, "Cool Particle Timeline 2", TimeInterval(0.0f, 5.0f));
 	ptm2->addBlock(new ForceBlock(TimeInterval(1.0f, 3.5f)), 0);
 	Timeline* ptm3 = new Timeline(type::Particle, "Cool Particle Timeline 3", TimeInterval(0.0f, 5.0f));
@@ -121,10 +123,13 @@ int main(int, char**)
 		}
         ImGui_ImplGlfwGL3_NewFrame();
 		//ImGui::NewFrame();
-				
-		ui.draw(windowSize);
-
-		if (false)	// true: show demo windows
+		
+		// true: our UI, false: demo window
+		if (true)
+		{
+			ui.draw(windowSize);
+		}
+		else
 		{
         // 1. Show a simple window.
         // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
