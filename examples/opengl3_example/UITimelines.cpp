@@ -127,9 +127,11 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::EndMenuBar();
 		}
 
-		// If the user has clicked the "+" in any timeline
+		// If the user has clicked the "+" in the current timeline
 		if (_addingNewBlock == i)
 		{
+			ImGui::SetCursorPos(ImVec2(timelineWidth - 100, menubarHeight + 3));
+			ImGui::Text("Cancel ^");
 			bool holdingButton = false;
 
 			for (unsigned int b = 0; b < blockNames[timeline->_type]->size(); ++b)
