@@ -12,10 +12,15 @@ public:
 
 	virtual void draw(ImVec2 pos, ImVec2 size);
 
+private:
+	ImVec2 winPos, winSize;
+	bool firstDraw;
+	bool drawNewFilePopup;
+
 	void AddNewFile(std::string name, bool isEmitter, bool open);
 	void AddExistingFile();
 	void OpenFileInWorkspace(Timeline* file);
-	 
+
 	std::string AddSpace(std::string base, int comp = 0);
 
 	//styles:
@@ -24,12 +29,5 @@ public:
 
 	void Style_VS_Node_s();
 	void Style_VS_Node_f();
-
-protected:
-	//ImGui
-	ImVec2 winPos, winSize;
-
-	bool firstDraw;
-	bool drawNewFilePopup;
 };
 

@@ -2,10 +2,8 @@
 
 Properties::Properties(Data* data){
 	this->data = data;
-	winPosX = 300, winPosY = 626;
-	winSizeX = 600, winSizeY = 454;
 
-	//currBlock = nullptr;
+	currBlock = nullptr;
 
 	firstDraw = true;
 }
@@ -26,13 +24,13 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 		winSize = size;
 	}
 
-	if(/*currBlock == nullptr*/true){
-		//show help prompt
-		ImGui::Text("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-		ImGui::Text(CenterString("Select timeline block to display its properties").c_str());
+	if(currBlock){
+		//show block properties
 	}
 	else{
-		//show block properties
+		//show help prompt
+		ImGui::Text("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");	//beautiful solution
+		ImGui::Text(CenterString("Select timeline block to display its properties").c_str());
 	}
 
 	firstDraw = false;
@@ -56,6 +54,8 @@ std::string Properties::CenterString(std::string base, int comp){
 
 	return newStr;
 }
+
+
 
 //VS_Text
 void Properties::Style_VS_Text_s(){
