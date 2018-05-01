@@ -9,12 +9,6 @@
 
 UI::UI(Data* data)
 {
-	//_containers.reserve(4);
-	//_containers.push_back(new Previewer());
-	//_containers.push_back(new Properties());
-	//_containers.push_back(new SolutionExplorer());
-	//_containers.push_back(new Timelines());
-
 	this->data = data;
 
 	_containers.push_back(
