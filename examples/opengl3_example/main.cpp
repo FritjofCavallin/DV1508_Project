@@ -19,6 +19,33 @@
 #include <memory>
 #include <iostream>
 
+
+
+
+
+
+PIXELFORMATDESCRIPTOR pfd =
+{
+	sizeof(PIXELFORMATDESCRIPTOR),
+	1,
+	PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    // Flags
+	PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
+	32,                   // Colordepth of the framebuffer.
+	0, 0, 0, 0, 0, 0,
+	0,
+	0,
+	0,
+	0, 0, 0, 0,
+	24,                   // Number of bits for the depthbuffer
+	8,                    // Number of bits for the stencilbuffer
+	0,                    // Number of Aux buffers in the framebuffer.
+	PFD_MAIN_PLANE,
+	0,
+	0, 0, 0
+};
+
+
+
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error %d: %s\n", error, description);
@@ -40,6 +67,10 @@ int main(int, char**)
 #endif
     GLFWwindow* window = glfwCreateWindow(windowSize.x, windowSize.y, "Group 3 - Particle Editor", NULL, NULL);
     glfwMakeContextCurrent(window);
+	HDC DC = wglGetCurrentDC();
+	SetPixelFormat(DC, ChoosePixelFormat(DC, &pfd), &pfd);
+	HGLRC glContext = wglCreateContext(DC);
+	wglMakeCurrent(DC, glContext);
     glfwSwapInterval(1); // Enable vsync
     gl3wInit();
 	seedRand();
