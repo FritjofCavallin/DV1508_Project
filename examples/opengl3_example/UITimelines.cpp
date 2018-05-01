@@ -240,6 +240,37 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					if (ImGui::Button("Block", ImVec2(blockWidth, channelHeight * 0.8f))) {}
 				}
 			}
+
+			// Draw vertical lines at bottom
+			ImDrawList* draw_list = ImGui::GetWindowDrawList();
+			float timeStart = timeline->_time._startTime;
+			float timeEnd = timeline->_time._endTime;
+			float duration = timeline->_time.duration();
+			//draw_list->PushClipRectFullScreen();
+			float percent = 1.f / duration * timelineWidth;
+			float secLen = timelineWidth / duration;
+			float curr = ((int)(timeStart * 100 + 10) / 100);
+			while (curr < timeEnd)
+			{
+				float x = pos.x + 3 + (curr - timeStart) * percent;
+				float y = pos.y + 19 + (timelineHeight + 3) * (i + 1);
+				ImGui::SetCursorPos(ImVec2(x - pos.x - 5, timelineHeight - 15));
+				ImGui::Text("%1.0f", curr);
+				draw_list->AddLine(ImVec2(x, y), ImVec2(x, y - 5), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
+				for (unsigned int d = 0; d < 10; ++d)
+				{
+					draw_list->AddLine(ImVec2(x + secLen / 10 * d, y), ImVec2(x + secLen / 10 * d, y - 2), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
+					if (duration < 2.f)
+					{
+						for (unsigned int h = 1; h < 10; ++h)
+						{
+							draw_list->AddLine(ImVec2(x + secLen / 10 * d + secLen / 100 * h, y), ImVec2(x + secLen / 10 * d + secLen / 100 * h, y - 1), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
+						}
+					}
+				}
+				curr += 1.0f;
+			}
+			//draw_list->PopClipRect();
 		}
 
 		ImGui::EndChild();
