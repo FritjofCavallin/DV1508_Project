@@ -37,6 +37,16 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 	ImGui::End();
 }
 
+void Properties::SelectBlock(Block* block){
+	//fast pop-upp effect?
+	currBlock = block;
+}
+
+void Properties::DeselectBlock(){
+	//fade effect?
+	currBlock = nullptr;
+}
+
 std::string Properties::AddSpace(std::string base, int comp){
 	//1 space = 7 pixels wide
 	int spaces = (int)((winSize.x - comp - (base.length()*7)) / 7);
