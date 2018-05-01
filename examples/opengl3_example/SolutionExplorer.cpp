@@ -23,22 +23,19 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size){
 	//---------------------------------------------
 	//header buttons
 	{
-		ImGui::PushID(0);
 		Style_VS_Text_s();
 		if(ImGui::Button(" Properties "))
 			ImGui::OpenPopup("miniMenu1");
 		if(ImGui::BeginPopup("miniMenu1")){
-			ImGui::Selectable("alpha");
-			ImGui::Selectable("beta");
-			ImGui::Selectable("gamma");
+			ImGui::Selectable("Collapse/Open All");
+			ImGui::Selectable("Sync with Active Document");
+			ImGui::Selectable("Open Effect Preferences");
 			ImGui::EndPopup();
 		}
-		ImGui::PopID();
 
 		ImGui::SameLine();
 
-		ImGui::PushID(0);
-		if(ImGui::Button(" Add File "))
+		if(ImGui::Button("Add File "))
 			ImGui::OpenPopup("miniMenu2");
 		if(ImGui::BeginPopup("miniMenu2")){
 			if(ImGui::Selectable("New file")){
@@ -48,20 +45,16 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size){
 				AddExistingFile();
 			ImGui::EndPopup();
 		}
-		ImGui::PopID();
 
 		ImGui::SameLine();
 
-		ImGui::PushID(0);
 		if(ImGui::Button(" Save "))
 			ImGui::OpenPopup("miniMenu3");
 		if(ImGui::BeginPopup("miniMenu3")){
-			ImGui::Selectable("alpha");
-			ImGui::Selectable("beta");
-			ImGui::Selectable("gamma");
+			ImGui::Selectable("Save");
+			ImGui::Selectable("Save as...");
 			ImGui::EndPopup();
 		}
-		ImGui::PopID();
 		Style_VS_Text_f();
 	}
 	//---------------------------------------------
@@ -179,6 +172,8 @@ void SolutionExplorer::AddNewFile(std::string name, bool isEmitter, bool open){
 
 	if(isEmitter) data->addEmitterTimeline(newTimeline);
 	else data->addParticleTimeline(newTimeline);
+
+	if(open) data->openTimeline(newTimeline);
 }
 
 void SolutionExplorer::AddExistingFile(){
