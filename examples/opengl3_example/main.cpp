@@ -67,13 +67,26 @@ int main(int, char**)
 #endif
     GLFWwindow* window = glfwCreateWindow(windowSize.x, windowSize.y, "Group 3 - Particle Editor", NULL, NULL);
     glfwMakeContextCurrent(window);
-	HDC DC = wglGetCurrentDC();
+	
+	//creating 
+	HDC DC = wglGetCurrentDC();  //Device Context getting current device context
 	SetPixelFormat(DC, ChoosePixelFormat(DC, &pfd), &pfd);
-	HGLRC glContext = wglCreateContext(DC);
-	wglMakeCurrent(DC, glContext);
+	HGLRC glContext = wglCreateContext(DC); //creating GL Render context
+	wglMakeCurrent(DC, glContext); //makes the newly created GL context the current one
     glfwSwapInterval(1); // Enable vsync
-    gl3wInit();
+
+
+
+	gl3wInit();
 	seedRand();
+
+
+
+	//creating frame buffer and setting it up
+	GLuint frameBuffer;
+	glGenFramebuffers(1, &frameBuffer);
+	//	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
 
     // Setup ImGui binding
     ImGui::CreateContext();
