@@ -134,14 +134,16 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::Text("Cancel ^");
 			bool holdingButton = false;
 
-			for (unsigned int b = 0; b < blockNames[timeline->_type]->size(); ++b)
+			int blockTypes = blockNames[timeline->_type]->size();
+			for (unsigned int b = 0; b < blockTypes; ++b)
 			{
 				// Choose start pos
-				float startY = timelineHeight / 2 - BUTTON_WIDTH / 2 - menubarHeight;
+				float startY = timelineHeight / 2 - BUTTON_WIDTH / 2;
+				float startX = timelineWidth / 2 - (BUTTON_WIDTH + 15) * blockTypes / 2;
 				if (_holdingBlockId == b)
-					ImGui::SetCursorPos(ImVec2(40 + (BUTTON_WIDTH + 15) * b + _moveDist.x, startY + _moveDist.y));
+					ImGui::SetCursorPos(ImVec2(startX + (BUTTON_WIDTH + 15) * b + _moveDist.x, startY + _moveDist.y));
 				else
-					ImGui::SetCursorPos(ImVec2(40 + (BUTTON_WIDTH + 15) * b, startY));
+					ImGui::SetCursorPos(ImVec2(startX + (BUTTON_WIDTH + 15) * b, startY));
 
 				// Create button
 				ImGui::Button(blockNames[timeline->_type]->at(b).c_str(), ImVec2(BUTTON_WIDTH, BUTTON_WIDTH));
@@ -164,7 +166,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					ImGui::EndTooltip();
 				}
 
-				if (b != blockNames[timeline->_type]->size() - 1)
+				if (b != blockTypes - 1)
 					ImGui::SameLine();
 			}
 
