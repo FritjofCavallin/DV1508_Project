@@ -19,26 +19,26 @@ UITimelines::UITimelines(Data* data)
 
 	_movingBlock = nullptr;
 
-	blockNames[0] = new std::vector<std::string>();
-	blockNames[0]->push_back("Test1");
-	blockNames[0]->push_back("Test2");
-	blockNames[0]->push_back("Test3");
-	blockNames[1] = new std::vector<std::string>();
-	blockNames[1]->push_back("Box\nVolume");
-	blockNames[1]->push_back("Spawn");
-	blockNames[2] = new std::vector<std::string>();
-	blockNames[2]->push_back("Test1");
-	blockNames[2]->push_back("Force");
-	blockNames[2]->push_back("Scale");
-	blockNames[2]->push_back("Test2");
-	blockNames[2]->push_back("Test3");
+	// Effect blocks
+	_blockInfos[0] = new std::vector<BlockInfo>();  // The items are added dynamically each frame
+	// Emitter blocks
+	_blockInfos[1] = new std::vector<BlockInfo>();
+	_blockInfos[1]->push_back({ "Box Volume", "What volume/shape to spawn from" });
+	_blockInfos[1]->push_back({ "Spawn", "How the particles should spawn" });
+	// Particle blocks
+	_blockInfos[2] = new std::vector<BlockInfo>();
+	_blockInfos[2]->push_back({ "Test1", "Perp" });
+	_blockInfos[2]->push_back({ "Force", "Apply a force to the particle" });
+	_blockInfos[2]->push_back({ "Scale", "Change size of the particle" });
+	_blockInfos[2]->push_back({ "Test2", "Slerp" });
+	_blockInfos[2]->push_back({ "Test3", "Gerp" });
 }
 
 
 UITimelines::~UITimelines()
 {
 	for (unsigned int i = 0; i < 3; ++i)
-		delete blockNames[i];
+		delete _blockInfos[i];
 }
 
 void UITimelines::draw(ImVec2 pos, ImVec2 size)
@@ -50,6 +50,18 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar /*| ImGuiWindowFlags_NoTitleBar*/);
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
+
+	_blockInfos[0]->clear();
+	std::string info;
+	for (auto e : data->getEmitterTimelines())
+	{
+		info = "Length: " + std::to_string(e->_time.duration()) + " s\nChannels: " + std::to_string(e->_channel.size()) + "\nLinked particle:\n   ";
+		if (e->_particleLink != nullptr)
+			info += e->_particleLink->_name;
+		else
+			info += "None";
+		_blockInfos[0]->push_back({ e->_name, info });
+	}
 
 	if (ImGui::BeginMenuBar())
 	{
@@ -90,7 +102,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				if (ImGui::BeginMenu(text.c_str()))
 				{
 					std::list<Timeline*>& particles = data->getParticleTimelines();
-					for (auto p : particles)
+					for (auto& p : particles)
 					{
 						if (ImGui::Selectable(p->_name.c_str(), timeline->_particleLink == p))
 							timeline->_particleLink = p;
@@ -134,7 +146,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::Text("Cancel ^");
 			bool holdingButton = false;
 
-			int blockTypes = blockNames[timeline->_type]->size();
+			int blockTypes = _blockInfos[timeline->_type]->size();
 			for (unsigned int b = 0; b < blockTypes; ++b)
 			{
 				// Choose start pos
@@ -146,7 +158,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					ImGui::SetCursorPos(ImVec2(startX + (BUTTON_WIDTH + 15) * b, startY));
 
 				// Create button
-				ImGui::Button(blockNames[timeline->_type]->at(b).c_str(), ImVec2(BUTTON_WIDTH, BUTTON_WIDTH));
+				ImGui::Button(_blockInfos[timeline->_type]->at(b)._name.c_str(), ImVec2(BUTTON_WIDTH, BUTTON_WIDTH));
 
 				// Add click effect
 				if (ImGui::IsItemActive())
@@ -161,7 +173,8 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				{
 					ImGui::BeginTooltip();
 					ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-					ImGui::TextUnformatted("Short block info");
+					std::string text = _blockInfos[timeline->_type]->at(b)._name + "\n---------\n" + _blockInfos[timeline->_type]->at(b)._desc;
+					ImGui::TextUnformatted(text.c_str());
 					ImGui::PopTextWrapPos();
 					ImGui::EndTooltip();
 				}
