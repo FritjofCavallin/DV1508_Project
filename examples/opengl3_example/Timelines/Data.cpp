@@ -87,7 +87,9 @@ void Data::openTimeline(Timeline* timeline)
 		std::find(particleTimelines.begin(), particleTimelines.end(), timeline) != particleTimelines.end() ||
 		std::find(emitterTimelines.begin(), emitterTimelines.end(), timeline) != emitterTimelines.end())
 	{
-		openTimelines.push_back(timeline);
+		// Only open closed timelines
+		if (std::find(openTimelines.begin(), openTimelines.end(), timeline) == openTimelines.end())
+			openTimelines.push_back(timeline);
 	}
 }
 
