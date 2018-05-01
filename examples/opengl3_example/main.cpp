@@ -98,8 +98,8 @@ int main(int, char**)
 	data.openTimeline(ptm);
 	data.openTimeline(ptm2);
 	data.openTimeline(ptm3);
-	//data.openTimeline(mtm);
-	//data.openTimeline(ftm);
+	data.openTimeline(mtm);
+	data.openTimeline(ftm);
 
 	UI ui(&data);
 

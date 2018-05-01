@@ -1,4 +1,6 @@
 #include <string>
+#include <iomanip>
+#include <sstream>
 
 #include "UITimelines.h"
 #include "Timelines/Timeline.h"
@@ -56,35 +58,68 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 	}
 
 	float timelineHeight = (ImGui::GetContentRegionAvail().y - (ImGui::GetStyle().WindowPadding.y + 1.0f) * (data->getOpenCount())) / data->getOpenCount();
+	float menubarHeight = 21.0f;
+
 	// Draw all open timelines
 	for (int i = 0; i < data->getOpenCount(); ++i)
 	{
 		// Store reference to current timeline
 		Timeline* timeline = data->getOpenTimeline(i);
 
-		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, timelineHeight + (i == 0 ? 3.0f : 0.0f)), true, ImGuiWindowFlags_MenuBar);
+		float timelineWidth = ImGui::GetContentRegionAvail().x;
+
+		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(timelineWidth, timelineHeight + (i == 0 ? 3.0f : 0.0f)), true, ImGuiWindowFlags_MenuBar);
 
 		if (ImGui::BeginMenuBar())
 		{
 			ImGui::Text(timeline->_name.c_str());
 
-			//ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.1f);
-			std::string text = "  +  ";
+			std::string text;
+			// Menu for linking particle to emitter
+			if (timeline->_type == type::Emitter)
+			{
+				ImGui::SameLine(300);
+				ImGui::Text("Linked particle: ");
+				ImGui::SameLine();
+				text = "[Click here to attach]";
+				if (timeline->_particleLink != nullptr)
+					text = timeline->_particleLink->_name;
+				std::stringstream ss;
+				ss << text << std::setw(30 - text.length()) << "";
+				text = ss.str();
+				if (ImGui::BeginMenu(text.c_str()))
+				{
+					std::list<Timeline*>& particles = data->getParticleTimelines();
+					for (auto p : particles)
+					{
+						if (ImGui::Selectable(p->_name.c_str(), timeline->_particleLink == p))
+							timeline->_particleLink = p;
+					}
+					ImGui::EndMenu();
+				}
+			}
+
+			// Button for adding block
+			text = "  +  ";
 			if (_addingNewBlock == i)
 				text = "  -  ";
-			if (ImGui::Button(text.c_str(), ImVec2(45, 0)))
+			ImGui::SameLine(timelineWidth - 70);
+			if (ImGui::Button(text.c_str(), ImVec2(43, 0)))
 			{
 				if (_addingNewBlock == i)
 					_addingNewBlock = -1;
 				else 
 					_addingNewBlock = i;
 			}
-
+			// Tooltip
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
 				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-				ImGui::TextUnformatted("Add block");
+				if (_addingNewBlock != i)
+					ImGui::TextUnformatted("Add block");
+				else
+					ImGui::TextUnformatted("Cancel");
 				ImGui::PopTextWrapPos();
 				ImGui::EndTooltip();
 			}
@@ -92,17 +127,15 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::EndMenuBar();
 		}
 
+		// If the user has clicked the "+" in any timeline
 		if (_addingNewBlock == i)
 		{
-			//ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1, 0.10, 0.20, 1));
-			ImGui::BeginChild("test", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_ChildWindow);
-
 			bool holdingButton = false;
 
 			for (unsigned int b = 0; b < blockNames[timeline->_type]->size(); ++b)
 			{
 				// Choose start pos
-				float startY = timelineHeight / 2 - BUTTON_WIDTH / 2 - 20;
+				float startY = timelineHeight / 2 - BUTTON_WIDTH / 2 - menubarHeight;
 				if (_holdingBlockId == b)
 					ImGui::SetCursorPos(ImVec2(40 + (BUTTON_WIDTH + 15) * b + _moveDist.x, startY + _moveDist.y));
 				else
@@ -117,7 +150,6 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					_moveDist = ImGui::GetMouseDragDelta(0);
 					_holdingBlockId = b;
 					holdingButton = true;
-					//ImGui::SetMouseCursor(2);
 				}
 
 				// Add tool tip
@@ -137,11 +169,10 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			if (!holdingButton)
 			{
 				_holdingBlockId = -1;
-				//ImGui::SetMouseCursor(0);
 			}
 
 			// Help text
-			ImGui::SetCursorPos(ImVec2(10, timelineHeight - 40));
+			ImGui::SetCursorPos(ImVec2(10, timelineHeight - 20));
 			if (_holdingBlockId == -1)
 				ImGui::Text("Click and hold on an icon...");
 			else
@@ -152,12 +183,10 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			{
 				switch (timeline->_type)
 				{
-				// Effect
-				case 0:
+				case type::Effect:
 
 					break;
-				// Emitter
-				case 1:
+				case type::Emitter:
 					switch (_holdingBlockId)
 					{
 					case 0:
@@ -168,7 +197,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 						break;
 					}
 					break;
-				case 2:
+				case type::Particle:
 					switch (_holdingBlockId)
 					{
 					case 0:
@@ -184,15 +213,10 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				_addingNewBlock = -1;
 				_holdingBlockId = -1;
 			}
-
-			ImGui::EndChild();
-			//ImGui::PopStyleColor();
 		}
-		else
+		else  // Showing the timeline as usual
 		{
-			//for (int i = 0; i < 1; ++i)
 			float channelHeight = (int)ImGui::GetContentRegionAvail().y / timeline->_channel.size();
-			float menubarHeight = 21.0f;
 			float timelineDuration = timeline->_time.duration();
 
 			// For every channel
