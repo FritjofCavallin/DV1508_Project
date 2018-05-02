@@ -271,8 +271,8 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				{
 					Block* block = timeline->_channel[c]->_data[b];
 
-					float blockStart = timeline->_channel[c]->_data[b]->_time._startTime;
-					float blockEnd = timeline->_channel[c]->_data[b]->_time._endTime;
+					float blockStart = timeline->_channel[c]->_data[b]->_time._startTime - timeline->_time._startTime;
+					float blockEnd = timeline->_channel[c]->_data[b]->_time._endTime - timeline->_time._startTime;
 
 					float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
 					float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
@@ -348,8 +348,8 @@ void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int ch
 	ImGuiIO& io = ImGui::GetIO();
 	float timelineDuration = timeline->_time.duration();
 
-	float blockStart = block->_time._startTime;
-	float blockEnd = block->_time._endTime;
+	float blockStart = block->_time._startTime - timeline->_time._startTime;
+	float blockEnd = block->_time._endTime - timeline->_time._startTime;
 
 	float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
 	float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
@@ -366,7 +366,7 @@ void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int ch
 		ImGui::SetMouseCursor(4);
 
 		// Update start time
-		*editedTimeValue = (block->dragStart + dragDistance.x) * timelineDuration / ImGui::GetContentRegionAvail().x;
+		*editedTimeValue = (((block->dragStart + dragDistance.x) * timelineDuration)) / ImGui::GetContentRegionAvail().x + timeline->_time._startTime;
 		timeline->_channel[channelIndex]->correctBlockDuration(block, timeline->_time, left);
 	}
 	if (left)
@@ -383,7 +383,6 @@ void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int ch
 		{
 			*draggingBool = true;
 			block->dragStart = blockStartPos + (left ? 0.0f : blockWidth);
-
 		}
 	}
 }
