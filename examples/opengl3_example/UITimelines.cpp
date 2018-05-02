@@ -99,7 +99,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 				// Block main body
 				ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * c));
-				if (ImGui::Button(std::to_string(block->_time._endTime).c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * 0.8f))) {}
+				if (ImGui::Button("Block", ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * 0.8f))) {}
 			}
 			ImGui::PopID();
 		}

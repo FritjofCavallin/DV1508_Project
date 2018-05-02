@@ -23,6 +23,6 @@ public:
 	Channel();
 	~Channel();
 
-
+	float minBlockDuration = 0.05f;
 };
 
