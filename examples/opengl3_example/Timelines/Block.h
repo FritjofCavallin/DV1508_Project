@@ -30,6 +30,8 @@ public:
 	// Used by UI
 	bool draggingLeft = false;
 	bool draggingRight = false;
-	float dragStart = 0.0f;
+	float dragHandleStart = 0.0f;
+	float dragBodyStart = 0.0f;
+	float dragBodyYOffset = 0.0f;
 };
 

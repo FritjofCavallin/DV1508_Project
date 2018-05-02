@@ -17,7 +17,7 @@ Timeline::~Timeline()
 
 
 
-bool Timeline::addBlock(Block *b, unsigned int channel)
+bool Timeline::addBlock(Block *b, unsigned int channel, bool insertChannel)
 {
 	if (channel >= _channel.size()) // Channel index to large (see MAX_CHANNEL const)
 	{
@@ -36,39 +36,72 @@ bool Timeline::addBlock(Block *b, unsigned int channel)
 		return false;
 	}
 
-	bool success = false;
-	// Check for overlapping blocks in same channel
-	if (_channel[channel]->blockFits(b))
+	//if (channel >= _channel.size())
+	//	_channel.push_back(new Channel());
+
+	// If at max channels, but the last channel is empty, remove it to allow reordering of blocks
+	if (insertChannel && _channel.size() >= MAX_CHANNELS && _channel[MAX_CHANNELS - 1]->_data.size() == 0)
 	{
+		auto it = _channel.end();
+		--it;
+
+		_channel.erase(it);
+	}
+
+	bool success = false;
+	if (insertChannel && _channel.size() < MAX_CHANNELS)
+	{
+		auto it = _channel.begin();
+		for (int i = 0; i < channel; ++i)
+			++it;
+
+		_channel.insert(it, new Channel());
+
+		// Insert block
 		_channel[channel]->_data.push_back(b);
 		success = true;
 	}
 	else
 	{
-		// First, try to create a new channel after the desired one
-		if (_channel.size() < MAX_CHANNELS)
+		// Check for overlapping blocks in same channel
+		if (_channel[channel]->blockFits(b))
 		{
-			auto it = _channel.begin();
-			for (int i = 0; i < channel; ++i)
-				++it;
-			++it;	// One extra step, to add the new channel after the desired one, not before
-
-			_channel.insert(it, new Channel());
-
-			// Insert block
-			_channel[channel + 1]->_data.push_back(b);
+			_channel[channel]->_data.push_back(b);
 			success = true;
 		}
-		// Lastly, check if block fits within other existing channels
 		else
 		{
-			for (Channel* c : _channel)
+			// First, try to add block to the next channel
+			if (channel < _channel.size() - 1 && _channel[channel + 1]->blockFits(b))
 			{
-				if (c->blockFits(b))
+				_channel[channel + 1]->_data.push_back(b);
+				success = true;
+			}
+			// Then, try to create a new channel after the desired one
+			else if (_channel.size() < MAX_CHANNELS)
+			{
+				auto it = _channel.begin();
+				for (int i = 0; i < channel; ++i)
+					++it;
+				++it;	// One extra step, to add the new channel after the desired one, not before
+
+				_channel.insert(it, new Channel());
+
+				// Insert block
+				_channel[channel + 1]->_data.push_back(b);
+				success = true;
+			}
+			// Lastly, check if block fits within other existing channels
+			else
+			{
+				for (Channel* c : _channel)
 				{
-					c->_data.push_back(b);
-					success = true;
-					break;
+					if (c->blockFits(b))
+					{
+						c->_data.push_back(b);
+						success = true;
+						break;
+					}
 				}
 			}
 		}
@@ -79,7 +112,7 @@ bool Timeline::addBlock(Block *b, unsigned int channel)
 	return success;
 }
 
-Block* Timeline::removeBlock(int channelIndex, int blockIndex)
+Block* Timeline::removeBlock(int channelIndex, int blockIndex, bool doCleanup)
 {
 	Block* ret = _channel[channelIndex]->_data[blockIndex];
 
@@ -89,13 +122,14 @@ Block* Timeline::removeBlock(int channelIndex, int blockIndex)
 
 	_channel[channelIndex]->_data.erase(it);
 
-	channelCleanup();
+	if (doCleanup)
+		channelCleanup();
 
 	return ret;
 }
 
 
-Block* Timeline::removeBlock(Block* block)
+Block* Timeline::removeBlock(Block* block, bool doCleanup)
 {
 	for (int c = 0; c < _channel.size(); ++c)
 	{
@@ -103,7 +137,7 @@ Block* Timeline::removeBlock(Block* block)
 		{
 			if (_channel[c]->_data[b] == block)
 			{
-				return removeBlock(c, b);
+				return removeBlock(c, b, doCleanup);
 			}
 		}
 	}

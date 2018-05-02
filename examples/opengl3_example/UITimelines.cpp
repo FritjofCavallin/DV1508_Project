@@ -18,8 +18,6 @@ UITimelines::UITimelines(Data* data)
 	_addingNewBlock = -1;
 	_holdingBlockId = -1;
 
-	_movingBlock = nullptr;
-
 	// Effect blocks
 	_blockInfos[0] = new std::vector<BlockInfo>();  // The items are added dynamically each frame
 	// Emitter blocks
@@ -81,6 +79,8 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 		float timelineWidth = ImGui::GetContentRegionAvail().x;
 
+		ImGuiIO& io = ImGui::GetIO();
+
 		ImVec4 color = ImVec4(0.1, 0, 0.2, 1);
 		if (timeline->_type == type::Emitter)
 			color = ImVec4(0, 0.2, 0.3, 1);
@@ -88,7 +88,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			color = ImVec4(0, 0, 0.3, 1);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, color);
 
-		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(timelineWidth, timelineHeight + (i == 0 ? 3.0f : 0.0f)), true, ImGuiWindowFlags_MenuBar);
+		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(timelineWidth, timelineHeight + (i == 0 ? 3.0f : 0.0f)), true, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar);
 
 		if (ImGui::BeginMenuBar())
 		{
@@ -146,24 +146,8 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 			ImGui::EndMenuBar();
 		}
-
-//<<<<<<< HEAD
-//		float channelHeight = (int) std::min(ImGui::GetContentRegionAvail().y / timeline->_channel.size(), 150.0f);
-//		float timelineDuration = timeline->_time.duration();
-//
-//
-//		// For every channel
-//		for (int c = 0; c < timeline->_channel.size(); ++c)
-//		{
-//			ImGui::PushID(c);
-//			// For every block in channel
-//			for (int b = 0; b < timeline->_channel[c]->_data.size(); ++b)
-//			{
-//				Block* block = timeline->_channel[c]->_data[b];
-//
-//				float blockStart = block->_time._startTime;
-//				float blockEnd = block->_time._endTime;
-//=======
+		
+		float channelHeight = (int)ImGui::GetContentRegionAvail().y / timeline->_channel.size();
 
 		// If the user has clicked the "+" in the current timeline
 		if (_addingNewBlock == i)
@@ -173,10 +157,10 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			bool holdingButton = false;
 
 			int blockTypes = _blockInfos[timeline->_type]->size();
+			float startY = timelineHeight / 2 - BUTTON_WIDTH / 2;
 			for (unsigned int b = 0; b < blockTypes; ++b)
 			{
 				// Choose start pos
-				float startY = timelineHeight / 2 - BUTTON_WIDTH / 2;
 				float startX = timelineWidth / 2 - (BUTTON_WIDTH + 15) * blockTypes / 2;
 				if (_holdingBlockId == b)
 					ImGui::SetCursorPos(ImVec2(startX + (BUTTON_WIDTH + 15) * b + _moveDist.x, startY + _moveDist.y));
@@ -233,10 +217,10 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					switch (_holdingBlockId)
 					{
 					case 0:
-						_movingBlock = new BoxVolumeBlock(TimeInterval());
+						timeline->_movingBlock = new BoxVolumeBlock(TimeInterval());
 						break;
 					case 1:
-						_movingBlock = new SpawnBlock(TimeInterval());
+						timeline->_movingBlock = new SpawnBlock(TimeInterval());
 						break;
 					}
 					break;
@@ -244,14 +228,16 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					switch (_holdingBlockId)
 					{
 					case 0:
-						_movingBlock = new ForceBlock(TimeInterval());
+						timeline->_movingBlock = new ForceBlock(TimeInterval());
 						break;
 					case 1:
-						_movingBlock = new ScaleBlock(TimeInterval());
+						timeline->_movingBlock = new ScaleBlock(TimeInterval());
 						break;
 					}
 				}
 
+				if (timeline->_movingBlock)
+					timeline->_movingBlock->dragBodyYOffset = channelHeight * 0.5f;
 				_moveDist = ImVec2(0, 0);
 				_addingNewBlock = -1;
 				_holdingBlockId = -1;
@@ -259,7 +245,6 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		}
 		else  // Showing the timeline as usual
 		{
-			float channelHeight = (int)ImGui::GetContentRegionAvail().y / timeline->_channel.size();
 			float timelineDuration = timeline->_time.duration();
 
 			// For every channel
@@ -277,29 +262,48 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
 					float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
 
-					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, handleColor);
-					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, handleActiveColor);
-					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, handleHoveredColor);
+					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, handleLeftColor);
+					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, handleLeftActiveColor);
+					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, handleLeftHoveredColor);
 
 					// Left handle
 					ImGui::PushID(b);
 					drawHandle(true, block, timeline, c, channelHeight);
+					ImGui::PopStyleColor(3);
+
+					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, handleRightColor);
+					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, handleRightActiveColor);
+					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, handleRightHoveredColor);
 
 					// Right handle
 					ImGui::PushID(b);
 					drawHandle(false, block, timeline, c, channelHeight);
-
-					ImGui::PopID();
-					ImGui::PopID();
 					ImGui::PopStyleColor(3);
 
 					// Block main body
+					ImGui::PushID(b);
 					ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * c));
-					if (ImGui::Button("Block", ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * 0.8f))) {}
+					if (ImGui::Button("Block", ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
+					if (ImGui::IsItemActive() && !timeline->_movingBlock)
+					{
+						if (dragDistance.x != 0.0f || dragDistance.y != 0.0f)
+						{
+							timeline->_movingBlock = timeline->removeBlock(block, false);
+							block->dragBodyStart = blockStartPos;
+							block->dragBodyYOffset = io.MousePos.y - ImGui::GetWindowPos().y - (menubarHeight + channelHeight * c);
+						}
+					}
+
+					ImGui::PopID();
+					ImGui::PopID();
+					ImGui::PopID();
 				}
 				ImGui::PopID();
 			}
 		}
+
+		// Dragged block
+		drawDraggedBlock(timeline, channelHeight);
 
 		// Draw vertical lines at bottom
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -366,7 +370,7 @@ void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int ch
 		ImGui::SetMouseCursor(4);
 
 		// Update start time
-		*editedTimeValue = (((block->dragStart + dragDistance.x) * timelineDuration)) / ImGui::GetContentRegionAvail().x + timeline->_time._startTime;
+		*editedTimeValue = (((block->dragHandleStart + dragDistance.x) * timelineDuration)) / ImGui::GetContentRegionAvail().x + timeline->_time._startTime;
 		timeline->_channel[channelIndex]->correctBlockDuration(block, timeline->_time, left);
 	}
 	if (left)
@@ -382,7 +386,95 @@ void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int ch
 		if (dragDistance.x != 0.0f || dragDistance.y != 0.0f)
 		{
 			*draggingBool = true;
-			block->dragStart = blockStartPos + (left ? 0.0f : blockWidth);
+			block->dragHandleStart = blockStartPos + (left ? 0.0f : blockWidth);
 		}
+	}
+}
+
+void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	// Get mouse position relative to window and clamp it to within timeline channels
+	ImVec2 mouseWindowPos = ImVec2(io.MousePos.x - ImGui::GetWindowPos().x, io.MousePos.y - ImGui::GetWindowPos().y);
+	mouseWindowPos.x = std::min(std::max(mouseWindowPos.x, 0.0f), ImGui::GetWindowWidth());
+	mouseWindowPos.y = std::min(std::max(mouseWindowPos.y, menubarHeight), ImGui::GetWindowHeight());
+	float hoveredChannel = ((mouseWindowPos.y - menubarHeight) / (ImGui::GetWindowHeight() - menubarHeight)) * timeline->_channel.size();
+	if (((int)hoveredChannel) >= timeline->_channel.size())
+		hoveredChannel = timeline->_channel.size() - 1;
+
+	// If mouse is in the upper 20% of the channel, insert a channel and then add block there
+	float hoveredChannelFrac = (hoveredChannel - ((float)((int)hoveredChannel)));
+	bool insertChannel = hoveredChannelFrac <= 0.2f;
+
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
+	draw_list->PushClipRectFullScreen();
+	// Draw a line between channels to signify insertion
+	if (insertChannel && timeline->_movingBlock && mouseWindowPos.y < ImGui::GetWindowPos().y + ImGui::GetWindowHeight())
+	{
+		draw_list->AddLine(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel)),
+			ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel)), ImGui::GetColorU32(ImGuiCol_Button), 4.0f);
+	}
+	// Draw a line over the channel being inserted into
+	else if (timeline->_movingBlock)
+	{
+		draw_list->AddLine(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel) + channelHeight * 0.5f),
+			ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel) + channelHeight * 0.5f), ImGui::GetColorU32(ImGuiCol_Button), channelHeight);
+	}
+	draw_list->PopClipRect();
+
+	// If mouse button is not held
+	if (timeline->_movingBlock && io.MouseDownDuration[0] < 0.0f)
+	{
+		// Place block. If placement fails, restore its position
+		if (!timeline->addBlock(timeline->_movingBlock, (int)hoveredChannel, insertChannel))
+		{
+			float timelineDuration = timeline->_time.duration();
+			TimeInterval* movingBlockTime = &(timeline->_movingBlock->_time);
+			float blockStart = movingBlockTime->_startTime - timeline->_time._startTime;
+			float blockEnd = movingBlockTime->_endTime - timeline->_time._startTime;
+
+			movingBlockTime->_startTime = (((timeline->_movingBlock->dragBodyStart + dragDistance.x) * timelineDuration)) / ImGui::GetContentRegionAvail().x + timeline->_time._startTime;
+			movingBlockTime->_endTime = movingBlockTime->_startTime + blockEnd - blockStart;
+
+			// If placing fails again, delete block
+			if (!timeline->addBlock(timeline->_movingBlock, (int)hoveredChannel, insertChannel))
+				delete timeline->_movingBlock;
+		}
+
+		timeline->_movingBlock = nullptr;
+	}
+
+	// Update moving block
+	if (timeline->_movingBlock)
+	{
+		float timelineDuration = timeline->_time.duration();
+
+		TimeInterval* movingBlockTime = &(timeline->_movingBlock->_time);
+		float blockStart = movingBlockTime->_startTime - timeline->_time._startTime;
+		float blockEnd = movingBlockTime->_endTime - timeline->_time._startTime;
+
+		float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
+		float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
+
+		movingBlockTime->_startTime = (((timeline->_movingBlock->dragBodyStart + dragDistance.x) * timelineDuration)) / ImGui::GetContentRegionAvail().x + timeline->_time._startTime;
+		movingBlockTime->_endTime = movingBlockTime->_startTime + blockEnd - blockStart;
+
+		// Correct if outside timeline interval
+		if (movingBlockTime->_startTime < timeline->_time._startTime)
+		{
+			movingBlockTime->_startTime = timeline->_time._startTime;
+			movingBlockTime->_endTime = timeline->_time._startTime + blockEnd - blockStart;
+		}
+		if (movingBlockTime->_endTime > timeline->_time._endTime)
+		{
+			movingBlockTime->_endTime = timeline->_time._endTime;
+			movingBlockTime->_startTime = timeline->_time._endTime - (blockEnd - blockStart);
+		}
+
+		// Draw block
+		float cursorY = std::min(std::max(mouseWindowPos.y - timeline->_movingBlock->dragBodyYOffset, menubarHeight), ImGui::GetWindowHeight() - channelHeight * blockHeightRatio);
+		ImGui::SetCursorPos(ImVec2(blockStartPos, cursorY));
+		if (ImGui::Button("Block", ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
 	}
 }
