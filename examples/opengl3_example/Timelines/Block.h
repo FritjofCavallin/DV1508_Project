@@ -16,6 +16,9 @@ public:
 	/* Time interval in absolute values related to parented timelines. */
 	TimeInterval _time;
 
+	// Returns true if the time intervals of the two blocks overlap.
+	bool overlaps(Block* other);
+
 	/* The timeline type the block is associated with
 	*/
 	virtual type::Timeline typeFit() = 0;
@@ -23,5 +26,12 @@ public:
 
 	virtual void applyParticle(float emitterTime, Particle &part, GPUParticle &gpuPart) {};
 	virtual void applyEmitter(Particle &part, GPUParticle &gpuPart) {};
+
+	// Used by UI
+	bool draggingLeft = false;
+	bool draggingRight = false;
+	float dragHandleStart = 0.0f;
+	float dragBodyStart = 0.0f;
+	float dragBodyYOffset = 0.0f;
 };
 

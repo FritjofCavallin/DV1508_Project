@@ -48,6 +48,8 @@ public:
 
 	/* Time interval in absolute values related to parented timelines */
 	TimeInterval _time;
+
+	Block* _movingBlock = nullptr;
 	
 
 	/* Channels containing the blocks controlling the params. */
@@ -56,10 +58,23 @@ public:
 	Timeline(type::Timeline type, const std::string &name, TimeInterval t);
 	~Timeline();
 
-	void addBlock(Block *b, unsigned int channel);
+	// Returns true on success, false otherwise
+	// Note that the block might be placed on another channel if it can't fit in the specified one
+	// If insertChannel == true, a new channel is always inserted if possible
+	bool addBlock(Block *b, unsigned int channel, bool insertChannel = false);
+
+	// Removes and returns block blockIndex of channel channelIndex
+	Block* removeBlock(int channelIndex, int blockIndex, bool doCleanup = true);
+
+	// Removes and returns the specified block, if found
+	Block* removeBlock(Block* block, bool doCleanup = true);
 
 	/* Fetch possible blocks affecting the particle effect at the time relative to the timeline
 	*/
 	BlockList fetchBlocks(float relativeTime);
+
+private:
+	// Ensures there is an empty channel at the end of the _channel vector, and removes other empty channels
+	void channelCleanup();
 };
 
