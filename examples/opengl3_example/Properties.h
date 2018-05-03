@@ -10,6 +10,14 @@ public:
 	virtual ~Properties();
 	virtual void draw(ImVec2 pos, ImVec2 size);
 
+	void SelectBlock(Block* block);
+	void DeselectBlock();
+
+private:
+	ImVec2 winPos, winSize;
+	Block* currBlock;
+	bool firstDraw;
+
 	char* Char(std::string& s){ return &s[0]; };
 	std::string AddSpace(std::string base, int comp = 0);
 	std::string CenterString(std::string base, int comp = 0);
@@ -20,14 +28,5 @@ public:
 
 	void Style_VS_Node_s();
 	void Style_VS_Node_f();
-
-private:
-	//ImGui
-	int winPosX, winPosY, winSizeX, winSizeY;
-	ImVec2 winPos, winSize;
-
-	//Block* currBlock;
-
-	bool firstDraw;
 };
 
