@@ -3,8 +3,17 @@
 #include <string>
 #include <fstream>
 #include "stb_image.h"
+#include <iostream>
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 #define STB_IMAGE_IMPLEMENTATION
+
+void checkError()
+{
+	GLenum err = glGetError();
+	if (err != GL_NO_ERROR)
+		std::cout << "GL Error Occured: " << err << "\n";
+}
+
 Previewer::Previewer(Data * data)
 {
 	this->data = data;
@@ -21,7 +30,6 @@ Previewer::Previewer(Data * data)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
 }
 
 Previewer::~Previewer()
@@ -50,6 +58,7 @@ void Previewer::creationoftexture()
 
 	}
 	stbi_image_free(data);
+	checkError();
 
 }
 void Previewer::CreateShaders()
@@ -58,6 +67,8 @@ void Previewer::CreateShaders()
 	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
 	// open glsl file and put it in a string
 	std::ifstream shaderFile("VertexShader.glsl");
+	if (!shaderFile.is_open())
+		throw std::exception("File not found...");
 	std::string shaderText((std::istreambuf_iterator<char>(shaderFile)), std::istreambuf_iterator<char>());
 	shaderFile.close();
 	// make a double pointer (only valid here)
@@ -81,6 +92,7 @@ void Previewer::CreateShaders()
 	glAttachShader(gShaderProgram, fs);
 	glAttachShader(gShaderProgram, vs);
 	glLinkProgram(gShaderProgram);
+	checkError();
 
 }
 void Previewer::CreateTriangleData()
@@ -131,6 +143,7 @@ void Previewer::CreateTriangleData()
 	// specify that: the vertex attribute "vertex_color", of 3 elements of type FLOAT, not normalized, with STRIDE != 0,
 	//               starts at offset (12 bytes) of the gVertexBuffer 
 	glVertexAttribPointer(vertexColor, 3, GL_FLOAT, GL_FALSE, sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float) * 3));
+	checkError();
 }
 
 
