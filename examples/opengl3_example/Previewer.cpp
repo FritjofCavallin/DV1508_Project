@@ -30,6 +30,15 @@ Previewer::Previewer(Data * data)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+		scaling = glm::scale(glm::vec3(1,1,1));
+
+		translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0,0));
+			
+		rotate = glm::rotate((glm::mediump_float)0,glm::vec3(1,0,0));
+
+		worldmatrix =  translate * rotate * scaling;
+		worldMatrixID = glGetUniformLocation(gShaderProgram, "MVP");
 }
 
 Previewer::~Previewer()
@@ -105,17 +114,32 @@ void Previewer::CreateTriangleData()
 		float r, g, b;
 	};
 	// create the actual data in plane Z = 0
-	TriangleVertex triangleVertices[6] =
+	TriangleVertex triangleVertices[4] =
 	{
+
+		//Triangle strip
+		{ -0.50f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
+		{ -0.50f, -1.0f, 0,	1.0f, 1.0f, 0.0f },
+		{ 0.50f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
+		{ 0.50f, -1.0f, 0,	1.0f, 1.0f, 0.0f }
 		// pos and color for each vertex
-		{ -1.0f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
+	/*{ -1.0f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
 	{ 1.0f, -1.0f, 0,	1.0f, 1.0f, 0.0f },
 	{ -1.0f, -1.0f, 0,   0.0f, 1.0f, 0.0f },
 	{ -1.0f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
 	{ 1.0f, 1.0f,  0,	1.0f, 0.0f, 0.0f },
-	{ 1.0f, -1.0f, 0,	1.0f, 1.0f, 0.0f }
+	{ 1.0f, -1.0f, 0,	1.0f, 1.0f, 0.0f }*/
 	};
 
+//	std::vector<TriangleVertex> triangleVertices;
+//	TriangleVertex pushbackdata;
+//	for (float i = -0.5; i < 1.6; i++)
+//	{
+//	pushbackdata = { i,1,0,0,0,1 };	
+//	triangleVertices.push_back(pushbackdata);
+//	pushbackdata = { i,-1,0,0,0,1 };
+//	triangleVertices.push_back(pushbackdata);
+//	}
 
 	// Vertex Array Object (VAO) 
 	glGenVertexArrays(1, &gVertexAttribute);
@@ -147,18 +171,20 @@ void Previewer::CreateTriangleData()
 }
 
 
+
 void Previewer::draw(ImVec2 pos, ImVec2 size)
 {
+
 	
 
-
+	glUniformMatrix4fv(worldMatrixID, 1, GL_FALSE, &worldmatrix[0][0]);
 	// Common stuff
 	ImGui::Begin("Previewer", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
 
-
+	
 
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
@@ -166,7 +192,8 @@ void Previewer::draw(ImVec2 pos, ImVec2 size)
 	glUseProgram(gShaderProgram);
 	glBindVertexArray(gVertexAttribute);
 	glBindTexture(GL_TEXTURE_2D, texturen);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glLineWidth(10);
+	glDrawArrays(GL_LINES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 	ImGui::Image(reinterpret_cast<ImTextureID>(texture), ImGui::GetContentRegionAvail(), ImVec2(0, 0), ImVec2(1, -1));

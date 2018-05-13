@@ -1,10 +1,8 @@
 #pragma once
 
 #include "UIContainer.h"
-#include <GL\/gl3w.h>
-#include <GLFW/glfw3.h>
-#define BUFFER_OFFSET(i) ((char *)nullptr + (i))
-#define STB_IMAGE_IMPLEMENTATION
+#include "camera.h"
+
 class Previewer : public UIContainer
 {
 public:
@@ -13,6 +11,12 @@ public:
 	GLuint gVertexAttribute;
 	GLuint gShaderProgram;
 	ImVec4 clear_color;
+	GLuint worldMatrixID;
+	glm::mat4 Identitymatrix;
+	glm::mat4 scaling;
+	glm::mat4 rotate;
+	glm::mat4 translate;
+	glm::mat4 worldmatrix;
 	unsigned int texture;
 	unsigned int texturen;
 	Previewer(Data* data);
