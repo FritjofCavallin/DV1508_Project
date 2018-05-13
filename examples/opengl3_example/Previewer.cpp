@@ -34,11 +34,18 @@ Previewer::Previewer(Data * data)
 		scaling = glm::scale(glm::vec3(1,1,1));
 
 		translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0,0));
-			
+		
 		rotate = glm::rotate((glm::mediump_float)0,glm::vec3(1,0,0));
-
+		Projectionmatrix = glm::perspective(
+			(glm::mediump_float)glm::radians(45.f), // The vertical Field of View, in radians: the amount of "zoom". Think "camera lens". Usually between 90° (extra wide) and 30° (quite zoomed in)
+			(glm::mediump_float)	4.0f / 3.0f,       // Aspect Ratio. Depends on the size of your window. Notice that 4/3 == 800/600 == 1280/960, sounds familiar ?
+			0.1f,              // Near clipping plane. Keep as big as possible, or you'll get precision issues.
+			100.0f             // Far clipping plane. Keep as little as possible.
+		);
 		worldmatrix =  translate * rotate * scaling;
 		worldMatrixID = glGetUniformLocation(gShaderProgram, "MVP");
+	
+
 }
 
 Previewer::~Previewer()
@@ -114,14 +121,14 @@ void Previewer::CreateTriangleData()
 		float r, g, b;
 	};
 	// create the actual data in plane Z = 0
-	TriangleVertex triangleVertices[4] =
-	{
+//	TriangleVertex triangleVertices[4] =
+//	{
 
 		//Triangle strip
-		{ -0.50f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
-		{ -0.50f, -1.0f, 0,	1.0f, 1.0f, 0.0f },
-		{ 0.50f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
-		{ 0.50f, -1.0f, 0,	1.0f, 1.0f, 0.0f }
+//		{ -0.50f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
+//		{ -0.50f, -1.0f, 0,	1.0f, 1.0f, 0.0f },
+//		{ 0.50f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
+//		{ 0.50f, -1.0f, 0,	1.0f, 1.0f, 0.0f }
 		// pos and color for each vertex
 	/*{ -1.0f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
 	{ 1.0f, -1.0f, 0,	1.0f, 1.0f, 0.0f },
@@ -129,17 +136,17 @@ void Previewer::CreateTriangleData()
 	{ -1.0f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
 	{ 1.0f, 1.0f,  0,	1.0f, 0.0f, 0.0f },
 	{ 1.0f, -1.0f, 0,	1.0f, 1.0f, 0.0f }*/
-	};
+//	};
 
-//	std::vector<TriangleVertex> triangleVertices;
-//	TriangleVertex pushbackdata;
-//	for (float i = -0.5; i < 1.6; i++)
-//	{
-//	pushbackdata = { i,1,0,0,0,1 };	
-//	triangleVertices.push_back(pushbackdata);
-//	pushbackdata = { i,-1,0,0,0,1 };
-//	triangleVertices.push_back(pushbackdata);
-//	}
+	std::vector<TriangleVertex> triangleVertices;
+	TriangleVertex pushbackdata;
+	for (float i = -0.5; i < 1.5; i++)
+	{
+	pushbackdata = { i,0,1,0,0,0 };	
+	triangleVertices.push_back(pushbackdata);
+	pushbackdata = { i,0,-1,0,0,0 };
+	triangleVertices.push_back(pushbackdata);
+	}
 
 	// Vertex Array Object (VAO) 
 	glGenVertexArrays(1, &gVertexAttribute);
@@ -148,13 +155,13 @@ void Previewer::CreateTriangleData()
 	// this activates the first and second attributes of this VAO
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-
+	//96
 	// create a vertex buffer object (VBO) id
 	glGenBuffers(1, &gVertexBuffer);
 	// Bind the buffer ID as an ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
 	// This "could" imply copying to the GPU, depending on what the driver wants to do...
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, triangleVertices.size() * 4 * 6, triangleVertices.data(), GL_STATIC_DRAW);
 
 	// query where which slot corresponds to the input vertex_position in the Vertex Shader 
 	GLuint vertexPos = glGetAttribLocation(gShaderProgram, "vertex_position");
@@ -175,7 +182,8 @@ void Previewer::CreateTriangleData()
 void Previewer::draw(ImVec2 pos, ImVec2 size)
 {
 
-	
+	worldmatrix = translate * rotate * scaling;
+	worldmatrix = Projectionmatrix *camera.returnViewmatrix()*  worldmatrix;
 
 	glUniformMatrix4fv(worldMatrixID, 1, GL_FALSE, &worldmatrix[0][0]);
 	// Common stuff

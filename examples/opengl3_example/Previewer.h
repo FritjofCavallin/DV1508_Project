@@ -16,6 +16,8 @@ public:
 	glm::mat4 scaling;
 	glm::mat4 rotate;
 	glm::mat4 translate;
+	glm::mat4 Projectionmatrix;
+	Camera camera;
 	glm::mat4 worldmatrix;
 	unsigned int texture;
 	unsigned int texturen;

@@ -13,5 +13,5 @@ class Camera
 private:
 	glm::vec3 camera;
 public:
-
+	glm::mat4 returnViewmatrix();
 };
