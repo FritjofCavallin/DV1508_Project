@@ -4,6 +4,7 @@
 #include <map>
 #include "Constants.h"
 #include <string>
+#include "../Other/GLFuncs.h"
 
 class Emission;
 
@@ -31,7 +32,7 @@ public:
 
 private:
 
-
+	GLuint _partShaderProgram;
 
 	void incrementTime(float step);
 	std::map<Timeline*, Emission*> _emitters;

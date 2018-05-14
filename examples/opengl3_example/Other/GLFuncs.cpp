@@ -9,17 +9,25 @@ void checkGLError()
 	if (err != GL_NO_ERROR)
 		std::cout << "GL Error Occured: " << err << "\n";
 }
-
-GLuint loadShader(const char* vertexShader, const char* fragmentShader)
+void checkGLError(const char * msg)
 {
+	GLenum err = glGetError();
+	if (err != GL_NO_ERROR)
+		std::cout << "GL Error Occured: " << err << "\nMsg: " << msg << "\n";
+}
 
-
-	//create vertex shader
-	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+GLuint loadShaderFile(const char* vertexShader, GLuint type)
+{
+	GLuint vs = glCreateShader(type);
 	// open glsl file and put it in a string
 	std::ifstream shaderFile(vertexShader);
 	if (!shaderFile.is_open())
-		throw std::exception("Vertex shader file not found...");
+	{
+		std::string err = "Shader file not found: ";
+		err += vertexShader;
+		std::cout << err.c_str() << std::endl;
+		throw std::exception("Shader file not found...");
+	}
 	std::string shaderText((std::istreambuf_iterator<char>(shaderFile)), std::istreambuf_iterator<char>());
 	shaderFile.close();
 	// make a double pointer (only valid here)
@@ -28,21 +36,41 @@ GLuint loadShader(const char* vertexShader, const char* fragmentShader)
 	glShaderSource(vs, 1, &shaderTextPtr, nullptr);
 	// ask GL to compile it
 	glCompileShader(vs);
+	std::string err = "Shader failed compilation: ";
+	err += vertexShader;
+	checkGLError(err.c_str());
+	return vs;
+}
 
-	//create fragment shader | same process.
-	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-	shaderFile.open(fragmentShader);
-	if (!shaderFile.is_open())
-		throw std::exception("Fragment shader file not found...");
-	shaderText.assign((std::istreambuf_iterator<char>(shaderFile)), std::istreambuf_iterator<char>());
-	shaderFile.close();
-	shaderTextPtr = shaderText.c_str();
-	glShaderSource(fs, 1, &shaderTextPtr, nullptr);
-	glCompileShader(fs);
+GLuint loadShader(const char* vertexShader, const char* fragmentShader)
+{
+	//create vertex shader
+
+	GLuint vs = loadShaderFile(vertexShader, GL_VERTEX_SHADER);
+	GLuint fs = loadShaderFile(fragmentShader, GL_FRAGMENT_SHADER);
+	
+	//link shader program (connect vs and ps)
+	GLuint gShaderProgram = glCreateProgram();
+	glAttachShader(gShaderProgram, fs);
+	glAttachShader(gShaderProgram, vs);
+	glLinkProgram(gShaderProgram);
+	checkGLError();
+
+	return gShaderProgram;
+}
+
+GLuint loadShader(const char* vertexShader, const char* geomShader, const char* fragmentShader)
+{
+	//create vertex shader
+
+	GLuint vs = loadShaderFile(vertexShader, GL_VERTEX_SHADER);
+	GLuint gs = loadShaderFile(geomShader, GL_GEOMETRY_SHADER);
+	GLuint fs = loadShaderFile(fragmentShader, GL_FRAGMENT_SHADER);
 
 	//link shader program (connect vs and ps)
 	GLuint gShaderProgram = glCreateProgram();
 	glAttachShader(gShaderProgram, fs);
+	glAttachShader(gShaderProgram, gs);
 	glAttachShader(gShaderProgram, vs);
 	glLinkProgram(gShaderProgram);
 	checkGLError();
