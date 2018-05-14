@@ -12,6 +12,12 @@ class Camera
 {
 private:
 	glm::vec3 camera;
+	glm::mat4 projMat;
 public:
-	glm::mat4 returnViewmatrix();
+	Camera();
+	~Camera(){}
+
+	glm::mat4 getViewMat();
+	glm::mat4 getProjMat();
+	glm::mat4 getVPMat();
 };

@@ -21,28 +21,34 @@ Previewer::Previewer(Data * data)
 		CreateShaders();
 		CreateTriangleData();
 		glGenFramebuffers(1, &frameBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
+		const unsigned int width = 1920, height = 1080;
+		
+		//Gen. and bind color tex
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920, 1080, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
+
+
+		//Gen. and bind depth tex
+		glGenTextures(1, &depthTex);
+		glBindTexture(GL_TEXTURE_2D, depthTex);
+		//Bind it to frame buffer.
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		//Clamp to edge
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTex, 0);
+
+
 		clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-		scaling = glm::scale(glm::vec3(1,1,1));
-
-		translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0,0));
-		
-		rotate = glm::rotate((glm::mediump_float)0,glm::vec3(1,0,0));
-		Projectionmatrix = glm::perspective(
-			(glm::mediump_float)glm::radians(45.f), // The vertical Field of View, in radians: the amount of "zoom". Think "camera lens". Usually between 90° (extra wide) and 30° (quite zoomed in)
-			(glm::mediump_float)	4.0f / 3.0f,       // Aspect Ratio. Depends on the size of your window. Notice that 4/3 == 800/600 == 1280/960, sounds familiar ?
-			0.1f,              // Near clipping plane. Keep as big as possible, or you'll get precision issues.
-			100.0f             // Far clipping plane. Keep as little as possible.
-		);
-		worldmatrix =  translate * rotate * scaling;
 		worldMatrixID = glGetUniformLocation(gShaderProgram, "MVP");
 	
 
@@ -50,7 +56,9 @@ Previewer::Previewer(Data * data)
 
 Previewer::~Previewer()
 {
-
+	glDeleteTextures(1, &depthTex);
+	glDeleteTextures(1, &texture);
+	glDeleteFramebuffers(1, &frameBuffer);
 }
 void Previewer::creationoftexture()
 {
@@ -121,32 +129,19 @@ void Previewer::CreateTriangleData()
 		float r, g, b;
 	};
 	// create the actual data in plane Z = 0
-//	TriangleVertex triangleVertices[4] =
-//	{
 
-		//Triangle strip
-//		{ -0.50f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
-//		{ -0.50f, -1.0f, 0,	1.0f, 1.0f, 0.0f },
-//		{ 0.50f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
-//		{ 0.50f, -1.0f, 0,	1.0f, 1.0f, 0.0f }
-		// pos and color for each vertex
-	/*{ -1.0f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
-	{ 1.0f, -1.0f, 0,	1.0f, 1.0f, 0.0f },
-	{ -1.0f, -1.0f, 0,   0.0f, 1.0f, 0.0f },
-	{ -1.0f, 1.0f,  0,	0.0f, 0.0f, 1.0f },
-	{ 1.0f, 1.0f,  0,	1.0f, 0.0f, 0.0f },
-	{ 1.0f, -1.0f, 0,	1.0f, 1.0f, 0.0f }*/
-//	};
+	std::vector<TriangleVertex> gridVerts;
+	
+	float square = 5.f;
 
-	std::vector<TriangleVertex> triangleVertices;
-	TriangleVertex pushbackdata;
-	for (float i = -0.5; i < 1.5; i++)
+	for (float i = -square; i <= square; i++)
 	{
-	pushbackdata = { i,0,1,0,0,0 };	
-	triangleVertices.push_back(pushbackdata);
-	pushbackdata = { i,0,-1,0,0,0 };
-	triangleVertices.push_back(pushbackdata);
+		gridVerts.push_back({ i,0,square+1,0,0,0 });
+		gridVerts.push_back({ i,0,-square-1,0,0,0 });
+		gridVerts.push_back({ square+1,0,i,0,0,0 });
+		gridVerts.push_back({ -square-1,0,i,0,0,0 });
 	}
+	gridVertCount = gridVerts.size();
 
 	// Vertex Array Object (VAO) 
 	glGenVertexArrays(1, &gVertexAttribute);
@@ -161,7 +156,7 @@ void Previewer::CreateTriangleData()
 	// Bind the buffer ID as an ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
 	// This "could" imply copying to the GPU, depending on what the driver wants to do...
-	glBufferData(GL_ARRAY_BUFFER, triangleVertices.size() * 4 * 6, triangleVertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, gridVerts.size() * 4 * 6, gridVerts.data(), GL_STATIC_DRAW);
 
 	// query where which slot corresponds to the input vertex_position in the Vertex Shader 
 	GLuint vertexPos = glGetAttribLocation(gShaderProgram, "vertex_position");
@@ -182,33 +177,34 @@ void Previewer::CreateTriangleData()
 void Previewer::draw(ImVec2 pos, ImVec2 size)
 {
 
-	worldmatrix = translate * rotate * scaling;
-	worldmatrix = Projectionmatrix *camera.returnViewmatrix()*  worldmatrix;
+	//Draw 3D
+	glm::mat4 VP = camera.getVPMat();
 
-	glUniformMatrix4fv(worldMatrixID, 1, GL_FALSE, &worldmatrix[0][0]);
-	// Common stuff
+	glUniformMatrix4fv(worldMatrixID, 1, GL_FALSE, &VP[0][0]);
+	glDepthMask(GL_TRUE); //Enable depth masking
+	glDepthFunc(GL_LESS);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(gShaderProgram);
+	glBindVertexArray(gVertexAttribute);
+	glBindTexture(GL_TEXTURE_2D, texturen);
+	glLineWidth(1);
+	glDrawArrays(GL_LINES, 0, gridVertCount);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Draw 2D
 	ImGui::Begin("Previewer", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
 
-	
-
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glUseProgram(gShaderProgram);
-	glBindVertexArray(gVertexAttribute);
-	glBindTexture(GL_TEXTURE_2D, texturen);
-	glLineWidth(10);
-	glDrawArrays(GL_LINES, 0, 6);
+	glDepthMask(GL_FALSE);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 	ImGui::Image(reinterpret_cast<ImTextureID>(texture), ImGui::GetContentRegionAvail(), ImVec2(0, 0), ImVec2(1, -1));
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-
 
 	ImGui::End();
 }
