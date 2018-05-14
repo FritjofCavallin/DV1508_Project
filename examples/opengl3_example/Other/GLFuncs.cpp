@@ -16,9 +16,9 @@ void checkGLError(const char * msg)
 		std::cout << "GL Error Occured: " << err << "\nMsg: " << msg << "\n";
 }
 
-GLuint loadShaderFile(const char* vertexShader, GLuint type)
+GLuint loadShaderFile(const char* vertexShader, GLenum  type)
 {
-	GLuint vs = glCreateShader(type);
+	GLuint shader = glCreateShader(type);
 	// open glsl file and put it in a string
 	std::ifstream shaderFile(vertexShader);
 	if (!shaderFile.is_open())
@@ -33,13 +33,13 @@ GLuint loadShaderFile(const char* vertexShader, GLuint type)
 	// make a double pointer (only valid here)
 	const char* shaderTextPtr = shaderText.c_str();
 	// ask GL to load this
-	glShaderSource(vs, 1, &shaderTextPtr, nullptr);
+	glShaderSource(shader, 1, &shaderTextPtr, nullptr);
 	// ask GL to compile it
-	glCompileShader(vs);
+	glCompileShader(shader);
 	std::string err = "Shader failed compilation: ";
 	err += vertexShader;
 	checkGLError(err.c_str());
-	return vs;
+	return shader;
 }
 
 GLuint loadShader(const char* vertexShader, const char* fragmentShader)
@@ -69,9 +69,9 @@ GLuint loadShader(const char* vertexShader, const char* geomShader, const char* 
 
 	//link shader program (connect vs and ps)
 	GLuint gShaderProgram = glCreateProgram();
-	glAttachShader(gShaderProgram, fs);
-	glAttachShader(gShaderProgram, gs);
 	glAttachShader(gShaderProgram, vs);
+	glAttachShader(gShaderProgram, gs);
+	glAttachShader(gShaderProgram, fs);
 	glLinkProgram(gShaderProgram);
 	checkGLError();
 

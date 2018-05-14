@@ -10,18 +10,19 @@ class Block
 {
 public:
 
-	Block(TimeInterval t);
+	Block(TimeInterval t, type::Timeline type);
 	virtual ~Block();
 
 	/* Time interval in absolute values related to parented timelines. */
 	TimeInterval _time;
+	type::Timeline _type;
 
 	// Returns true if the time intervals of the two blocks overlap.
 	bool overlaps(Block* other);
 
 	/* The timeline type the block is associated with
 	*/
-	virtual type::Timeline typeFit() = 0;
+	type::Timeline typeFit() { return _type; };
 
 
 	virtual void applyParticle(float emitterTime, Particle &part, GPUParticle &gpuPart) {};

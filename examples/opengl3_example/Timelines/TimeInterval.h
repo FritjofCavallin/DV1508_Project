@@ -12,6 +12,8 @@ struct TimeInterval
 	float duration() { return _endTime - _startTime; }
 	/* Convert the time parameter to relative time in the interval. */
 	float toRelative(float parentTime) { return parentTime - _startTime; }
+	/* Convert the time parameter to normalised relative time (in the range [0,1]). */
+	float toRelativeNor(float parentTime) { return (parentTime - _startTime) / duration(); }
 
 
 	TimeInterval()

@@ -65,7 +65,10 @@ void SolutionExplorer::draw(ImVec2 pos, ImVec2 size){
 
 		Style_VS_Text_s();
 
-		if(ImGui::Selectable(AddSpace(data->getEffectTimeline()->_name).c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
+		std::string effectName;
+		Timeline *t = data->getEffectTimeline();
+		effectName = t ? data->getEffectTimeline()->_name : "Empty";
+		if(ImGui::Selectable(AddSpace(effectName).c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
 			if(ImGui::IsMouseDoubleClicked(0))
 				OpenFileInWorkspace(data->getEffectTimeline());
 

@@ -15,9 +15,5 @@ public:
 	virtual ~BoxVolumeBlock();
 
 	virtual void applyEmitter(Particle &part, GPUParticle &gpuPart);
-
-	/* The timeline type the block is associated with
-	*/
-	virtual type::Timeline typeFit() { return type::Particle; }
 };
 

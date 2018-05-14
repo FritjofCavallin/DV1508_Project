@@ -3,8 +3,8 @@
 #include <string>
 #include "stb_image.h"
 #include "Other/GLFuncs.h"
+#include "Particles/ParticleManager.h"
 
-#define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 #define STB_IMAGE_IMPLEMENTATION
 
 Previewer::Previewer(Data * data)
@@ -80,7 +80,7 @@ void Previewer::creationoftexture()
 }
 void Previewer::CreateShaders()
 {
-	gShaderProgram = loadShader("VertexShader.glsl", "Fragment.glsl");
+	gShaderProgram = loadShader("Shaders/VertexShader.glsl", "Shaders/Fragment.glsl");
 }
 void Previewer::CreateTriangleData()
 {
@@ -143,18 +143,21 @@ void Previewer::draw(ImVec2 pos, ImVec2 size)
 	//Draw 3D
 	glm::mat4 VP = camera.getVPMat();
 
-	glUniformMatrix4fv(mvpMatrixID, 1, GL_FALSE, &VP[0][0]);
-	glDepthMask(GL_TRUE); //Enable depth masking
+	glDepthMask(GL_FALSE); //Enable depth masking
 	glDepthFunc(GL_LESS);
+	glDisable(GL_CULL_FACE);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(gShaderProgram);
+	glUniformMatrix4fv(mvpMatrixID, 1, GL_FALSE, &VP[0][0]);
 	glBindVertexArray(gVertexAttribute);
-	glBindTexture(GL_TEXTURE_2D, texturen);
 	glLineWidth(1);
 	glDrawArrays(GL_LINES, 0, gridVertCount);
+
+	data->getPlayer()->update();
+	data->getPlayer()->render(&camera);
 
 	checkGLError();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -167,8 +170,8 @@ void Previewer::draw(ImVec2 pos, ImVec2 size)
 
 	glDepthMask(GL_FALSE);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 	ImGui::Image(reinterpret_cast<ImTextureID>(texture), ImGui::GetContentRegionAvail(), ImVec2(0, 0), ImVec2(1, -1));
 
 	ImGui::End();
+	checkGLError();
 }

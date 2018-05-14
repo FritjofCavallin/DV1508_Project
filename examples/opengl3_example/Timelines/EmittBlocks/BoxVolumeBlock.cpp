@@ -3,7 +3,7 @@
 
 
 BoxVolumeBlock::BoxVolumeBlock(TimeInterval t)
-	: Block(t)
+	: Block(t, type::Emitter), _volumeSize(1.f)
 {
 }
 

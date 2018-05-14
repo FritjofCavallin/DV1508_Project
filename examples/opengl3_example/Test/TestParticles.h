@@ -3,7 +3,12 @@
 
 #include "../Timelines/Timeline.h"
 
+class Data;
 
 
 
-Timeline *simpleEffect();
+
+void simpleEffect(Data &data);
+void noParticle(Data &data);
+
+void oldTest(Data &data);

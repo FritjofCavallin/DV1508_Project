@@ -5,6 +5,8 @@
 #include "Constants.h"
 #include <string>
 #include "../Other/GLFuncs.h"
+#include "ParticleShader.h"
+#include "../camera.h"
 
 class Emission;
 
@@ -26,13 +28,14 @@ public:
 
 
 	void update();
-	void render();
+	void render(Camera *cam);
 	
 	std::string getStatus();
-
+	
 private:
 
-	GLuint _partShaderProgram;
+	ParticleShader _shader;
+
 
 	void incrementTime(float step);
 	std::map<Timeline*, Emission*> _emitters;

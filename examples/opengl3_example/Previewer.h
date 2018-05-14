@@ -12,7 +12,7 @@ public:
 
 
 	ImVec4 clear_color;
-	GLuint mvpMatrixID;
+	GLint mvpMatrixID;
 	size_t gridVertCount;
 
 	Camera camera;

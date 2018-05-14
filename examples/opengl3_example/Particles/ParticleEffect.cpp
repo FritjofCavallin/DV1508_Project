@@ -6,15 +6,19 @@
 ParticleEffect::ParticleEffect()
 	: _timeline(nullptr), _time(0.f), _loopTime(MAX_DURATION)
 {
+	_shader.load();
 }
 
 ParticleEffect::ParticleEffect(Timeline *timeline)
 	: _timeline(timeline), _time(0.f), _loopTime(MAX_DURATION)
 {
+	_shader.load();
 }
 
 ParticleEffect::~ParticleEffect()
 {
+	for (auto e : _emitters)
+		delete e.second;
 }
 
 void ParticleEffect::incrementTime(float step)
@@ -40,7 +44,7 @@ void ParticleEffect::update()
 			e = it->second;
 		else
 		{
-			e = new Emission(this, emitter);
+			e = new Emission(this, emitter, &_shader);
 			_emitters[emitter] = e;
 		}
 
@@ -56,9 +60,11 @@ void ParticleEffect::update()
 		e.second->updateParticles();
 }
 
-void ParticleEffect::render()
+void ParticleEffect::render(Camera *cam)
 {
-
+	_shader.assignGlobalUniforms(cam);
+	for (auto e : _emitters)
+		e.second->render();
 }
 
 std::string ParticleEffect::getStatus()

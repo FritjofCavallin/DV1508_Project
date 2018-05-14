@@ -14,9 +14,5 @@ public:
 
 	EffectBlock(Timeline *emitter, TimeInterval t);
 	virtual ~EffectBlock();
-	
-	/* The timeline type the block is associated with
-	*/
-	virtual type::Timeline typeFit() { return type::Effect; }
 };
 

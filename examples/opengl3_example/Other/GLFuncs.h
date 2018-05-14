@@ -2,6 +2,8 @@
 #include "GL/gl3w.h"
 
 
+#define BUFFER_OFFSET(i) ((char *)nullptr + (i))
+
 void checkGLError();
 
 

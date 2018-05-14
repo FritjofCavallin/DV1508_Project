@@ -1,9 +1,14 @@
 #include <iostream>
 
 #include "Data.h"
+#include "../Test/TestParticles.h"
+#include "../Particles/ParticleManager.h"
 
 Data::Data()
+	: effectPlayer(new ParticleManager())
 {
+	effectTimeline = nullptr;
+	
 }
 
 Data::~Data()
@@ -14,6 +19,9 @@ Data::~Data()
 		delete e;
 
 	delete effectTimeline;
+
+	if (effectPlayer)
+		delete effectPlayer;
 }
 
 int Data::getParticleCount()
@@ -43,8 +51,15 @@ void Data::addEmitterTimeline(Timeline* emitterTimeline, int index)
 
 void Data::setEffect(Timeline* effectTimeline)
 {
-	delete this->effectTimeline;
+	//Swap out old effect
+	Timeline *old = this->effectTimeline;
+	if (old)
+		effectPlayer->stopEffect(old);
+	// Run new
 	this->effectTimeline = effectTimeline;
+	effectPlayer->runEffect(effectTimeline);
+	// Delete
+	delete old;
 }
 
 void Data::removeParticleTimeline(int index)
@@ -70,6 +85,11 @@ std::list<Timeline*>& Data::getEmitterTimelines()
 Timeline* Data::getEffectTimeline()
 {
 	return effectTimeline;
+}
+
+ParticleManager *Data::getPlayer()
+{
+	return effectPlayer;
 }
 
 Timeline* Data::getOpenTimeline(int index)

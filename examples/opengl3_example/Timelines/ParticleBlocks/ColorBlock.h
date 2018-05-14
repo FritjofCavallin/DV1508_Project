@@ -2,17 +2,17 @@
 #include "../Block.h"
 #include "glm/vec3.hpp"
 
-class ScaleBlock :
+class ColorBlock :
 	public Block
 {
 public:
 
 	/* Parameters
 	*/
-	glm::vec2 _scaleBegin, _scaleEnd;
+	glm::vec4 _colorBegin, _colorEnd;
 
-	ScaleBlock(TimeInterval t);
-	virtual ~ScaleBlock();
+	ColorBlock(TimeInterval t);
+	virtual ~ColorBlock();
 
 	virtual void applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart);
 };
