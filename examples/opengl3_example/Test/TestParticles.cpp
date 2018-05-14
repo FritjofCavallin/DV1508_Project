@@ -22,7 +22,7 @@ void simpleEffect(Data &data)
 
 	ColorBlock *color = new ColorBlock(time);
 	color->_colorBegin = glm::vec4(0.f, 0, 0, 1);
-	color->_colorEnd = glm::vec4(1.f, 0.f, 0.5f, 1.f);
+	color->_colorEnd = glm::vec4(1.f, 0.f, 0.5f, 0.5f);
 	p->addBlock(color, 1);
 
 	RotationBlock * rot = new RotationBlock(time);

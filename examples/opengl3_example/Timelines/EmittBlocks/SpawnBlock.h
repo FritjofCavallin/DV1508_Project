@@ -22,6 +22,7 @@ public:
 	type::Timeline _type;
 	InitialEmissionParams _params;
 
+
 	SpawnBlock(TimeInterval t);
 	SpawnBlock(TimeInterval t, InitialEmissionParams &p);
 	virtual ~SpawnBlock();

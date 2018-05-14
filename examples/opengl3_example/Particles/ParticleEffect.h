@@ -9,6 +9,7 @@
 #include "../camera.h"
 
 class Emission;
+class EffectBlock;
 
 /* Displayed particle effect constantly updated.
 */
@@ -38,6 +39,6 @@ private:
 
 
 	void incrementTime(float step);
-	std::map<Timeline*, Emission*> _emitters;
+	std::map<EffectBlock*, Emission*> _emitters;
 };
 

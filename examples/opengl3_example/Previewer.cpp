@@ -142,11 +142,7 @@ void Previewer::draw(ImVec2 pos, ImVec2 size)
 
 	//Draw 3D
 	glm::mat4 VP = camera.getVPMat();
-
-	glDepthMask(GL_FALSE); //Enable depth masking
-	glDepthFunc(GL_LESS);
-	glDisable(GL_CULL_FACE);
-
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -157,7 +153,11 @@ void Previewer::draw(ImVec2 pos, ImVec2 size)
 	glDrawArrays(GL_LINES, 0, gridVertCount);
 
 	data->getPlayer()->update();
+
+	glEnablei(GL_BLEND, 0);
+	glBlendFunci(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	data->getPlayer()->render(&camera);
+	glDisablei(GL_BLEND, 0);
 
 	checkGLError();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -168,7 +168,6 @@ void Previewer::draw(ImVec2 pos, ImVec2 size)
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
 
-	glDepthMask(GL_FALSE);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	ImGui::Image(reinterpret_cast<ImTextureID>(texture), ImGui::GetContentRegionAvail(), ImVec2(0, 0), ImVec2(1, -1));
 

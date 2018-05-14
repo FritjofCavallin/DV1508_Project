@@ -2,7 +2,7 @@
 
 
 InitialEmissionParams::InitialEmissionParams() :
-	_initAmount(1), _endAmount(1),
+	_initAmount(1), _endAmount(20),
 	_minSize(0.4f, 0.4f),	_maxSize(0.5f, 0.5f),
 	_emitOrigin(0.f), _emitDir(0,1.f,0),
 	_minRotation(0), _maxRotation(3.14*2),

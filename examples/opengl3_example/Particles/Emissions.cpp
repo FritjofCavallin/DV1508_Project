@@ -3,10 +3,11 @@
 #include "../Other/RandFunction.h"
 #include "glm/geometric.hpp"
 #include "Constants.h"
+#include <algorithm>
 
 Emission::Emission(ParticleEffect* effect, Timeline *emitter, ParticleShader *shader)
 	: _emitter(emitter), _shader(shader), _particleInfo(PARTICLES_EMITTED_MAX), _data(PARTICLES_EMITTED_MAX), _effect(effect),
-	_cycleBegin(0), _cycleEnd(0), _bufCycle(0)
+	_remainder(0.f), _cycleBegin(0), _cycleEnd(0), _bufCycle(0)
 {
 	_shadeBuffers[0] = shader->genBuffer(PARTICLES_EMITTED_MAX);
 	_shadeBuffers[1] = shader->genBuffer(PARTICLES_EMITTED_MAX);
@@ -53,13 +54,10 @@ void Emission::updateParticle(unsigned int index)
 {
 	Timeline *ref = _emitter->_particleLink;
 	float particleTime = _effect->elapsedSince(_particleInfo[index]._spawnTime);
-	if (_effect->_time < _particleInfo[index]._spawnTime)
-	{
-		int a = 0;
-	}
+
+	//Kill particle
 	if (particleTime >= (ref ? ref->_time.duration() : 5.f))
 	{
-		//Destroy particle
 		incrementCycleBegin();
 		return;
 	}
@@ -95,34 +93,43 @@ void Emission::updateParticles()
 			updateParticle(i);
 	}
 }
-void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime)
+void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime, float deltaT)
 {
 	float duration = _emitter->_particleLink ?
 		_emitter->_particleLink->_time.duration() :
 		PARTICLE_DEFAULT_DUR;
-	// Emitt n particles (interpolate particle emission: n/frame)
-	float n = glm::mix(spawner->_params._initAmount, spawner->_params._endAmount, (blockTime + EMIT_STEP*0.5) / duration);
-	float dTime = EMIT_STEP / (n + 1.f);
+
+	float lerp = std::fmax(0, (blockTime - deltaT * 0.5) / duration);
+
+	// Emitt n particles (cheap interpolation over particle emission: Total/n)
+	//float n = glm::mix(spawner->_params._initAmount, spawner->_params._endAmount, lerp) / duration * deltaT;
+	_remainder = glm::mix(spawner->_params._initAmount, spawner->_params._endAmount, lerp) * deltaT + _remainder;
+	float N = (int)_remainder;
+	_remainder = _remainder - N;
+
+	float dTime = deltaT / (N + 1.f);
 	// Lazy solution, emitted particles is floored.
 	// Remainder needs to be stored for next update so the number of particles emitted is correct...
-	for (float i = 0; i < n; i++) 
+	for (float i = 1; i <= N; i++)
 	{
 		InitialEmissionParams &param = spawner->_params;
 		Particle p;
-		p._spawnTime = _effect->_time + dTime * i;
+		float timeOffset = dTime * (N - i);
+		p._spawnTime = _effect->_time - timeOffset;
 		p._initSize = glm::mix(param._minSize, param._maxSize, randomFloat());
 		p._initDir = param._emitDir;
 
+		// Lerp initial position depending on initial velocity
 		GPUParticle gpuP;
+		p._velocity = glm::mix(param._minForce, param._maxForce, randomFloat()) * p._initDir;
+		gpuP._position = param._emitOrigin + p._initDir * p._velocity * timeOffset;
+
 		gpuP._rotation = glm::mix(param._minRotation, param._maxRotation, randomFloat());
-		gpuP._position = param._emitOrigin;
 
 		// Apply emitter blocks
 		for (unsigned int ii = 0; ii < active._size; ii++)
 			active._blocks[ii]->applyEmitter(p, gpuP);
 
-		// Perform post calculations
-		p._velocity = glm::mix(param._minForce, param._maxForce, randomFloat()) * p._initDir;
 
 		// Add new particle
 		_particleInfo[_cycleEnd] = p;
@@ -130,7 +137,7 @@ void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float block
 		incrementCycleEnd();
 	}
 }
-void Emission::spawnParticles(float emitterTime)
+void Emission::spawnParticles(float emitterTime, float deltaT)
 {
 	BlockList list = _emitter->fetchBlocks(emitterTime);
 	BlockList spawners;
@@ -145,6 +152,9 @@ void Emission::spawnParticles(float emitterTime)
 		}
 	}
 	for (unsigned int i = 0; i < spawners._size; i++)
-		spawnParticle((SpawnBlock*)spawners._blocks[i], list, spawners._blocks[i]->_time.toRelative(emitterTime));
+	{
+		SpawnBlock *b = reinterpret_cast<SpawnBlock*>(spawners._blocks[i]);
+		spawnParticle(b, list, b->_time.toRelative(emitterTime), deltaT);
+	}
 }
 

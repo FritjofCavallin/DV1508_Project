@@ -10,7 +10,6 @@
 
 class ParticleEffect;
 
-
 class Emission
 {
 public:
@@ -24,8 +23,8 @@ public:
 	std::vector<Particle> _particleInfo;
 	std::vector<GPUParticle> _data;
 
-	void spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime);
-	void spawnParticles(float emitterTime);
+	void spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime, float deltaT);
+	void spawnParticles(float emitterTime, float deltaT);
 
 	void updateParticle(unsigned int index);
 	void updateParticles();
@@ -40,6 +39,9 @@ public:
 private:
 	ParticleEffect *_effect;
 	size_t _cycleBegin, _cycleEnd;
+
+	/* Store how many (more) particles the */
+	float _remainder;
 
 	unsigned int _bufCycle;
 	ParticleBuffer _shadeBuffers[2];
