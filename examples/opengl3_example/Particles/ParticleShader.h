@@ -27,6 +27,11 @@ public:
 
 	GLint  gViewMat, gProjMat;
 
+
+	/* Loaded texture for default behavior
+	*/
+	GLuint defaultTex;
+
 	ParticleShader();
 	~ParticleShader();
 

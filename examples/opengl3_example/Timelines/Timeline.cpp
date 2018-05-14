@@ -52,7 +52,7 @@ bool Timeline::addBlock(Block *b, unsigned int channel, bool insertChannel)
 	if (insertChannel && _channel.size() < MAX_CHANNELS)
 	{
 		auto it = _channel.begin();
-		for (int i = 0; i < channel; ++i)
+		for (unsigned int i = 0; i < channel; ++i)
 			++it;
 
 		_channel.insert(it, new Channel());
@@ -81,7 +81,7 @@ bool Timeline::addBlock(Block *b, unsigned int channel, bool insertChannel)
 			else if (_channel.size() < MAX_CHANNELS)
 			{
 				auto it = _channel.begin();
-				for (int i = 0; i < channel; ++i)
+				for (unsigned int i = 0; i < channel; ++i)
 					++it;
 				++it;	// One extra step, to add the new channel after the desired one, not before
 
@@ -131,9 +131,9 @@ Block* Timeline::removeBlock(int channelIndex, int blockIndex, bool doCleanup)
 
 Block* Timeline::removeBlock(Block* block, bool doCleanup)
 {
-	for (int c = 0; c < _channel.size(); ++c)
+	for (unsigned int c = 0; c < _channel.size(); ++c)
 	{
-		for (int b = 0; b < _channel[c]->_data.size(); ++b)
+		for (unsigned int b = 0; b < _channel[c]->_data.size(); ++b)
 		{
 			if (_channel[c]->_data[b] == block)
 			{
@@ -161,7 +161,7 @@ BlockList Timeline::fetchBlocks(float relativeTime)
 void Timeline::channelCleanup()
 {
 	// Remove empty channels in the middle of the vector
-	for (int c = 0; c < _channel.size() - 1; ++c)
+	for (unsigned int c = 0; c < _channel.size() - 1; ++c)
 	{
 		if (_channel[c]->isEmpty())
 		{

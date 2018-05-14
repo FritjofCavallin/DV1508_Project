@@ -1,16 +1,12 @@
 #include "Previewer.h"
 
 #include <string>
-#include "stb_image.h"
 #include "Other/GLFuncs.h"
 #include "Particles/ParticleManager.h"
-
-#define STB_IMAGE_IMPLEMENTATION
 
 Previewer::Previewer(Data * data)
 {
 	this->data = data;
-	creationoftexture();
 	CreateShaders();
 	CreateTriangleData();
 	glGenFramebuffers(1, &frameBuffer);
@@ -52,31 +48,6 @@ Previewer::~Previewer()
 	glDeleteTextures(1, &depthTex);
 	glDeleteTextures(1, &texture);
 	glDeleteFramebuffers(1, &frameBuffer);
-}
-void Previewer::creationoftexture()
-{
-	glGenTextures(1, &texturen);
-	glBindTexture(GL_TEXTURE_2D, texturen);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// load and generate the texture
-	int width, height, nrChannels;
-	unsigned char *data = stbi_load("Imagetoreadfire.jpg", &width, &height, &nrChannels, 4);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-
-	}
-	stbi_image_free(data);
-	checkGLError();
-
 }
 void Previewer::CreateShaders()
 {

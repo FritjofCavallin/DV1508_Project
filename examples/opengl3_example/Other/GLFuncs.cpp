@@ -3,6 +3,9 @@
 #include <fstream>
 #include <iostream>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "../stb_image.h"
+
 void checkGLError()
 {
 	GLenum err = glGetError();
@@ -14,6 +17,18 @@ void checkGLError(const char * msg)
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR)
 		std::cout << "GL Error Occured: " << err << "\nMsg: " << msg << "\n";
+}
+
+void checkCompileStatus(GLuint shaderProg)
+{
+
+	GLint val = GL_FALSE;
+	glGetShaderiv(shaderProg, GL_COMPILE_STATUS, &val);
+	if (val != GL_TRUE)
+	{
+		// compilation failed
+		std::cout << "GL Compilation failed: " << val << "\n";
+	}
 }
 
 GLuint loadShaderFile(const char* vertexShader, GLenum  type)
@@ -54,7 +69,8 @@ GLuint loadShader(const char* vertexShader, const char* fragmentShader)
 	glAttachShader(gShaderProgram, fs);
 	glAttachShader(gShaderProgram, vs);
 	glLinkProgram(gShaderProgram);
-	checkGLError();
+	//checkCompileStatus(gShaderProgram);
+	checkGLError(); 
 
 	return gShaderProgram;
 }
@@ -74,6 +90,33 @@ GLuint loadShader(const char* vertexShader, const char* geomShader, const char* 
 	glAttachShader(gShaderProgram, fs);
 	glLinkProgram(gShaderProgram);
 	checkGLError();
+	//checkCompileStatus(gShaderProgram);
+	checkGLError();
 
 	return gShaderProgram;
+}
+
+bool loadTexture(const char* texFile, GLuint &tex)
+{
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	// load and generate the texture
+	int width, height, nrChannels;
+	unsigned char *data = stbi_load(texFile, &width, &height, &nrChannels, 4);
+	GLenum format = nrChannels == 4 ? GL_RGBA : GL_RGB;
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		// set the texture wrapping/filtering options (on the currently bound texture object)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else // Failed texture load
+		return false;
+	stbi_image_free(data);
+	checkGLError();
+	return true;
 }

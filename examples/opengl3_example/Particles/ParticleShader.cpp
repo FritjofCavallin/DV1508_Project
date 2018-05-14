@@ -1,5 +1,5 @@
 #include "ParticleShader.h"
-
+#include <exception>
 const GLuint SHADE_DEF = 1000000;
 
 ParticleShader::ParticleShader()
@@ -11,7 +11,7 @@ ParticleShader::ParticleShader()
 
 ParticleShader::~ParticleShader()
 {
-
+	glDeleteTextures(1, &defaultTex);
 	glDeleteShader(gShaderProgram);
 }
 
@@ -30,8 +30,25 @@ void ParticleShader::load()
 	if (gShaderProgram != SHADE_DEF)
 		glDeleteShader(gShaderProgram);
 	gShaderProgram = loadShader("Shaders/ParticleVertex.glsl", "Shaders/ParticleGeom.glsl", "Shaders/ParticleFragment.glsl");
+	glUseProgram(gShaderProgram);
 	gViewMat = glGetUniformLocation(gShaderProgram, "viewMat");
 	gProjMat = glGetUniformLocation(gShaderProgram, "projMat");
+	checkGLError();
+
+	GLint loc[4] = { glGetUniformLocation(gShaderProgram, "textures0"),
+		glGetUniformLocation(gShaderProgram, "textures1"),
+		glGetUniformLocation(gShaderProgram, "textures2"),
+		glGetUniformLocation(gShaderProgram, "textures3") };
+	for (int i = 0; i < 4; i++)
+	{
+		if (loc[i] != -1) 
+			glUniform1i(loc[i], i); //Assigns sampling slo
+	}
+	checkGLError();
+
+	if (!loadTexture("error.png", defaultTex))
+		throw std::exception();
+	
 	checkGLError();
 }
 
@@ -48,6 +65,7 @@ ParticleBuffer ParticleShader::genBuffer(size_t nVerts)
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
 	//96
 	// create a vertex buffer object (VBO) id
 	glGenBuffers(1, &buff.gVertBuf);
@@ -67,6 +85,9 @@ ParticleBuffer ParticleShader::genBuffer(size_t nVerts)
 
 	GLuint vertexRotation = glGetAttribLocation(gShaderProgram, "Rotation");
 	glVertexAttribPointer(vertexRotation, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), BUFFER_OFFSET(36));
+
+	GLuint vertexBlendTex = glGetAttribLocation(gShaderProgram, "TexBlend");
+	glVertexAttribPointer(vertexBlendTex, 4, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), BUFFER_OFFSET(40));
 
 	checkGLError();
 	return buff;

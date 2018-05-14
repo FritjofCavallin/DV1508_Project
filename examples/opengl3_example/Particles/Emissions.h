@@ -46,6 +46,9 @@ private:
 	unsigned int _bufCycle;
 	ParticleBuffer _shadeBuffers[2];
 
+	GLuint _texSlots[4];
+	bool _texActive[4];
+
 	void incrementCycleEnd() { _cycleEnd++; if (_cycleEnd == _particleInfo.size()) _cycleEnd = 0; }
 	void incrementCycleBegin() { _cycleBegin++; if (_cycleBegin == _particleInfo.size()) _cycleBegin = 0; }
 

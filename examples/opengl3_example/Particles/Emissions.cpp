@@ -4,6 +4,7 @@
 #include "glm/geometric.hpp"
 #include "Constants.h"
 #include <algorithm>
+#include "../Timelines/EmittBlocks/TextureBlock.h"
 
 Emission::Emission(ParticleEffect* effect, Timeline *emitter, ParticleShader *shader)
 	: _emitter(emitter), _shader(shader), _particleInfo(PARTICLES_EMITTED_MAX), _data(PARTICLES_EMITTED_MAX), _effect(effect),
@@ -33,6 +34,19 @@ void Emission::render()
 		_shadeBuffers[_bufCycle].buffer(_cycleEnd - _cycleBegin, _data.data() + _cycleBegin, 0);
 	// Swap buf and draw
 	_bufCycle = !_bufCycle;
+		//Bind textures:
+	checkGLError();
+	
+	for (unsigned int i = 0; i < 1; i++)
+	{
+	glActiveTexture(GL_TEXTURE0);
+	glBindSampler(GL_TEXTURE_2D, _texActive[i] ? _texSlots[i] : _shader->defaultTex);
+		_texActive[i] = false;
+	}
+	
+	checkGLError();
+	
+
 	_shadeBuffers[_bufCycle].draw();
 	checkGLError();
 }
@@ -71,6 +85,7 @@ void Emission::updateParticle(unsigned int index)
 	// Reset data that is applied relative to initial data
 	_data[index]._color = glm::vec4(1.f);
 	_data[index]._size = _particleInfo[index]._initSize;
+	_data[index]._texBlend = glm::vec4(0.f);
 
 	for (unsigned int i = 0; i < active._size; i++)
 		active._blocks[i]->applyParticle(particleTime, _particleInfo[index], _data[index]);
@@ -145,10 +160,17 @@ void Emission::spawnParticles(float emitterTime, float deltaT)
 	for (unsigned int i = 0; i < list._size; i++)
 	{
 		SpawnBlock *b = dynamic_cast<SpawnBlock*> (list._blocks[i]);
+		TextureBlock *t = dynamic_cast<TextureBlock*> (list._blocks[i]);
 		if (b != NULL)
 		{
 			spawners.push(b);
 			list.remove(i--);
+		}
+		else if (t != NULL)
+		{
+			list.remove(i--);
+			_texSlots[t->_texSlot] = t->gTextureID;
+			_texActive[t->_texSlot] = true;
 		}
 	}
 	for (unsigned int i = 0; i < spawners._size; i++)

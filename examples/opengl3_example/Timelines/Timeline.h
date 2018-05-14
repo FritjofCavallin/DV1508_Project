@@ -4,10 +4,8 @@
 #include "Channel.h"
 #include "TimelineType.h"
 #include "TimeInterval.h"
+#include "../Particles/Constants.h"
 
-/* Maximum number of channels supported in a timeline
-*/
-static const unsigned int MAX_CHANNELS = 10;
 /*	Container for blocks active in a timeline at a time instance.
 *	Size is static but number of blocks is limited by the number of channels!
 */

@@ -23,7 +23,7 @@ void Channel::correctBlockDuration(Block* draggedBlock, TimeInterval timelineExt
 		std::cerr << "Attempted to call correctBlockDuration() with a block not contained in the channel called";
 	}
 
-	for (int i = 0; i < _data.size(); ++i)
+	for (unsigned int i = 0; i < _data.size(); ++i)
 	{
 		if (_data[i] == draggedBlock)
 			continue;

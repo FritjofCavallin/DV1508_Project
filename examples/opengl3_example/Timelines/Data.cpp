@@ -8,7 +8,7 @@ Data::Data()
 	: effectPlayer(new ParticleManager())
 {
 	effectTimeline = nullptr;
-	
+
 }
 
 Data::~Data()

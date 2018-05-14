@@ -12,11 +12,13 @@ in Vertex
   vec4 color;
   vec2 size;
   float rot;
+  vec4 texBlend;
 } vertex[];
 
 
 out vec2 Vertex_UV;
 out vec4 Vertex_Color;
+out vec4 Tex_Blend;
 
 vec2 rotate(in float theta, in vec2 v)
 {
@@ -39,6 +41,7 @@ void main (void)
   gl_Position = projMat * vec4(va, P.zw);
   Vertex_UV = vec2(0.0, 0.0);
   Vertex_Color = vertex[0].color;
+  Tex_Blend = vertex[0].texBlend;
   EmitVertex();
 
   // b: left-top
@@ -46,6 +49,7 @@ void main (void)
   gl_Position = projMat * vec4(vb, P.zw);
   Vertex_UV = vec2(0.0, 1.0);
   Vertex_Color = vertex[0].color;
+  Tex_Blend = vertex[0].texBlend;
   EmitVertex();
 
   // d: right-bottom
@@ -53,6 +57,7 @@ void main (void)
   gl_Position = projMat * vec4(vd, P.zw);
   Vertex_UV = vec2(1.0, 0.0);
   Vertex_Color = vertex[0].color;
+  Tex_Blend = vertex[0].texBlend;
   EmitVertex();
 
   // c: right-top
@@ -60,6 +65,7 @@ void main (void)
   gl_Position = projMat * vec4(vc, P.zw);
   Vertex_UV = vec2(1.0, 1.0);
   Vertex_Color = vertex[0].color;
+  Tex_Blend = vertex[0].texBlend;
   EmitVertex();
 
   EndPrimitive();
