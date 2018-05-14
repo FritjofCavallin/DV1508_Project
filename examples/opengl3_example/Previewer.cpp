@@ -1,18 +1,11 @@
 #include "Previewer.h"
 
 #include <string>
-#include <fstream>
 #include "stb_image.h"
-#include <iostream>
+#include "Other/GLFuncs.h"
+
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 #define STB_IMAGE_IMPLEMENTATION
-
-void checkError()
-{
-	GLenum err = glGetError();
-	if (err != GL_NO_ERROR)
-		std::cout << "GL Error Occured: " << err << "\n";
-}
 
 Previewer::Previewer(Data * data)
 {
@@ -49,7 +42,7 @@ Previewer::Previewer(Data * data)
 
 	clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	worldMatrixID = glGetUniformLocation(gShaderProgram, "MVP");
+	mvpMatrixID = glGetUniformLocation(gShaderProgram, "MVP");
 	
 
 }
@@ -82,42 +75,12 @@ void Previewer::creationoftexture()
 
 	}
 	stbi_image_free(data);
-	checkError();
+	checkGLError();
 
 }
 void Previewer::CreateShaders()
 {
-	//create vertex shader
-	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-	// open glsl file and put it in a string
-	std::ifstream shaderFile("VertexShader.glsl");
-	if (!shaderFile.is_open())
-		throw std::exception("File not found...");
-	std::string shaderText((std::istreambuf_iterator<char>(shaderFile)), std::istreambuf_iterator<char>());
-	shaderFile.close();
-	// make a double pointer (only valid here)
-	const char* shaderTextPtr = shaderText.c_str();
-	// ask GL to load this
-	glShaderSource(vs, 1, &shaderTextPtr, nullptr);
-	// ask GL to compile it
-	glCompileShader(vs);
-
-	//create fragment shader | same process.
-	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-	shaderFile.open("Fragment.glsl");
-	shaderText.assign((std::istreambuf_iterator<char>(shaderFile)), std::istreambuf_iterator<char>());
-	shaderFile.close();
-	shaderTextPtr = shaderText.c_str();
-	glShaderSource(fs, 1, &shaderTextPtr, nullptr);
-	glCompileShader(fs);
-
-	//link shader program (connect vs and ps)
-	gShaderProgram = glCreateProgram();
-	glAttachShader(gShaderProgram, fs);
-	glAttachShader(gShaderProgram, vs);
-	glLinkProgram(gShaderProgram);
-	checkError();
-
+	gShaderProgram = loadShader("VertexShader.glsl", "Fragment.glsl");
 }
 void Previewer::CreateTriangleData()
 {
@@ -169,7 +132,7 @@ void Previewer::CreateTriangleData()
 	// specify that: the vertex attribute "vertex_color", of 3 elements of type FLOAT, not normalized, with STRIDE != 0,
 	//               starts at offset (12 bytes) of the gVertexBuffer 
 	glVertexAttribPointer(vertexColor, 3, GL_FLOAT, GL_FALSE, sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float) * 3));
-	checkError();
+	checkGLError();
 }
 
 
@@ -180,7 +143,7 @@ void Previewer::draw(ImVec2 pos, ImVec2 size)
 	//Draw 3D
 	glm::mat4 VP = camera.getVPMat();
 
-	glUniformMatrix4fv(worldMatrixID, 1, GL_FALSE, &VP[0][0]);
+	glUniformMatrix4fv(mvpMatrixID, 1, GL_FALSE, &VP[0][0]);
 	glDepthMask(GL_TRUE); //Enable depth masking
 	glDepthFunc(GL_LESS);
 
@@ -193,6 +156,7 @@ void Previewer::draw(ImVec2 pos, ImVec2 size)
 	glLineWidth(1);
 	glDrawArrays(GL_LINES, 0, gridVertCount);
 
+	checkGLError();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Draw 2D

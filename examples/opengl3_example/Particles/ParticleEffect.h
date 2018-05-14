@@ -25,6 +25,7 @@ public:
 
 
 	void update();
+	void render();
 	
 	std::string getStatus();
 

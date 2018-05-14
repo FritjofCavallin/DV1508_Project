@@ -56,6 +56,10 @@ void ParticleEffect::update()
 		e.second->updateParticles();
 }
 
+void ParticleEffect::render()
+{
+
+}
 
 std::string ParticleEffect::getStatus()
 {

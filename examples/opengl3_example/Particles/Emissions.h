@@ -29,6 +29,8 @@ public:
 	void updateParticles();
 
 
+	void render();
+
 	/*Get number of active particles */
 	size_t numActive();
 
