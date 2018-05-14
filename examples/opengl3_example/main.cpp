@@ -10,12 +10,10 @@
 #include <GLFW/glfw3.h>
 
 #include "UI.h"
-#include "Particles/ParticleEffect.h"
+#include "Particles/ParticleManager.h"
 #include "Test/TestParticles.h"
 #include "Other/RandFunction.h"
 #include "Timelines/Data.h"
-#include "Timelines/ParticleBlocks/ForceBlock.h"
-#include "Timelines/EmittBlocks/BoxVolumeBlock.h"
 #include <memory>
 #include <iostream>
 
@@ -78,34 +76,10 @@ int main(int, char**)
 
 	Data data;
 	
-	// Add test data
-	Timeline* ptm = new Timeline(type::Particle, "Cool Particle Timeline", TimeInterval(0.0f, 5.0f));
-	ptm->addBlock(new ForceBlock(TimeInterval(0.1f, 1.099f)), 0);
-	ptm->addBlock(new ForceBlock(TimeInterval(1.1f, 1.9f)), 0);
-	ptm->addBlock(new ForceBlock(TimeInterval(2.0f, 3.5f)), 0);
-	ptm->addBlock(new ForceBlock(TimeInterval(3.61f, 5.0f)), 0);
-	Timeline* ptm2 = new Timeline(type::Particle, "Cool Particle Timeline 2", TimeInterval(0.0f, 5.0f));
-	ptm2->addBlock(new ForceBlock(TimeInterval(1.0f, 3.5f)), 0);
-	Timeline* ptm3 = new Timeline(type::Particle, "Cool Particle Timeline 3", TimeInterval(0.0f, 5.0f));
-	ptm3->addBlock(new ForceBlock(TimeInterval(1.0f, 3.5f)), 0);
-	Timeline* mtm = new Timeline(type::Emitter, "My Emitter Timeline", TimeInterval(0.0f, 5.0f));
-	mtm->addBlock(new BoxVolumeBlock(TimeInterval(1.0f, 3.5f)), 0);
-	Timeline* ftm = new Timeline(type::Effect, "Effect Timeline", TimeInterval(0.0f, 5.0f));
-	data.addParticleTimeline(ptm);
-	data.addParticleTimeline(ptm2);
-	data.addParticleTimeline(ptm3);
-	data.addEmitterTimeline(mtm);
-	data.setEffect(ftm);
-
-	data.openTimeline(ptm);
-	data.openTimeline(ptm2);
-	data.openTimeline(ptm3);
-	data.openTimeline(mtm);
-	data.openTimeline(ftm);
+	simpleEffect(data);
 
 	UI ui(&data);
 
-	std::unique_ptr<ParticleEffect> effect(new ParticleEffect(simpleEffect()));
 	double statusTick = 0.f;
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -115,10 +89,9 @@ int main(int, char**)
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
-		effect->update();
 		if (glfwGetTime() > statusTick) //Print status every second
 		{
-			std::cout << effect->getStatus();
+			data.getPlayer()->printInfo();
 			statusTick++;
 		}
         ImGui_ImplGlfwGL3_NewFrame();

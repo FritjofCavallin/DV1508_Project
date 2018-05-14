@@ -3,7 +3,7 @@
 
 
 ForceBlock::ForceBlock(TimeInterval t)
-	: Block(t)
+	: Block(t, type::Particle)
 {
 }
 

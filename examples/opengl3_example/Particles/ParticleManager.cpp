@@ -1,5 +1,5 @@
 #include "ParticleManager.h"
-
+#include <iostream>
 
 
 ParticleManager::ParticleManager()
@@ -19,6 +19,21 @@ void ParticleManager::update()
 		e->update();
 }
 
+
+void ParticleManager::render(Camera *cam)
+{
+	for (ParticleEffect *e : _effects)
+		e->render(cam);
+
+}
+
+
+void ParticleManager::printInfo()
+{
+	for (ParticleEffect *e : _effects)
+		std::cout << e->getStatus();
+
+}
 
 
 void ParticleManager::runEffect(Timeline *t)

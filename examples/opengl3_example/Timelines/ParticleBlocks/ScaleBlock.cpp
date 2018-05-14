@@ -3,7 +3,7 @@
 
 
 ScaleBlock::ScaleBlock(TimeInterval t)
-	: Block(t)
+	: Block(t, type::Particle)
 {
 }
 
@@ -14,6 +14,5 @@ ScaleBlock::~ScaleBlock()
 
 void ScaleBlock::applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart)
 {
-	gpuPart._size.x *= glm::mix(_scaleBegin.x, _scaleEnd.x, _time.toRelative(emittTime));
-	gpuPart._size.y *= glm::mix(_scaleBegin.y, _scaleEnd.y, _time.toRelative(emittTime));
+	gpuPart._size *= glm::mix(_scaleBegin, _scaleEnd, _time.toRelativeNor(emittTime));
 }

@@ -1,3 +1,5 @@
+
+#define NOMINMAX
 #include <algorithm>
 #include <string>
 #include <iomanip>
@@ -147,7 +149,8 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::EndMenuBar();
 		}
 		
-		float channelHeight = (int)ImGui::GetContentRegionAvail().y / timeline->_channel.size();
+		float chCount = timeline ? timeline->_channel.size() : 1;
+		float channelHeight = (int)ImGui::GetContentRegionAvail().y / chCount;
 
 		// If the user has clicked the "+" in the current timeline
 		if (_addingNewBlock == i)
@@ -156,7 +159,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::Text("Cancel ^");
 			bool holdingButton = false;
 
-			int blockTypes = _blockInfos[timeline->_type]->size();
+			size_t blockTypes = _blockInfos[timeline->_type]->size();
 			float startY = timelineHeight / 2 - BUTTON_WIDTH / 2;
 			for (unsigned int b = 0; b < blockTypes; ++b)
 			{
@@ -248,11 +251,11 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			float timelineDuration = timeline->_time.duration();
 
 			// For every channel
-			for (int c = 0; c < timeline->_channel.size(); ++c)
+			for (size_t c = 0; c < timeline->_channel.size(); ++c)
 			{
 				ImGui::PushID(c);
 				// For every block in channel
-				for (int b = 0; b < timeline->_channel[c]->_data.size(); ++b)
+				for (size_t b = 0; b < timeline->_channel[c]->_data.size(); ++b)
 				{
 					Block* block = timeline->_channel[c]->_data[b];
 

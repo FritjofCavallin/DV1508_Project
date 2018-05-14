@@ -3,7 +3,7 @@
 
 
 EffectBlock::EffectBlock(Timeline *emitter, TimeInterval t)
-	: Block(t), _emitter(emitter)
+	: Block(t, type::Effect), _emitter(emitter)
 {
 }
 

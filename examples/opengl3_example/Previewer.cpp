@@ -1,16 +1,12 @@
 #include "Previewer.h"
 
 #include <string>
-#include "stb_image.h"
 #include "Other/GLFuncs.h"
-
-#define BUFFER_OFFSET(i) ((char *)nullptr + (i))
-#define STB_IMAGE_IMPLEMENTATION
+#include "Particles/ParticleManager.h"
 
 Previewer::Previewer(Data * data)
 {
 	this->data = data;
-	creationoftexture();
 	CreateShaders();
 	CreateTriangleData();
 	glGenFramebuffers(1, &frameBuffer);
@@ -53,34 +49,9 @@ Previewer::~Previewer()
 	glDeleteTextures(1, &texture);
 	glDeleteFramebuffers(1, &frameBuffer);
 }
-void Previewer::creationoftexture()
-{
-	glGenTextures(1, &texturen);
-	glBindTexture(GL_TEXTURE_2D, texturen);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// load and generate the texture
-	int width, height, nrChannels;
-	unsigned char *data = stbi_load("Imagetoreadfire.jpg", &width, &height, &nrChannels, 4);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-
-	}
-	stbi_image_free(data);
-	checkGLError();
-
-}
 void Previewer::CreateShaders()
 {
-	gShaderProgram = loadShader("VertexShader.glsl", "Fragment.glsl");
+	gShaderProgram = loadShader("Shaders/VertexShader.glsl", "Shaders/Fragment.glsl");
 }
 void Previewer::CreateTriangleData()
 {
@@ -142,19 +113,22 @@ void Previewer::draw(ImVec2 pos, ImVec2 size)
 
 	//Draw 3D
 	glm::mat4 VP = camera.getVPMat();
-
-	glUniformMatrix4fv(mvpMatrixID, 1, GL_FALSE, &VP[0][0]);
-	glDepthMask(GL_TRUE); //Enable depth masking
-	glDepthFunc(GL_LESS);
-
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(gShaderProgram);
+	glUniformMatrix4fv(mvpMatrixID, 1, GL_FALSE, &VP[0][0]);
 	glBindVertexArray(gVertexAttribute);
-	glBindTexture(GL_TEXTURE_2D, texturen);
 	glLineWidth(1);
 	glDrawArrays(GL_LINES, 0, gridVertCount);
+
+	data->getPlayer()->update();
+
+	glEnablei(GL_BLEND, 0);
+	glBlendFunci(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	data->getPlayer()->render(&camera);
+	glDisablei(GL_BLEND, 0);
 
 	checkGLError();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -165,10 +139,9 @@ void Previewer::draw(ImVec2 pos, ImVec2 size)
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
 
-	glDepthMask(GL_FALSE);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 	ImGui::Image(reinterpret_cast<ImTextureID>(texture), ImGui::GetContentRegionAvail(), ImVec2(0, 0), ImVec2(1, -1));
 
 	ImGui::End();
+	checkGLError();
 }

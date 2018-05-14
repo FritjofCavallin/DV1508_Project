@@ -16,9 +16,5 @@ public:
 	virtual ~ForceBlock();
 
 	virtual void applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart);
-
-	/* The timeline type the block is associated with
-	*/
-	virtual type::Timeline typeFit() { return type::Particle; }
 };
 

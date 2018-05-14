@@ -2,8 +2,8 @@
 
 
 
-Block::Block(TimeInterval t)
-	: _time(t)
+Block::Block(TimeInterval t, type::Timeline type)
+	: _time(t), _type(type)
 {
 }
 

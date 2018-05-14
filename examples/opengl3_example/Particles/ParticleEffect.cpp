@@ -6,15 +6,19 @@
 ParticleEffect::ParticleEffect()
 	: _timeline(nullptr), _time(0.f), _loopTime(MAX_DURATION)
 {
+	_shader.load();
 }
 
 ParticleEffect::ParticleEffect(Timeline *timeline)
 	: _timeline(timeline), _time(0.f), _loopTime(MAX_DURATION)
 {
+	_shader.load();
 }
 
 ParticleEffect::~ParticleEffect()
 {
+	for (auto e : _emitters)
+		delete e.second;
 }
 
 void ParticleEffect::incrementTime(float step)
@@ -26,25 +30,28 @@ void ParticleEffect::update()
 {
 	if (!_timeline) return;
 
-	float emittTime = std::fmodf(_time, _timeline->_time.duration());
-	BlockList list = _timeline->fetchBlocks(emittTime);
+	float effectTime = std::fmodf(_time, _timeline->_time.duration());
+	BlockList list = _timeline->fetchBlocks(effectTime);
 
 	// For every active emitter: spawn particles
 	for (unsigned int i = 0; i < list._size; i++)
 	{
-		Timeline *emitter = reinterpret_cast<EffectBlock*>(list._blocks[i])->_emitter;
+		EffectBlock *eBlock = reinterpret_cast<EffectBlock*>(list._blocks[i]);
+		Timeline *emitter = eBlock->_emitter;
 
 		Emission *e;
-		auto it = _emitters.find(emitter);
+		auto it = _emitters.find(eBlock);
 		if (it != _emitters.end())
 			e = it->second;
 		else
 		{
-			e = new Emission(this, emitter);
-			_emitters[emitter] = e;
+			e = new Emission(this, emitter, &_shader);
+			_emitters[eBlock] = e;
 		}
-
-		e->spawnParticles(emittTime);
+		// Remap time from effect time to time on the emitter scale:
+		float timeRemap = emitter->_time.duration() / eBlock->_time.duration();
+		float emitterTime = (effectTime - eBlock->_time._startTime)  /  eBlock->_time.duration() * emitter->_time.duration();
+		e->spawnParticles(emitterTime, EMIT_STEP * timeRemap);
 	}
 
 	// Increment timestep after particles are spawned,
@@ -56,9 +63,11 @@ void ParticleEffect::update()
 		e.second->updateParticles();
 }
 
-void ParticleEffect::render()
+void ParticleEffect::render(Camera *cam)
 {
-
+	_shader.assignGlobalUniforms(cam);
+	for (auto e : _emitters)
+		e.second->render();
 }
 
 std::string ParticleEffect::getStatus()

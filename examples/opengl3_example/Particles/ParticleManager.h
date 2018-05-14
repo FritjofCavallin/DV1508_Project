@@ -2,6 +2,7 @@
 
 #include "../Timelines/Timeline.h"
 #include "ParticleEffect.h"
+#include "../camera.h"
 
 class ParticleManager
 {
@@ -11,9 +12,12 @@ public:
 
 
 	void update();
+	void render(Camera *cam);
 
 	void runEffect(Timeline *t);
 	void stopEffect(Timeline *t);
+
+	void printInfo();
 
 private:
 
