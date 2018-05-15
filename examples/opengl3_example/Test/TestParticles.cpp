@@ -88,7 +88,7 @@ void simpleEffect(Data &data)
 	spread->_volumeSize = glm::vec3(0.5f, 0.1f, 0.5f);
 	e2->addBlock(spread, 1);
 
-	TextureBlock *tex = new TextureBlock(time, "Content/Effect.png", 0);
+	TextureBlock *tex = new TextureBlock(time, "Effect.png", 0);
 	e2->addBlock(tex, 2);
 	e2->_particleLink = p2; //Set particle
 
