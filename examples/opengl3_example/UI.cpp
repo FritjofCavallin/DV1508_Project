@@ -29,7 +29,6 @@ UI::~UI()
 		delete c;
 }
 
-
 void UI::draw(ImVec2 windowSize)
 {
 	ImGui::BeginMainMenuBar();

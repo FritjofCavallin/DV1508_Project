@@ -4,7 +4,7 @@
 #include "Channel.h"
 #include "TimelineType.h"
 #include "TimeInterval.h"
-#include "../Particles/Constants.h"
+#include "../Other/Constants.h"
 
 /*	Container for blocks active in a timeline at a time instance.
 *	Size is static but number of blocks is limited by the number of channels!

@@ -3,9 +3,10 @@
 #include "Data.h"
 #include "../Test/TestParticles.h"
 #include "../Particles/ParticleManager.h"
+#include "../Window/PreviewWindow.h"
 
 Data::Data()
-	: effectPlayer(new ParticleManager())
+	: effectPlayer(new ParticleManager()), previewWindow(new PreviewWindow(this))
 {
 	effectTimeline = nullptr;
 
@@ -90,6 +91,11 @@ Timeline* Data::getEffectTimeline()
 ParticleManager *Data::getPlayer()
 {
 	return effectPlayer;
+}
+
+PreviewWindow *Data::getPreview()
+{
+	return previewWindow;
 }
 
 Timeline* Data::getOpenTimeline(int index)

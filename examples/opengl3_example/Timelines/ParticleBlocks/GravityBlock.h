@@ -2,9 +2,9 @@
 #include "../Block.h"
 #include "glm/vec3.hpp"
 
-/* Force applied over time
+/* Constant force
 */
-class ForceBlock :
+class GravityBlock :
 	public Block
 {
 public:
@@ -12,11 +12,10 @@ public:
 	/* Parameters
 	*/
 	glm::vec3 _forceDir;
-	float _force;
+	float _gravity;
 
-	ForceBlock(TimeInterval t);
-	ForceBlock(TimeInterval t, glm::vec3 forceDir, float force);
-	virtual ~ForceBlock();
+	GravityBlock(TimeInterval t);
+	virtual ~GravityBlock();
 
 	virtual void applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart);
 };

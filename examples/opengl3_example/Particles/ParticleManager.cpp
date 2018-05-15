@@ -9,6 +9,8 @@ ParticleManager::ParticleManager()
 
 ParticleManager::~ParticleManager()
 {
+	for (ParticleEffect *e : _effects)
+		delete e;
 }
 
 

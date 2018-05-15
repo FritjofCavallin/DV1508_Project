@@ -2,7 +2,7 @@
 #include "ParticleEffect.h"
 #include "../Other/RandFunction.h"
 #include "glm/geometric.hpp"
-#include "Constants.h"
+#include "../Other/Constants.h"
 #include <algorithm>
 #include "../Timelines/EmittBlocks/TextureBlock.h"
 
@@ -37,12 +37,14 @@ void Emission::render()
 		//Bind textures:
 	checkGLError();
 	
-	for (unsigned int i = 0; i < 1; i++)
+	for (int i = 0; i < 4; i++)
 	{
-	glActiveTexture(GL_TEXTURE0);
-	glBindSampler(GL_TEXTURE_2D, _texActive[i] ? _texSlots[i] : _shader->defaultTex);
+		glActiveTexture(GL_TEXTURE0 + i);
+		GLuint texInd = _texActive[i] ? _texSlots[i] : _shader->defaultTex;
+		glBindTexture(GL_TEXTURE_2D, texInd);
 		_texActive[i] = false;
 	}
+	
 	
 	checkGLError();
 	
@@ -114,18 +116,18 @@ void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float block
 		_emitter->_particleLink->_time.duration() :
 		PARTICLE_DEFAULT_DUR;
 
-	float lerp = std::fmax(0, (blockTime - deltaT * 0.5) / duration);
+	float lerp = std::fmaxf(0, (blockTime - deltaT * 0.5f) / duration);
 
 	// Emitt n particles (cheap interpolation over particle emission: Total/n)
 	//float n = glm::mix(spawner->_params._initAmount, spawner->_params._endAmount, lerp) / duration * deltaT;
 	_remainder = glm::mix(spawner->_params._initAmount, spawner->_params._endAmount, lerp) * deltaT + _remainder;
-	float N = (int)_remainder;
+	int N = (int)_remainder;
 	_remainder = _remainder - N;
 
 	float dTime = deltaT / (N + 1.f);
 	// Lazy solution, emitted particles is floored.
 	// Remainder needs to be stored for next update so the number of particles emitted is correct...
-	for (float i = 1; i <= N; i++)
+	for (int i = 1; i <= N; i++)
 	{
 		InitialEmissionParams &param = spawner->_params;
 		Particle p;

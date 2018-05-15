@@ -8,15 +8,19 @@
 
 void checkGLError()
 {
+#ifdef _DEBUG
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR)
 		std::cout << "GL Error Occured: " << err << "\n";
+#endif
 }
 void checkGLError(const char * msg)
 {
+#ifdef _DEBUG
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR)
 		std::cout << "GL Error Occured: " << err << "\nMsg: " << msg << "\n";
+#endif
 }
 
 void checkCompileStatus(GLuint shaderProg)
@@ -98,12 +102,21 @@ GLuint loadShader(const char* vertexShader, const char* geomShader, const char* 
 
 bool loadTexture(const char* texFile, GLuint &tex)
 {
+	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
 	// load and generate the texture
 	int width, height, nrChannels;
-	unsigned char *data = stbi_load(texFile, &width, &height, &nrChannels, 4);
+	stbi_uc *data = stbi_load(texFile, &width, &height, &nrChannels, 4);
 	GLenum format = nrChannels == 4 ? GL_RGBA : GL_RGB;
+	switch (nrChannels)
+	{
+	case 3:
+		format = GL_RGB;
+	case 4:
+	default:
+		format = GL_RGBA;
+	}
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
@@ -112,11 +125,12 @@ bool loadTexture(const char* texFile, GLuint &tex)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		//glGenerateMipmap(GL_TEXTURE_2D);
+		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else // Failed texture load
 		return false;
 	stbi_image_free(data);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	checkGLError();
 	return true;
 }

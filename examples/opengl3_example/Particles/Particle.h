@@ -3,7 +3,7 @@
 #include "glm/vec4.hpp"
 #include "glm/geometric.hpp"
 #include "GL/gl3w.h"
-#include "Constants.h"
+#include "../Other/Constants.h"
 /* Data sent to the GPU
 */
 struct GPUParticle

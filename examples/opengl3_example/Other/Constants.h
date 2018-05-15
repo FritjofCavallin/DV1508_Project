@@ -1,6 +1,5 @@
 #pragma once
 
-
 /* Maximum number of channels supported in a timeline
 */
 const unsigned int MAX_CHANNELS = 10;
@@ -17,3 +16,9 @@ const static float PARTICLE_DEFAULT_DUR = 5.f;
 
 // Maximum number of particles emitted for a specific timeline
 const static size_t PARTICLES_EMITTED_MAX = 1000;
+
+
+const static char* DEFAULT_TEX = "error.png";
+
+
+const float PI = 3.14159265359f;

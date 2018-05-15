@@ -83,11 +83,11 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 		ImGuiIO& io = ImGui::GetIO();
 
-		ImVec4 color = ImVec4(0.1, 0, 0.2, 1);
+		ImVec4 color = ImVec4(0.1f, 0, 0.2f, 1);
 		if (timeline->_type == type::Emitter)
-			color = ImVec4(0, 0.2, 0.3, 1);
+			color = ImVec4(0, 0.2f, 0.3f, 1);
 		else if (timeline->_type == type::Effect)
-			color = ImVec4(0, 0, 0.3, 1);
+			color = ImVec4(0, 0, 0.3f, 1);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, color);
 
 		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(timelineWidth, timelineHeight + (i == 0 ? 3.0f : 0.0f)), true, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar);
@@ -149,7 +149,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			ImGui::EndMenuBar();
 		}
 		
-		float chCount = timeline ? timeline->_channel.size() : 1;
+		float chCount = (float)(timeline ? timeline->_channel.size() : 1);
 		float channelHeight = (int)ImGui::GetContentRegionAvail().y / chCount;
 
 		// If the user has clicked the "+" in the current timeline
@@ -316,7 +316,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		//draw_list->PushClipRectFullScreen();
 		float percent = 1.f / duration * timelineWidth;
 		float secLen = timelineWidth / duration;
-		float curr = ((int)(timeStart * 100 + 10) / 100);
+		float curr = ((int)(timeStart * 100 + 10) / 100.f);
 		while (curr < timeEnd)
 		{
 			float x = pos.x + 3 + (curr - timeStart) * percent;
@@ -361,7 +361,7 @@ void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int ch
 	float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
 	float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
 
-	dragDistance = ImGui::GetMouseDragDelta(0.0f);
+	dragDistance = ImGui::GetMouseDragDelta(0);
 
 	// If left mouse button is not pressed
 	if (*draggingBool && io.MouseDownDuration[0] < 0.0f)
@@ -403,8 +403,8 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 	mouseWindowPos.x = std::min(std::max(mouseWindowPos.x, 0.0f), ImGui::GetWindowWidth());
 	mouseWindowPos.y = std::min(std::max(mouseWindowPos.y, menubarHeight), ImGui::GetWindowHeight());
 	float hoveredChannel = ((mouseWindowPos.y - menubarHeight) / (ImGui::GetWindowHeight() - menubarHeight)) * timeline->_channel.size();
-	if (((int)hoveredChannel) >= timeline->_channel.size())
-		hoveredChannel = timeline->_channel.size() - 1;
+	if (((unsigned int)hoveredChannel) >= timeline->_channel.size())
+		hoveredChannel = (float)(timeline->_channel.size() - 1);
 
 	// If mouse is in the upper 20% of the channel, insert a channel and then add block there
 	float hoveredChannelFrac = (hoveredChannel - ((float)((int)hoveredChannel)));

@@ -14,6 +14,7 @@
 #include "Test/TestParticles.h"
 #include "Other/RandFunction.h"
 #include "Timelines/Data.h"
+#include "Window/PreviewWindow.h"
 #include <memory>
 #include <iostream>
 
@@ -36,7 +37,7 @@ int main(int, char**)
 #if __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-    GLFWwindow* window = glfwCreateWindow(windowSize.x, windowSize.y, "Group 3 - Particle Editor", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow((int)windowSize.x, (int)windowSize.y, "Group 3 - Particle Editor", NULL, NULL);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
     gl3wInit();
@@ -89,11 +90,17 @@ int main(int, char**)
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
+
+		data.getPlayer()->update();
 		if (glfwGetTime() > statusTick) //Print status every second
 		{
 			data.getPlayer()->printInfo();
 			statusTick++;
 		}
+		/* Render 3D
+		*/
+		data.getPreview()->render();
+
         ImGui_ImplGlfwGL3_NewFrame();
 		//ImGui::NewFrame();
 		

@@ -5,6 +5,7 @@
 #include "Timeline.h"
 
 class ParticleManager;
+class PreviewWindow;
 
 /* Database containing timelines in the project
 */
@@ -33,6 +34,7 @@ public:
 	Timeline* getEffectTimeline();
 	Timeline* getOpenTimeline(int index);
 	ParticleManager *getPlayer();
+	PreviewWindow *getPreview();
 
 	// Adds a timeline to the open list. The timeline must be part of the database.
 	void openTimeline(Timeline* timeline);
@@ -51,6 +53,7 @@ private:
 	/* Effect player
 	*/
 	ParticleManager * effectPlayer;
+	PreviewWindow *previewWindow;
 
 	void addTimeline(Timeline* particleTimeline, int index, std::list<Timeline*>& list, type::Timeline type);
 	void removeTimeline(int index, std::list<Timeline*>& list);

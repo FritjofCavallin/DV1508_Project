@@ -1,5 +1,7 @@
 #include "ParticleShader.h"
 #include <exception>
+#include "../Other/Constants.h"
+#include <iostream>
 const GLuint SHADE_DEF = 1000000;
 
 ParticleShader::ParticleShader()
@@ -35,20 +37,23 @@ void ParticleShader::load()
 	gProjMat = glGetUniformLocation(gShaderProgram, "projMat");
 	checkGLError();
 
-	GLint loc[4] = { glGetUniformLocation(gShaderProgram, "textures0"),
+	GLint loc[4] = { 
+		glGetUniformLocation(gShaderProgram, "textures0"),
 		glGetUniformLocation(gShaderProgram, "textures1"),
 		glGetUniformLocation(gShaderProgram, "textures2"),
 		glGetUniformLocation(gShaderProgram, "textures3") };
 	for (int i = 0; i < 4; i++)
 	{
 		if (loc[i] != -1) 
-			glUniform1i(loc[i], i); //Assigns sampling slo
+			glUniform1i(loc[i], i); //Assigns sampling slots
 	}
 	checkGLError();
 
-	if (!loadTexture("error.png", defaultTex))
+	if (!loadTexture(DEFAULT_TEX, defaultTex))
+	{
+		std::cout << "No default tex could be loaded: " << DEFAULT_TEX << "\n";
 		throw std::exception();
-	
+	}
 	checkGLError();
 }
 
@@ -108,6 +113,7 @@ void ParticleBuffer::destroy()
 {
 	glDeleteVertexArrays(1, &gVAO);
 	glDeleteBuffers(1, &gVertBuf);
+	checkGLError();
 }
 
 void ParticleBuffer::buffer(size_t nVerts, const void *data, size_t offsetN)

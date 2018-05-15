@@ -141,6 +141,7 @@ Block* Timeline::removeBlock(Block* block, bool doCleanup)
 			}
 		}
 	}
+	return nullptr;
 }
 
 BlockList Timeline::fetchBlocks(float relativeTime)
@@ -166,7 +167,7 @@ void Timeline::channelCleanup()
 		if (_channel[c]->isEmpty())
 		{
 			auto it = _channel.begin();
-			for (int i = 0; i < c; ++i)
+			for (unsigned int i = 0; i < c; ++i)
 				++it;
 
 			_channel.erase(it);

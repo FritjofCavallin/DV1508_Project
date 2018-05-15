@@ -19,10 +19,10 @@ void main (void)
   /* Texture blending:
   */
   vec4 colOut = Vertex_Color;
-  if(Tex_Blend.x + Tex_Blend.z > 0.f)
-    colOut *= texture(textures0, uv).rgba * Tex_Blend.x + texture(textures2, uv).rgba * Tex_Blend.z;
-  if(Tex_Blend.y + Tex_Blend.w > 0.f)
-    colOut *= texture(textures1, uv).rgba * Tex_Blend.y + texture(textures3, uv).rgba * Tex_Blend.w;
-  //FragColor = vec4(t, 1.0) * Vertex_Color;
+  colOut *= mix(vec4(1.f),texture(textures0, uv).rgba, Tex_Blend.x);
+  colOut += 0.001f*mix(vec4(1.f),texture(textures1, uv).rgba, 0.001f * Tex_Blend.y);
+  colOut += 0.001f*mix(vec4(1.f),texture(textures2, uv).rgba, 0.001f *  Tex_Blend.z);
+  colOut += 0.001f*mix(vec4(1.f),texture(textures3, uv).rgba, 0.001f * Tex_Blend.w);
+
   FragColor = colOut;
 }

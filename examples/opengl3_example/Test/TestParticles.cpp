@@ -9,6 +9,7 @@
 #include "../Timelines/ParticleBlocks/ColorBlock.h"
 #include "../Timelines/ParticleBlocks/RotationBlock.h"
 #include "../Timelines/ParticleBlocks/ForceBlock.h"
+#include "../Timelines/ParticleBlocks/GravityBlock.h"
 #include "../Timelines/ParticleBlocks/TextureFadeBlock.h"
 
 void simpleEffect(Data &data)
@@ -29,12 +30,16 @@ void simpleEffect(Data &data)
 
 	RotationBlock * rot = new RotationBlock(time);
 	p->addBlock(rot, 2);
+	GravityBlock *gravity = new GravityBlock(time);
+	p->addBlock(gravity, 3);
 
 	// Create an emitter
 	Timeline *e = new Timeline(type::Emitter, "Emitter0", time);
 	InitialEmissionParams sParam;
-	sParam._emitDir = glm::normalize(glm::vec3(1, 2, 3));
+	sParam._emitDir = glm::normalize(glm::vec3(-1, 1, 0));
 	sParam._emitOrigin = glm::vec3(2, 0.1f, 0);
+	sParam._minForce = 9.f;
+	sParam._maxForce = 15.f;
 	sParam._minSize = glm::vec2(0.1, 0.2f);
 	sParam._maxSize = glm::vec2(0.3, 0.33f);
 	e->addBlock(new SpawnBlock(TimeInterval(0, 2), sParam), 0);
@@ -51,22 +56,39 @@ void simpleEffect(Data &data)
 
 	Timeline *p2 = new Timeline(type::Particle, "Particle1", time);
 	scale = new ScaleBlock(time);
-	scale->_scaleBegin = glm::vec2(0.2f, 0.2f);
-	scale->_scaleEnd = glm::vec2(1.f, 1.f);
+	scale->_scaleBegin = glm::vec2(1.f, 1.f);
+	scale->_scaleEnd = glm::vec2(0.1f, 0.1f);
 	p2->addBlock(scale, 0);
 	rot = new RotationBlock(time);
+	rot->_angVelocityBegin = PI * 2.f;
+	rot->_angVelocityEnd = PI *16.f;
 	p2->addBlock(rot, 1);
+
+	ForceBlock *f1 = new ForceBlock(TimeInterval(0.4f, 0.6f), glm::vec3(1.f,0,0), 5.f);
+	ForceBlock *f2 = new ForceBlock(TimeInterval(1.f, 1.2f), glm::vec3(-1.f, 0, 0), 5.f);
+	p2->addBlock(f1, 2);
+	p2->addBlock(f2, 2);
+
 	TextureFadeBlock *texFade = new TextureFadeBlock(time, 0);
-	p2->addBlock(texFade, 2);
+	p2->addBlock(texFade, 3);
 
 	Timeline *e2 = new Timeline(type::Emitter, "Emitter1", time);
+	sParam._initAmount = 5;
+	sParam._endAmount = 5;
+	sParam._minForce = 1.f;
+	sParam._maxForce = 2.f;
 	sParam._emitDir = glm::normalize(glm::vec3(0, 1, 0.1f));
 	sParam._emitOrigin = glm::vec3(0, 0.1f, 0);
-	sParam._minSize = glm::vec2(1.0, 2.0f);
-	sParam._maxSize = glm::vec2(1.0, 2.0f);
+	sParam._minSize = glm::vec2(0.6f, 1.2f);
+	sParam._maxSize = glm::vec2(0.6f, 1.2f);
 	e2->addBlock(new SpawnBlock(time, sParam), 0);
+
+	spread = new BoxVolumeBlock(time);
+	spread->_volumeSize = glm::vec3(0.5f, 0.1f, 0.5f);
+	e2->addBlock(spread, 1);
+
 	TextureBlock *tex = new TextureBlock(time, "Effect.png", 0);
-	e2->addBlock(tex, 1);
+	e2->addBlock(tex, 2);
 	e2->_particleLink = p2; //Set particle
 
 
