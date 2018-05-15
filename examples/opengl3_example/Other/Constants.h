@@ -18,7 +18,7 @@ const static float PARTICLE_DEFAULT_DUR = 5.f;
 const static size_t PARTICLES_EMITTED_MAX = 1000;
 
 
-const static char* DEFAULT_TEX = "error.png";
+const static char* DEFAULT_TEX = "Content/error.png";
 
 
 const float PI = 3.14159265359f;
