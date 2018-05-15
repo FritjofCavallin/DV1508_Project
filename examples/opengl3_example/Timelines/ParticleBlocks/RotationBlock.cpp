@@ -5,6 +5,8 @@
 RotationBlock::RotationBlock(TimeInterval t)
 	: Block(t, type::Particle), _angVelocityBegin(3.14f/20.f), _angVelocityEnd(3.14f / 3.f)
 {
+	visualName = "Rotation";
+	desc = "Rotate the particle quad";
 }
 
 

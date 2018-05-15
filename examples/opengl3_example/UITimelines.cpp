@@ -4,13 +4,21 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <vector>
 
 #include "UITimelines.h"
 #include "Timelines/Timeline.h"
 #include "Timelines/EmittBlocks/BoxVolumeBlock.h"
 #include "Timelines/EmittBlocks/SpawnBlock.h"
+#include "Timelines/EmittBlocks/TextureBlock.h"
+#include "Timelines/ParticleBlocks/ColorBlock.h"
+#include "Timelines/ParticleBlocks/ConstantForce.h"
 #include "Timelines/ParticleBlocks/ForceBlock.h"
+#include "Timelines/ParticleBlocks/GravityBlock.h"
+#include "Timelines/ParticleBlocks/RotationBlock.h"
 #include "Timelines/ParticleBlocks/ScaleBlock.h"
+#include "Timelines/ParticleBlocks/TextureFadeBlock.h"
+#include "Timelines/EffectBlock.h"
 
 #define BUTTON_WIDTH 70
 
@@ -22,17 +30,32 @@ UITimelines::UITimelines(Data* data)
 
 	// Effect blocks
 	_blockInfos[0] = new std::vector<BlockInfo>();  // The items are added dynamically each frame
+	
 	// Emitter blocks
 	_blockInfos[1] = new std::vector<BlockInfo>();
-	_blockInfos[1]->push_back({ "Box Volume", "What volume/shape to spawn from" });
-	_blockInfos[1]->push_back({ "Spawn", "How the particles should spawn" });
+	std::vector<Block*> temp;
+	temp.push_back(new BoxVolumeBlock({ 0, 0 }));
+	temp.push_back(new SpawnBlock({ 0, 0 }));
+	temp.push_back(new TextureBlock({ 0, 0 }, "", -1));
+	for (auto& e : temp)
+	{
+		_blockInfos[1]->push_back({ e->visualName, e->desc });
+	}
+	temp.clear();
+
 	// Particle blocks
 	_blockInfos[2] = new std::vector<BlockInfo>();
-	_blockInfos[2]->push_back({ "Test1", "Perp" });
-	_blockInfos[2]->push_back({ "Force", "Apply a force to the particle" });
-	_blockInfos[2]->push_back({ "Scale", "Change size of the particle" });
-	_blockInfos[2]->push_back({ "Test2", "Slerp" });
-	_blockInfos[2]->push_back({ "Test3", "Gerp" });
+	temp.push_back(new ColorBlock({ 0, 0 }));
+	temp.push_back(new ConstantForce({ 0, 0 }));
+	temp.push_back(new ForceBlock({ 0, 0 }));
+	temp.push_back(new GravityBlock({ 0, 0 }));
+	temp.push_back(new RotationBlock({ 0, 0 }));
+	temp.push_back(new ScaleBlock({ 0, 0 }));
+	temp.push_back(new TextureFadeBlock({ 0, 0 }, -1));
+	for (auto& p : temp)
+	{
+		_blockInfos[2]->push_back({ p->visualName, p->desc });
+	}
 }
 
 
@@ -52,6 +75,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
 
+	// Adding info about emitters
 	_blockInfos[0]->clear();
 	std::string info;
 	for (auto e : data->getEmitterTimelines())
@@ -216,8 +240,19 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				switch (timeline->_type)
 				{
 				case type::Effect:
-
+				{
+					auto& ets = data->getEmitterTimelines();
+					int index = 0;
+					for (auto& et : ets)
+					{
+						if (index == _holdingBlockId)
+						{
+							timeline->_movingBlock = new EffectBlock(et, TimeInterval());
+							break;
+						}
+					}
 					break;
+				}
 				case type::Emitter:
 					switch (_holdingBlockId)
 					{
@@ -227,16 +262,34 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					case 1:
 						timeline->_movingBlock = new SpawnBlock(TimeInterval());
 						break;
+					case 2:
+						timeline->_movingBlock = new TextureBlock(TimeInterval(), "", -1);
+						break;
 					}
 					break;
 				case type::Particle:
 					switch (_holdingBlockId)
 					{
 					case 0:
-						timeline->_movingBlock = new ForceBlock(TimeInterval());
+						timeline->_movingBlock = new ColorBlock(TimeInterval());
 						break;
 					case 1:
+						timeline->_movingBlock = new ConstantForce(TimeInterval());
+						break;
+					case 2:
+						timeline->_movingBlock = new ForceBlock(TimeInterval());
+						break;
+					case 3:
+						timeline->_movingBlock = new GravityBlock(TimeInterval());
+						break;
+					case 4:
+						timeline->_movingBlock = new RotationBlock(TimeInterval());
+						break;
+					case 5:
 						timeline->_movingBlock = new ScaleBlock(TimeInterval());
+						break;
+					case 6:
+						timeline->_movingBlock = new TextureFadeBlock(TimeInterval(), -1);
 						break;
 					}
 				}
@@ -288,7 +341,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					// Block main body
 					ImGui::PushID(b);
 					ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * c));
-					if (ImGui::Button("Block", ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
+					if (ImGui::Button(block->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
 					if (ImGui::IsItemActive() && !timeline->_movingBlock)
 					{
 						if (dragDistance.x != 0.0f || dragDistance.y != 0.0f)
@@ -321,9 +374,11 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				ImGui::SetCursorPos(ImVec2(x - pos.x - 5, timelineHeight - 15 - 1 * i));
 				ImGui::Text("%1.0f", curr);
 				draw_list->AddLine(ImVec2(x, y), ImVec2(x, y - 5), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
+				// 1/10
 				for (unsigned int d = 0; d < 10; ++d)
 				{
 					draw_list->AddLine(ImVec2(x + secLen / 10 * d, y), ImVec2(x + secLen / 10 * d, y - 2), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
+					// 1/100
 					if (duration < 2.f)
 					{
 						for (unsigned int h = 1; h < 10; ++h)
@@ -478,6 +533,6 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 		// Draw block
 		float cursorY = std::min(std::max(mouseWindowPos.y - timeline->_movingBlock->dragBodyYOffset, menubarHeight), ImGui::GetWindowHeight() - channelHeight * blockHeightRatio);
 		ImGui::SetCursorPos(ImVec2(blockStartPos, cursorY));
-		if (ImGui::Button("Block", ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
+		if (ImGui::Button(timeline->_movingBlock->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
 	}
 }

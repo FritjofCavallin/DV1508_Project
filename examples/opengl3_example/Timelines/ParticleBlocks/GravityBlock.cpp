@@ -5,10 +5,14 @@
 GravityBlock::GravityBlock(TimeInterval t)
 	: Block(t, type::Particle), _gravityPoint(0,0,0), _gravity(9.82f)
 {
+	visualName = "Gravity";
+	desc = "Accelerate toward a point";
 }
 GravityBlock::GravityBlock(TimeInterval t, glm::vec3 gravityPoint, float constantForce)
 	: Block(t, type::Particle), _gravityPoint(gravityPoint), _gravity(constantForce)
 {
+	visualName = "Gravity";
+	desc = "Accelerate toward a point";
 }
 
 

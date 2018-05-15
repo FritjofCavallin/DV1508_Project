@@ -5,6 +5,8 @@
 ColorBlock::ColorBlock(TimeInterval t)
 	: Block(t, type::Particle), _colorBegin(1.f), _colorEnd(1.f)
 {
+	visualName = "Color";
+	desc = "Change color of the texture and particle";
 }
 
 

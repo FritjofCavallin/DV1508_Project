@@ -6,6 +6,8 @@
 TextureFadeBlock::TextureFadeBlock(TimeInterval t, unsigned int texSlot)
 	: Block(t, type::Particle), _texSlot(texSlot)
 {
+	visualName = "Fade\n Factor";
+	desc = "Fade factor value for a texture";
 }
 
 TextureFadeBlock::~TextureFadeBlock()

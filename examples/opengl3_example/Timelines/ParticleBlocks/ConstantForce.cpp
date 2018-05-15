@@ -5,6 +5,8 @@
 ConstantForce::ConstantForce(TimeInterval t)
 	: Block(t, type::Particle), _forceDir(0,-1,0), _gravity(9.82f)
 {
+	visualName = "Constant\n Force";
+	desc = "Apply a constant force";
 }
 
 

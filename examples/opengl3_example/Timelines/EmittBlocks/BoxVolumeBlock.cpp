@@ -5,6 +5,8 @@
 BoxVolumeBlock::BoxVolumeBlock(TimeInterval t)
 	: Block(t, type::Emitter), _volumeSize(1.f)
 {
+	visualName = "Box\n Volume";
+	desc = "What volume / shape to spawn from";
 }
 
 

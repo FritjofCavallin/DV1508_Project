@@ -5,6 +5,8 @@
 ScaleBlock::ScaleBlock(TimeInterval t)
 	: Block(t, type::Particle)
 {
+	visualName = "Scale";
+	desc = "Change size of the particle";
 }
 
 

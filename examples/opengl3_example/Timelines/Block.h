@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 #include "TimelineType.h"
 #include "../Particles/Particle.h"
@@ -34,5 +35,7 @@ public:
 	float dragHandleStart = 0.0f;
 	float dragBodyStart = 0.0f;
 	float dragBodyYOffset = 0.0f;
+	std::string visualName = "CHANGE THIS!";
+	std::string desc = "CHANGE THIS!";
 };
 
