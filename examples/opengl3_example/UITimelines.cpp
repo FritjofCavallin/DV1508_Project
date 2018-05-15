@@ -152,25 +152,13 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			if (_addingNewBlock == i)
 				text = " Cancel  ";
 			ImGui::SameLine(timelineWidth - 200);
-			if (ImGui::Button(text.c_str()/*, ImVec2(43, 0)*/))
+			if (ImGui::Button(text.c_str()))
 			{
 				if (_addingNewBlock == i)
 					_addingNewBlock = -1;
 				else 
 					_addingNewBlock = i;
 			}
-			// Tooltip
-			//if (ImGui::IsItemHovered())
-			//{
-			//	ImGui::BeginTooltip();
-			//	ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-			//	if (_addingNewBlock != i)
-			//		ImGui::TextUnformatted("Add block");
-			//	else
-			//		ImGui::TextUnformatted("Cancel");
-			//	ImGui::PopTextWrapPos();
-			//	ImGui::EndTooltip();
-			//}
 
 			// Button for closing the timeline
 			if (_addingNewBlock != i)
@@ -180,6 +168,14 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				{
 					data->closeTimeline(i);
 				}
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+					ImGui::TextUnformatted("Close timeline");
+					ImGui::PopTextWrapPos();
+					ImGui::EndTooltip();
+				}
 			}
 
 			ImGui::EndMenuBar();
@@ -188,11 +184,9 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		float chCount = (float)(timeline ? timeline->_channel.size() : 1);
 		float channelHeight = (int)ImGui::GetContentRegionAvail().y / chCount;
 
-		// If the user has clicked the "+" in the current timeline
+		// If the user has clicked to start adding a new block
 		if (_addingNewBlock == i)
 		{
-			//ImGui::SetCursorPos(ImVec2(timelineWidth - 100, menubarHeight + 3));
-			//ImGui::Text("Cancel ^");
 			bool holdingButton = false;
 
 			size_t blockTypes = _blockInfos[timeline->_type]->size();
