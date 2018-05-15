@@ -14,15 +14,15 @@ InitialEmissionParams::InitialEmissionParams() :
 SpawnBlock::SpawnBlock(TimeInterval t)
 	: Block(t, type::Emitter), _params()
 {
-	visualName = "Spawn";
-	desc = "How the particles should spawn";
+	visualName = "Amount";
+	desc = "The amount of particles to spawn";
 }
 
 SpawnBlock::SpawnBlock(TimeInterval t, InitialEmissionParams &p) 
 	: Block(t, type::Emitter), _params(p)
 {
-	visualName = "Spawn";
-	desc = "How the particles should spawn";
+	visualName = "Amount";
+	desc = "The amount of particles to spawn";
 }
 
 SpawnBlock::~SpawnBlock()

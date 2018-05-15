@@ -122,7 +122,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 			std::string text;
 			// Menu for linking particle to emitter
-			if (timeline->_type == type::Emitter)
+			if (timeline->_type == type::Emitter && _addingNewBlock != i)
 			{
 				ImGui::SameLine(300);
 				ImGui::Text("Linked particle: ");
@@ -148,11 +148,11 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			}
 
 			// Button for adding block
-			text = "  +  ";
+			text = " Add new ";
 			if (_addingNewBlock == i)
-				text = "  -  ";
-			ImGui::SameLine(timelineWidth - 70);
-			if (ImGui::Button(text.c_str(), ImVec2(43, 0)))
+				text = " Cancel  ";
+			ImGui::SameLine(timelineWidth - 200);
+			if (ImGui::Button(text.c_str()/*, ImVec2(43, 0)*/))
 			{
 				if (_addingNewBlock == i)
 					_addingNewBlock = -1;
@@ -160,16 +160,26 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					_addingNewBlock = i;
 			}
 			// Tooltip
-			if (ImGui::IsItemHovered())
+			//if (ImGui::IsItemHovered())
+			//{
+			//	ImGui::BeginTooltip();
+			//	ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+			//	if (_addingNewBlock != i)
+			//		ImGui::TextUnformatted("Add block");
+			//	else
+			//		ImGui::TextUnformatted("Cancel");
+			//	ImGui::PopTextWrapPos();
+			//	ImGui::EndTooltip();
+			//}
+
+			// Button for closing the timeline
+			if (_addingNewBlock != i)
 			{
-				ImGui::BeginTooltip();
-				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-				if (_addingNewBlock != i)
-					ImGui::TextUnformatted("Add block");
-				else
-					ImGui::TextUnformatted("Cancel");
-				ImGui::PopTextWrapPos();
-				ImGui::EndTooltip();
+				ImGui::SameLine(timelineWidth - 40);
+				if (ImGui::Button("X", ImVec2(40, 0)))
+				{
+					data->closeTimeline(i);
+				}
 			}
 
 			ImGui::EndMenuBar();
@@ -181,8 +191,8 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		// If the user has clicked the "+" in the current timeline
 		if (_addingNewBlock == i)
 		{
-			ImGui::SetCursorPos(ImVec2(timelineWidth - 100, menubarHeight + 3));
-			ImGui::Text("Cancel ^");
+			//ImGui::SetCursorPos(ImVec2(timelineWidth - 100, menubarHeight + 3));
+			//ImGui::Text("Cancel ^");
 			bool holdingButton = false;
 
 			size_t blockTypes = _blockInfos[timeline->_type]->size();
