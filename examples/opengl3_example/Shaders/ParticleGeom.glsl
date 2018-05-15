@@ -13,12 +13,14 @@ in Vertex
   vec2 size;
   float rot;
   vec4 texBlend;
+  ivec4 texArea;
 } vertex[];
 
 
 out vec2 Vertex_UV;
-out vec4 Vertex_Color;
-out vec4 Tex_Blend;
+flat out vec4 Vertex_Color;
+flat out vec4 Tex_Blend;
+flat out ivec4 Tex_Area;
 
 vec2 rotate(in float theta, in vec2 v)
 {
@@ -42,6 +44,7 @@ void main (void)
   Vertex_UV = vec2(0.0, 0.0);
   Vertex_Color = vertex[0].color;
   Tex_Blend = vertex[0].texBlend;
+  Tex_Area = vertex[0].texArea;
   EmitVertex();
 
   // b: left-top
@@ -50,6 +53,7 @@ void main (void)
   Vertex_UV = vec2(0.0, 1.0);
   Vertex_Color = vertex[0].color;
   Tex_Blend = vertex[0].texBlend;
+  Tex_Area = vertex[0].texArea;
   EmitVertex();
 
   // d: right-bottom
@@ -58,6 +62,7 @@ void main (void)
   Vertex_UV = vec2(1.0, 0.0);
   Vertex_Color = vertex[0].color;
   Tex_Blend = vertex[0].texBlend;
+  Tex_Area = vertex[0].texArea;
   EmitVertex();
 
   // c: right-top
@@ -66,6 +71,7 @@ void main (void)
   Vertex_UV = vec2(1.0, 1.0);
   Vertex_Color = vertex[0].color;
   Tex_Blend = vertex[0].texBlend;
+  Tex_Area = vertex[0].texArea;
   EmitVertex();
 
   EndPrimitive();

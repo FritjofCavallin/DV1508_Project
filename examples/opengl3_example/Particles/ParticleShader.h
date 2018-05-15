@@ -25,7 +25,7 @@ public:
 
 	GLuint gShaderProgram;
 
-	GLint  gViewMat, gProjMat;
+	GLint  gViewMat, gProjMat, gArea;
 
 
 	/* Loaded texture for default behavior

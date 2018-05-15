@@ -24,6 +24,16 @@ void checkGLError(const char * msg)
 #endif
 }
 
+void checkCompileError(GLuint program, const char* msg)
+{
+	checkGLError();
+	static GLchar text[400];
+	GLsizei len = 0;
+	glGetProgramInfoLog(program, 200, &len, text);
+	if(len > 0)
+		std::cout << msg << "\n" << text << "\n";
+}
+
 void checkCompileStatus(GLuint shaderProg)
 {
 
@@ -72,10 +82,12 @@ GLuint loadShader(const char* vertexShader, const char* fragmentShader)
 	//link shader program (connect vs and ps)
 	GLuint gShaderProgram = glCreateProgram();
 	glAttachShader(gShaderProgram, fs);
+	checkCompileError(gShaderProgram, "Fragment error.");
 	glAttachShader(gShaderProgram, vs);
+	checkCompileError(gShaderProgram, "Vertex shader error.");
 	glLinkProgram(gShaderProgram);
+	checkCompileError(gShaderProgram, "Shader link error.");
 	//checkCompileStatus(gShaderProgram);
-	checkGLError(); 
 
 	return gShaderProgram;
 }
@@ -91,12 +103,13 @@ GLuint loadShader(const char* vertexShader, const char* geomShader, const char* 
 	//link shader program (connect vs and ps)
 	GLuint gShaderProgram = glCreateProgram();
 	glAttachShader(gShaderProgram, vs);
+	checkCompileError(gShaderProgram, "Vertex shader error.");
 	glAttachShader(gShaderProgram, gs);
+	checkCompileError(gShaderProgram, "Geometry shader error.");
 	glAttachShader(gShaderProgram, fs);
+	checkCompileError(gShaderProgram, "Fragment error.");
 	glLinkProgram(gShaderProgram);
-	checkGLError();
-	//checkCompileStatus(gShaderProgram);
-	checkGLError();
+	checkCompileError(gShaderProgram, "Shader link error.");
 
 	return gShaderProgram;
 }

@@ -23,6 +23,8 @@ void ParticleShader::assignGlobalUniforms(Camera *cam)
 	glm::mat4 view = cam->getViewMat();
 	glUniformMatrix4fv(gProjMat, 1, GL_FALSE, &cam->projMat[0][0]);
 	glUniformMatrix4fv(gViewMat, 1, GL_FALSE, &view[0][0]);
+	
+
 	checkGLError();
 }
 
@@ -33,8 +35,10 @@ void ParticleShader::load()
 		glDeleteShader(gShaderProgram);
 	gShaderProgram = loadShader("Shaders/ParticleVertex.glsl", "Shaders/ParticleGeom.glsl", "Shaders/ParticleFragment.glsl");
 	glUseProgram(gShaderProgram);
+	checkGLError();
 	gViewMat = glGetUniformLocation(gShaderProgram, "viewMat");
 	gProjMat = glGetUniformLocation(gShaderProgram, "projMat");
+	gArea = glGetUniformLocation(gShaderProgram, "area");
 	checkGLError();
 
 	GLint loc[4] = { 
@@ -47,6 +51,14 @@ void ParticleShader::load()
 		if (loc[i] != -1) 
 			glUniform1i(loc[i], i); //Assigns sampling slots
 	}
+
+
+	const glm::vec4 areas[8] = {
+		glm::vec4(0,0,1,1), glm::vec4(0,0,1,1),
+		glm::vec4(0,0,1,1), glm::vec4(0,0,1,1),
+		glm::vec4(0,0,1,1), glm::vec4(0,0,1,1),
+		glm::vec4(0,0,1,1), glm::vec4(0,0,1,1) };
+	glUniform4fv(gArea, 8, (GLfloat*)areas);
 	checkGLError();
 
 	if (!loadTexture(DEFAULT_TEX, defaultTex))
@@ -71,6 +83,7 @@ ParticleBuffer ParticleShader::genBuffer(size_t nVerts)
 	glEnableVertexAttribArray(2);
 	glEnableVertexAttribArray(3);
 	glEnableVertexAttribArray(4);
+	glEnableVertexAttribArray(5);
 	//96
 	// create a vertex buffer object (VBO) id
 	glGenBuffers(1, &buff.gVertBuf);
@@ -93,6 +106,9 @@ ParticleBuffer ParticleShader::genBuffer(size_t nVerts)
 
 	GLuint vertexBlendTex = glGetAttribLocation(gShaderProgram, "TexBlend");
 	glVertexAttribPointer(vertexBlendTex, 4, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), BUFFER_OFFSET(40));
+
+	GLuint vertexAreaTex = glGetAttribLocation(gShaderProgram, "TexArea");
+	glVertexAttribPointer(vertexAreaTex, 4, GL_INT, GL_FALSE, sizeof(GPUParticle), BUFFER_OFFSET(56));
 
 	checkGLError();
 	return buff;
