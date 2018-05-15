@@ -9,6 +9,7 @@
 #include "../Timelines/ParticleBlocks/ColorBlock.h"
 #include "../Timelines/ParticleBlocks/RotationBlock.h"
 #include "../Timelines/ParticleBlocks/ForceBlock.h"
+#include "../Timelines/ParticleBlocks/ConstantForce.h"
 #include "../Timelines/ParticleBlocks/GravityBlock.h"
 #include "../Timelines/ParticleBlocks/TextureFadeBlock.h"
 
@@ -30,7 +31,7 @@ void simpleEffect(Data &data)
 
 	RotationBlock * rot = new RotationBlock(time);
 	p->addBlock(rot, 2);
-	GravityBlock *gravity = new GravityBlock(time);
+	ConstantForce *gravity = new ConstantForce(time);
 	p->addBlock(gravity, 3);
 
 	// Create an emitter

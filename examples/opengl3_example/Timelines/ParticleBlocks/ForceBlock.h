@@ -11,7 +11,7 @@ public:
 
 	/* Parameters
 	*/
-	glm::vec3 _forceDir;
+	glm::vec3 _gravityPoint;
 	float _force;
 
 	ForceBlock(TimeInterval t);
