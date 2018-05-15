@@ -114,7 +114,9 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					std::list<Timeline*>& particles = data->getParticleTimelines();
 					for (auto& p : particles)
 					{
-						if (ImGui::Selectable(p->_name.c_str(), timeline->_particleLink == p))
+						ss.str("");
+						ss << p->_name.c_str() << std::setw(30 - p->_name.length()) << "";
+						if (ImGui::Selectable(ss.str().c_str(), timeline->_particleLink == p))
 							timeline->_particleLink = p;
 					}
 					ImGui::EndMenu();
