@@ -1,4 +1,5 @@
 #include "GLFuncs.h"
+#include "../Other/Constants.h"
 #include <exception>
 #include <fstream>
 #include <iostream>
@@ -102,12 +103,14 @@ GLuint loadShader(const char* vertexShader, const char* geomShader, const char* 
 
 bool loadTexture(const char* texFile, GLuint &tex)
 {
+	std::string filePath(TEX_PATH);
+	filePath += texFile;
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
 	// load and generate the texture
 	int width, height, nrChannels;
-	stbi_uc *data = stbi_load(texFile, &width, &height, &nrChannels, 4);
+	stbi_uc *data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 4);
 	GLenum format = nrChannels == 4 ? GL_RGBA : GL_RGB;
 	switch (nrChannels)
 	{

@@ -19,6 +19,7 @@ const static size_t PARTICLES_EMITTED_MAX = 1000;
 
 
 const static char* DEFAULT_TEX = "error.png";
+const static char* TEX_PATH = "Content/";
 
 
 const float PI = 3.14159265359f;
