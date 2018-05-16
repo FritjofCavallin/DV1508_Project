@@ -19,6 +19,8 @@ public:
 	int getEmitterCount();
 	int getOpenCount();
 
+	Block* _selectedBlock = nullptr;
+
 	// Add a particle timeline. If index >= 0, insert at specified index and push existing timelines back. If index < 0, insert at end.
 	void addParticleTimeline(Timeline* particleTimeline, int index = -1);
 	// Add an emitter timeline. If index >= 0, insert at specified index and push existing timelines back. If index < 0, insert at end.

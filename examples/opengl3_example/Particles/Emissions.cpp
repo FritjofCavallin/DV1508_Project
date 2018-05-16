@@ -72,7 +72,7 @@ void Emission::updateParticle(unsigned int index)
 	float particleTime = _effect->elapsedSince(_particleInfo[index]._spawnTime);
 
 	//Kill particle
-	if (particleTime >= (ref ? ref->_time.duration() : 5.f))
+	if (particleTime >= (ref ? ref->_timeTotal.duration() : 5.f))
 	{
 		incrementCycleBegin();
 		return;
@@ -113,7 +113,7 @@ void Emission::updateParticles()
 void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime, float deltaT)
 {
 	float duration = _emitter->_particleLink ?
-		_emitter->_particleLink->_time.duration() :
+		_emitter->_particleLink->_timeTotal.duration() :
 		PARTICLE_DEFAULT_DUR;
 
 	float lerp = std::fmaxf(0, (blockTime - deltaT * 0.5f) / duration);

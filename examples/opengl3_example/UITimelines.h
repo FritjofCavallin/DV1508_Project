@@ -16,6 +16,8 @@ private:
 	ImVec2					_moveDist;
 	std::vector<BlockInfo>*	_blockInfos[3];
 
+	bool					_onMenuBar = false;
+
 public:
 	UITimelines(Data* data);
 	virtual ~UITimelines();

@@ -30,7 +30,7 @@ void ParticleEffect::update()
 {
 	if (!_timeline) return;
 
-	float effectTime = std::fmodf(_time, _timeline->_time.duration());
+	float effectTime = std::fmodf(_time, _timeline->_timeTotal.duration());
 	BlockList list = _timeline->fetchBlocks(effectTime);
 
 	// For every active emitter: spawn particles
@@ -49,8 +49,8 @@ void ParticleEffect::update()
 			_emitters[eBlock] = e;
 		}
 		// Remap time from effect time to time on the emitter scale:
-		float timeRemap = emitter->_time.duration() / eBlock->_time.duration();
-		float emitterTime = (effectTime - eBlock->_time._startTime)  /  eBlock->_time.duration() * emitter->_time.duration();
+		float timeRemap = emitter->_timeTotal.duration() / eBlock->_time.duration();
+		float emitterTime = (effectTime - eBlock->_time._startTime)  /  eBlock->_time.duration() * emitter->_timeTotal.duration();
 		e->spawnParticles(emitterTime, EMIT_STEP * timeRemap);
 	}
 
