@@ -26,6 +26,7 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 
 	if(currBlock){
 		//show block properties
+		currBlock->DrawProperties();
 	}
 	else{
 		//show help prompt
@@ -64,8 +65,6 @@ std::string Properties::CenterString(std::string base, int comp){
 
 	return newStr;
 }
-
-
 
 //VS_Text
 void Properties::Style_VS_Text_s(){

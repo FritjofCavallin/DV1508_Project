@@ -18,3 +18,7 @@ void TextureFadeBlock::applyParticle(float emittTime, Particle &part, GPUParticl
 {
 	gpuPart._texBlend[_texSlot] = 1.f;
 }
+
+void TextureFadeBlock::DrawProperties(){
+
+}

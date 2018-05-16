@@ -24,3 +24,7 @@ void ForceBlock::applyParticle(float emitterTime, Particle &part, GPUParticle &g
 {
 	part._velocity += _gravityPoint * _force *  EMIT_STEP / _time.duration();
 }
+
+void ForceBlock::DrawProperties(){
+
+}
