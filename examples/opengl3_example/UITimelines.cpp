@@ -372,17 +372,17 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				if (io.KeyCtrl)  // Pressing CTRL
 				{
 					// Zooming
-					float zoomSpeed = 0.9;
+					float zoomSpeed = 0.9f;
 					float center = start + half;
 					if (io.MouseWheel > 0)  //Zooming in
 					{
-						half *= 0.93;
+						half *= 0.93f;
 						start = center - half;
 						end = center + half;
 					}
 					else if (io.MouseWheel < 0)  //Zooming out
 					{
-						half *= 1.07;
+						half *= 1.07f;
 						start = std::max(center - half, 0.f);
 						end = std::min(center + half, timeline->_timeTotal._endTime);
 					}

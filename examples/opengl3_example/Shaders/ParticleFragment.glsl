@@ -11,12 +11,12 @@ uniform vec4 area[8];
 in vec2 Vertex_UV;
 flat in vec4 Vertex_Color;
 flat in vec4 Tex_Blend;
-flat in ivec4 Tex_Area;
+flat in uvec4 Tex_Area;
 out vec4 FragColor;
 
 /* Transform uv to local tex zone
 */
-vec2 areaTrans(vec2 uv, int i)
+vec2 areaTrans(vec2 uv, uint i)
 {
   return area[i].xy + uv * area[i].zw;
 }
@@ -35,6 +35,5 @@ void main (void)
   colOut *= mix(vec4(1.f),texture(textures1, areaTrans(uv, Tex_Area.y)).rgba, Tex_Blend.y);
   colOut *= mix(vec4(1.f),texture(textures2, areaTrans(uv, Tex_Area.z)).rgba, Tex_Blend.z);
   colOut *= mix(vec4(1.f),texture(textures3, areaTrans(uv, Tex_Area.w)).rgba, Tex_Blend.w);
-
   FragColor = colOut;
 }

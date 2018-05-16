@@ -15,7 +15,7 @@ struct GPUParticle
 	glm::vec4 _texBlend;
 	/* Indices to area arrays:
 	*/
-	glm::ivec4 _texArea;
+	unsigned char _texArea[4];
 };
 
 /* Container for particle info

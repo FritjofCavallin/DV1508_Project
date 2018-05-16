@@ -143,7 +143,10 @@ void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float block
 
 		gpuP._rotation = glm::mix(param._minRotation, param._maxRotation, randomFloat());
 
-		gpuP._texArea = glm::ivec4(0);
+		gpuP._texArea[0] = 0;
+		gpuP._texArea[1] = 0;
+		gpuP._texArea[2] = 0;
+		gpuP._texArea[3] = 0;
 
 		// Apply emitter blocks
 		for (unsigned int ii = 0; ii < active._size; ii++)

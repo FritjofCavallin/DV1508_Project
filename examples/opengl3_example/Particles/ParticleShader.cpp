@@ -54,10 +54,9 @@ void ParticleShader::load()
 
 
 	const glm::vec4 areas[8] = {
-		glm::vec4(0,0,1,1), glm::vec4(0,0,1,1),
-		glm::vec4(0,0,1,1), glm::vec4(0,0,1,1),
-		glm::vec4(0,0,1,1), glm::vec4(0,0,1,1),
-		glm::vec4(0,0,1,1), glm::vec4(0,0,1,1) };
+		glm::vec4(0,0,1,1), 
+		glm::vec4(0,0,0.5f,0.5f), glm::vec4(0.5f,0.f,0.5f,0.5f), glm::vec4(0,0.5f,0.5f,0.5f), glm::vec4(0.5f,0.5f,0.5f,0.5f), 
+		glm::vec4(0,0,1,1), glm::vec4(0,0,1,1), glm::vec4(0,0,1,1) };
 	glUniform4fv(gArea, 8, (GLfloat*)areas);
 	checkGLError();
 
@@ -108,7 +107,7 @@ ParticleBuffer ParticleShader::genBuffer(size_t nVerts)
 	glVertexAttribPointer(vertexBlendTex, 4, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), BUFFER_OFFSET(40));
 
 	GLuint vertexAreaTex = glGetAttribLocation(gShaderProgram, "TexArea");
-	glVertexAttribPointer(vertexAreaTex, 4, GL_INT, GL_FALSE, sizeof(GPUParticle), BUFFER_OFFSET(56));
+	glVertexAttribIPointer(vertexAreaTex, 4, GL_UNSIGNED_BYTE, sizeof(GPUParticle), BUFFER_OFFSET(56));
 
 	checkGLError();
 	return buff;
