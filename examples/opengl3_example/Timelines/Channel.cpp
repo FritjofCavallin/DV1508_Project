@@ -1,4 +1,8 @@
 #include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
+#include <vector>
 
 #include "Channel.h"
 
@@ -31,12 +35,18 @@ void Channel::correctBlockDuration(Block* draggedBlock, TimeInterval timelineExt
 		if (left)
 		{
 			if (draggedBlock->_time._startTime < _data[i]->_time._endTime && draggedBlock->_time._endTime >= _data[i]->_time._endTime)
+			{
+				_data[i]->_time._endTime = std::fmaxf(draggedBlock->_time._startTime, _data[i]->_time._startTime + minBlockDuration);
 				draggedBlock->_time._startTime = _data[i]->_time._endTime;
+			}
 		}
 		else
 		{
 			if (draggedBlock->_time._endTime > _data[i]->_time._startTime && draggedBlock->_time._startTime <= _data[i]->_time._startTime)
+			{
+				_data[i]->_time._startTime = std::fminf(draggedBlock->_time._endTime, _data[i]->_time._endTime - minBlockDuration);
 				draggedBlock->_time._endTime = _data[i]->_time._startTime;
+			}
 		}
 	}
 
