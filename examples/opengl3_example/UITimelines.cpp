@@ -241,6 +241,9 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			// Starts moving and closes the adding menu
 			if (abs(_moveDist.x) > 20 || abs(_moveDist.y) > 20)
 			{
+				float start = timeline->_timeShown._startTime;
+				float end = timeline->_timeShown._endTime;
+				TimeInterval time = TimeInterval(start, end);
 				switch (timeline->_type)
 				{
 				case type::Effect:
@@ -251,7 +254,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					{
 						if (index == _holdingBlockId)
 						{
-							timeline->_movingBlock = new EffectBlock(et, TimeInterval());
+							timeline->_movingBlock = new EffectBlock(et, time);
 							break;
 						}
 					}
@@ -261,13 +264,13 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					switch (_holdingBlockId)
 					{
 					case 0:
-						timeline->_movingBlock = new BoxVolumeBlock(TimeInterval());
+						timeline->_movingBlock = new BoxVolumeBlock(time);
 						break;
 					case 1:
-						timeline->_movingBlock = new SpawnBlock(TimeInterval());
+						timeline->_movingBlock = new SpawnBlock(time);
 						break;
 					case 2:
-						timeline->_movingBlock = new TextureBlock(TimeInterval(), "", -1);
+						timeline->_movingBlock = new TextureBlock(time, "", -1);
 						break;
 					}
 					break;
@@ -275,25 +278,25 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					switch (_holdingBlockId)
 					{
 					case 0:
-						timeline->_movingBlock = new ColorBlock(TimeInterval());
+						timeline->_movingBlock = new ColorBlock(time);
 						break;
 					case 1:
-						timeline->_movingBlock = new ConstantForce(TimeInterval());
+						timeline->_movingBlock = new ConstantForce(time);
 						break;
 					case 2:
-						timeline->_movingBlock = new ForceBlock(TimeInterval());
+						timeline->_movingBlock = new ForceBlock(time);
 						break;
 					case 3:
-						timeline->_movingBlock = new GravityBlock(TimeInterval());
+						timeline->_movingBlock = new GravityBlock(time);
 						break;
 					case 4:
-						timeline->_movingBlock = new RotationBlock(TimeInterval());
+						timeline->_movingBlock = new RotationBlock(time);
 						break;
 					case 5:
-						timeline->_movingBlock = new ScaleBlock(TimeInterval());
+						timeline->_movingBlock = new ScaleBlock(time);
 						break;
 					case 6:
-						timeline->_movingBlock = new TextureFadeBlock(TimeInterval(), -1);
+						timeline->_movingBlock = new TextureFadeBlock(time, -1);
 						break;
 					}
 				}
