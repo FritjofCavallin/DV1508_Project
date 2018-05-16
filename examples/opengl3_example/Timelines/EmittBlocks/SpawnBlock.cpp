@@ -28,3 +28,7 @@ SpawnBlock::SpawnBlock(TimeInterval t, InitialEmissionParams &p)
 SpawnBlock::~SpawnBlock()
 {
 }
+
+void SpawnBlock::DrawProperties(){
+
+}

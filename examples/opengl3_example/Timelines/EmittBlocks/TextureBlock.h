@@ -17,5 +17,7 @@ public:
 	virtual ~TextureBlock();
 
 	virtual void applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart) {}
+
+	virtual void DrawProperties();
 };
 

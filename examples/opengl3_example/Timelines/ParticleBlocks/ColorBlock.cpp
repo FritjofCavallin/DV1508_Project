@@ -19,3 +19,7 @@ void ColorBlock::applyParticle(float emittTime, Particle &part, GPUParticle &gpu
 	float tRel = _time.toRelativeNor(emittTime);
 	gpuPart._color *= glm::mix(_colorBegin, _colorEnd, tRel);
 }
+
+void ColorBlock::DrawProperties(){
+
+}
