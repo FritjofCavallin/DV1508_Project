@@ -15,5 +15,7 @@ public:
 	virtual ~BoxVolumeBlock();
 
 	virtual void applyEmitter(Particle &part, GPUParticle &gpuPart);
+
+	virtual void DrawProperties();
 };
 

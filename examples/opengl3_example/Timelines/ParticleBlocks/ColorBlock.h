@@ -15,5 +15,7 @@ public:
 	virtual ~ColorBlock();
 
 	virtual void applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart);
+
+	virtual void DrawProperties();
 };
 

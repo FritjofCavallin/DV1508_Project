@@ -20,5 +20,7 @@ public:
 	virtual ~GravityBlock();
 
 	virtual void applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart);
+
+	virtual void DrawProperties();
 };
 

@@ -13,6 +13,9 @@ struct GPUParticle
 	glm::vec2 _size;
 	float _rotation;
 	glm::vec4 _texBlend;
+	/* Indices to area arrays:
+	*/
+	glm::ivec4 _texArea;
 };
 
 /* Container for particle info

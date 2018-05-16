@@ -25,3 +25,7 @@ void GravityBlock::applyParticle(float emitterTime, Particle &part, GPUParticle 
 	// Accelerate toward the gravity point
 	part._velocity += glm::normalize(_gravityPoint - gpuPart._position) * _gravity *  EMIT_STEP;
 }
+
+void GravityBlock::DrawProperties(){
+
+}

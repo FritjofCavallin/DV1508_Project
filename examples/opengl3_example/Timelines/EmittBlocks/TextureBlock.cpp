@@ -16,3 +16,7 @@ TextureBlock::TextureBlock(TimeInterval t, const char* fileName, unsigned int te
 TextureBlock::~TextureBlock()
 {
 }
+
+void TextureBlock::DrawProperties(){
+
+}

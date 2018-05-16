@@ -25,9 +25,11 @@ public:
 	*/
 	type::Timeline typeFit() { return _type; };
 
-
 	virtual void applyParticle(float emitterTime, Particle &part, GPUParticle &gpuPart) {};
 	virtual void applyEmitter(Particle &part, GPUParticle &gpuPart) {};
+
+	//should be pure virtual
+	virtual void DrawProperties(){};
 
 	// Used by UI
 	bool draggingLeft = false;

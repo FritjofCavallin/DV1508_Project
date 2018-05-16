@@ -18,3 +18,7 @@ void ConstantForce::applyParticle(float emitterTime, Particle &part, GPUParticle
 {
 	part._velocity += _forceDir * _gravity *  EMIT_STEP;
 }
+
+void ConstantForce::DrawProperties(){
+
+}

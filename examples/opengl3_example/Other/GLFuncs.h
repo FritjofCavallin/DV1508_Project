@@ -5,6 +5,7 @@
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
 void checkGLError();
+void checkGLError(const char * msg);
 
 
 GLuint loadShader(const char* vertexShader, const char* fragmentShader);

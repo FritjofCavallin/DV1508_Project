@@ -18,3 +18,7 @@ void ScaleBlock::applyParticle(float emittTime, Particle &part, GPUParticle &gpu
 {
 	gpuPart._size *= glm::mix(_scaleBegin, _scaleEnd, _time.toRelativeNor(emittTime));
 }
+
+void ScaleBlock::DrawProperties(){
+
+}
