@@ -3,9 +3,9 @@
 #include "Timeline.h"
 
 Timeline::Timeline(type::Timeline type, const std::string &name, TimeInterval t)
-	: _type(type), _name(name), _particleLink(nullptr), _time(t)
+	: _type(type), _name(name), _particleLink(nullptr), _timeTotal(t), _timeShown(t)
 {
-		_channel.push_back(new Channel());
+	_channel.push_back(new Channel());
 }
 
 
@@ -29,8 +29,8 @@ bool Timeline::addBlock(Block *b, unsigned int channel, bool insertChannel)
 		std::cerr << "Tried to add a block to a non-matching timeline\n";
 		return false; 
 	}
-	if (!(_time._startTime <= b->_time._startTime && _time._startTime <= b->_time._endTime &&
-		_time._endTime >= b->_time._startTime && _time._endTime >= b->_time._endTime))
+	if (!(_timeTotal._startTime <= b->_time._startTime && _timeTotal._startTime <= b->_time._endTime &&
+		_timeTotal._endTime >= b->_time._startTime && _timeTotal._endTime >= b->_time._endTime))
 	{
 		std::cerr << "Block time interval is not contained within timeline time interval\n";
 		return false;

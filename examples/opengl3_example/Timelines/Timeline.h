@@ -45,7 +45,8 @@ public:
 	Timeline *_particleLink;
 
 	/* Time interval in absolute values related to parented timelines */
-	TimeInterval _time;
+	TimeInterval _timeTotal;
+	TimeInterval _timeShown;
 
 	Block* _movingBlock = nullptr;
 	

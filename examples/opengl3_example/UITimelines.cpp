@@ -80,7 +80,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 	std::string info;
 	for (auto e : data->getEmitterTimelines())
 	{
-		info = "Length: " + std::to_string(e->_time.duration()) + " s\nChannels: " + std::to_string(e->_channel.size()) + "\nLinked particle:\n   ";
+		info = "Length: " + std::to_string(e->_timeTotal.duration()) + " s\nChannels: " + std::to_string(e->_channel.size()) + "\nLinked particle:\n   ";
 		if (e->_particleLink != nullptr)
 			info += e->_particleLink->_name;
 		else
@@ -307,7 +307,50 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		}
 		else  // Showing the timeline as usual
 		{
-			float timelineDuration = timeline->_time.duration();
+			// Check if the mouse if above the timeline
+			if (ImGui::IsWindowHovered())
+			{
+				float& start = timeline->_timeShown._startTime;
+				float& end = timeline->_timeShown._endTime;
+				float half = (end - start) / 2;
+				if (io.KeyCtrl)  // Pressing CTRL
+				{
+					// Zooming
+					float zoomSpeed = 0.9;
+					float center = start + half;
+					if (io.MouseWheel > 0)  //Zooming in
+					{
+						half *= 0.93;
+						start = center - half;
+						end = center + half;
+					}
+					else if (io.MouseWheel < 0)  //Zooming out
+					{
+						half *= 1.07;
+						start = std::max(center - half, 0.f);
+						end = std::min(center + half, timeline->_timeTotal._endTime);
+					}
+				}
+				else
+				{
+					// Panning
+					float speed = half / 12.f;
+					if (io.MouseWheel > 0)
+					{
+						end += speed;
+						end = std::min(end, timeline->_timeTotal._endTime);
+						start = end - 2 * half;
+					}
+					else if (io.MouseWheel < 0)
+					{
+						start -= speed;
+						start = std::max(start, 0.f);
+						end = start + 2 * half;
+					}
+				}
+			}
+
+			float timelineShownDuration = timeline->_timeShown.duration();
 
 			// For every channel
 			for (size_t c = 0; c < timeline->_channel.size(); ++c)
@@ -318,12 +361,12 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				{
 					Block* block = timeline->_channel[c]->_data[b];
 
-					float blockStart = timeline->_channel[c]->_data[b]->_time._startTime - timeline->_time._startTime;
-					float blockEnd = timeline->_channel[c]->_data[b]->_time._endTime - timeline->_time._startTime;
+					float blockStart = (block->_time._startTime - timeline->_timeTotal._startTime) - timeline->_timeShown._startTime;
+					float blockEnd = block->_time._endTime - timeline->_timeShown._startTime;
 
-					float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
-					float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
-
+					float blockStartPos = ImGui::GetContentRegionAvail().x * (blockStart) / timelineShownDuration;
+					float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineShownDuration;
+					
 					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, handleLeftColor);
 					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, handleLeftActiveColor);
 					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, handleLeftHoveredColor);
@@ -365,30 +408,26 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 			// Draw vertical lines at bottom
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
-			float timeStart = timeline->_time._startTime;
-			float timeEnd = timeline->_time._endTime;
-			float duration = timeline->_time.duration();
-			float percent = 1.f / duration * timelineWidth;
+			float timeStart = timeline->_timeShown._startTime;
+			float timeEnd = timeline->_timeShown._endTime;
+			float duration = timeEnd - timeStart;
 			float secLen = timelineWidth / duration;
-			float curr = ((int)(timeStart * 100 + 10) / 100.f);
+			float curr = -timeStart;
 			while (curr < timeEnd)
 			{
-				float x = pos.x + 3 + (curr - timeStart) * percent;
+				float x = pos.x + 3 + (curr) / duration * timelineWidth;
 				float y = pos.y + 19 + (timelineHeight + 3) * (i + 1);
-				ImGui::SetCursorPos(ImVec2(x - pos.x - 5, timelineHeight - 15 - 1 * i));
-				ImGui::Text("%1.0f", curr);
+				ImGui::SetCursorPos(ImVec2(x - pos.x - 5, timelineHeight - 15 - i));
+				ImGui::Text("%d", (int)(curr + timeStart + 0.9));
 				draw_list->AddLine(ImVec2(x, y), ImVec2(x, y - 5), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
 				// 1/10
 				for (unsigned int d = 0; d < 10; ++d)
 				{
-					draw_list->AddLine(ImVec2(x + secLen / 10 * d, y), ImVec2(x + secLen / 10 * d, y - 2), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
+					draw_list->AddLine(ImVec2(x + secLen / 10 * d, y), ImVec2(x + secLen / 10 * d, y - 4), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
 					// 1/100
-					if (duration < 2.f)
+					for (unsigned int h = 1; h < 10; ++h)
 					{
-						for (unsigned int h = 1; h < 10; ++h)
-						{
-							draw_list->AddLine(ImVec2(x + secLen / 10 * d + secLen / 100 * h, y), ImVec2(x + secLen / 10 * d + secLen / 100 * h, y - 1), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
-						}
+						draw_list->AddLine(ImVec2(x + secLen / 10 * d + secLen / 100 * h, y), ImVec2(x + secLen / 10 * d + secLen / 100 * h, y - 1), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
 					}
 				}
 				curr += 1.0f;
@@ -412,13 +451,14 @@ void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int ch
 	bool* draggingBool = left ? &(block->draggingLeft) : &(block->draggingRight);
 	float* editedTimeValue = left ? &(block->_time._startTime) : &(block->_time._endTime);
 	ImGuiIO& io = ImGui::GetIO();
-	float timelineDuration = timeline->_time.duration();
 
-	float blockStart = block->_time._startTime - timeline->_time._startTime;
-	float blockEnd = block->_time._endTime - timeline->_time._startTime;
+	float timelineShownDuration = timeline->_timeShown.duration();
 
-	float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
-	float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
+	float blockStart = (block->_time._startTime - timeline->_timeTotal._startTime) - timeline->_timeShown._startTime;
+	float blockEnd = block->_time._endTime - timeline->_timeShown._startTime;
+
+	float blockStartPos = ImGui::GetContentRegionAvail().x * (blockStart) / timelineShownDuration;// + timeline->_timeShown._startTime * 2;
+	float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineShownDuration;
 
 	dragDistance = ImGui::GetMouseDragDelta(0);
 
@@ -432,8 +472,8 @@ void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int ch
 		ImGui::SetMouseCursor(4);
 
 		// Update start time
-		*editedTimeValue = (((block->dragHandleStart + dragDistance.x) * timelineDuration)) / ImGui::GetContentRegionAvail().x + timeline->_time._startTime;
-		timeline->_channel[channelIndex]->correctBlockDuration(block, timeline->_time, left);
+		*editedTimeValue = (((block->dragHandleStart + dragDistance.x) * timelineShownDuration)) / ImGui::GetContentRegionAvail().x + timeline->_timeShown._startTime;
+		timeline->_channel[channelIndex]->correctBlockDuration(block, timeline->_timeTotal, left);
 	}
 	if (left)
 		ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * channelIndex));
@@ -491,12 +531,12 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 		// Place block. If placement fails, restore its position
 		if (!timeline->addBlock(timeline->_movingBlock, (int)hoveredChannel, insertChannel))
 		{
-			float timelineDuration = timeline->_time.duration();
+			float timelineDuration = timeline->_timeTotal.duration();
 			TimeInterval* movingBlockTime = &(timeline->_movingBlock->_time);
-			float blockStart = movingBlockTime->_startTime - timeline->_time._startTime;
-			float blockEnd = movingBlockTime->_endTime - timeline->_time._startTime;
+			float blockStart = movingBlockTime->_startTime - timeline->_timeTotal._startTime;
+			float blockEnd = movingBlockTime->_endTime - timeline->_timeTotal._startTime;
 
-			movingBlockTime->_startTime = (((timeline->_movingBlock->dragBodyStart + dragDistance.x) * timelineDuration)) / ImGui::GetContentRegionAvail().x + timeline->_time._startTime;
+			movingBlockTime->_startTime = (((timeline->_movingBlock->dragBodyStart + dragDistance.x) * timelineDuration)) / ImGui::GetContentRegionAvail().x + timeline->_timeTotal._startTime;
 			movingBlockTime->_endTime = movingBlockTime->_startTime + blockEnd - blockStart;
 
 			// If placing fails again, delete block
@@ -510,28 +550,32 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 	// Update moving block
 	if (timeline->_movingBlock)
 	{
-		float timelineDuration = timeline->_time.duration();
+		//float timelineDuration = timeline->_timeTotal.duration();
 
 		TimeInterval* movingBlockTime = &(timeline->_movingBlock->_time);
-		float blockStart = movingBlockTime->_startTime - timeline->_time._startTime;
-		float blockEnd = movingBlockTime->_endTime - timeline->_time._startTime;
 
-		float blockStartPos = ImGui::GetContentRegionAvail().x * blockStart / timelineDuration;
-		float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineDuration;
+		float timelineShownDuration = timeline->_timeShown.duration();
 
-		movingBlockTime->_startTime = (((timeline->_movingBlock->dragBodyStart + dragDistance.x) * timelineDuration)) / ImGui::GetContentRegionAvail().x + timeline->_time._startTime;
+		float blockStart = (timeline->_movingBlock->_time._startTime - timeline->_timeTotal._startTime) - timeline->_timeShown._startTime;
+		float blockEnd = timeline->_movingBlock->_time._endTime - timeline->_timeShown._startTime;
+
+		float blockStartPos = ImGui::GetContentRegionAvail().x * (blockStart) / timelineShownDuration;
+		float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineShownDuration;
+
+		movingBlockTime->_startTime = (((timeline->_movingBlock->dragBodyStart + dragDistance.x) * timelineShownDuration)) 
+										/ ImGui::GetContentRegionAvail().x + timeline->_timeShown._startTime;
 		movingBlockTime->_endTime = movingBlockTime->_startTime + blockEnd - blockStart;
 
 		// Correct if outside timeline interval
-		if (movingBlockTime->_startTime < timeline->_time._startTime)
+		if (movingBlockTime->_startTime < timeline->_timeTotal._startTime)
 		{
-			movingBlockTime->_startTime = timeline->_time._startTime;
-			movingBlockTime->_endTime = timeline->_time._startTime + blockEnd - blockStart;
+			movingBlockTime->_startTime = timeline->_timeTotal._startTime;
+			movingBlockTime->_endTime = timeline->_timeTotal._startTime + blockEnd - blockStart;
 		}
-		if (movingBlockTime->_endTime > timeline->_time._endTime)
+		if (movingBlockTime->_endTime > timeline->_timeTotal._endTime)
 		{
-			movingBlockTime->_endTime = timeline->_time._endTime;
-			movingBlockTime->_startTime = timeline->_time._endTime - (blockEnd - blockStart);
+			movingBlockTime->_endTime = timeline->_timeTotal._endTime;
+			movingBlockTime->_startTime = timeline->_timeTotal._endTime - (blockEnd - blockStart);
 		}
 
 		// Draw block
