@@ -122,7 +122,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 			std::string text;
 			// Menu for linking particle to emitter
-			if (timeline->_type == type::Emitter && _addingNewBlock != i)
+			if (timeline->_type == type::Emitter && _addingNewBlock != i && timeline->_movingBlock == nullptr)
 			{
 				ImGui::SameLine(300);
 				ImGui::Text("Linked particle: ");
@@ -147,68 +147,75 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				}
 			}
 
+			// Info text when moving a block
+			if (timeline->_movingBlock != nullptr)
+			{
+				ImGui::SameLine(timelineWidth / 2 - 40);
+				ImGui::Text("Drag here to delete block");
+			}
+
 			// Button for adding block
-			text = " Add new ";
-			if (_addingNewBlock == i)
-				text = " Cancel  ";
-			ImGui::SameLine(timelineWidth - 300);
-			if (ImGui::Button(text.c_str()))
+			if (timeline->_movingBlock == nullptr)
 			{
+				text = " Add new ";
 				if (_addingNewBlock == i)
-					_addingNewBlock = -1;
-				else
-					_addingNewBlock = i;
-			}
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::BeginTooltip();
-				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-				ImGui::TextUnformatted("Add new block to the timeline");
-				ImGui::PopTextWrapPos();
-				ImGui::EndTooltip();
-			}
-
-			// Set timeline duration
-			ImGui::SameLine(timelineWidth - 180);
-			ImGui::Text("Time:");
-			ImGui::PushItemWidth(50);
-			if (ImGui::InputFloat("", &timeline->_timeTotal._endTime, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue))
-			{
-				timeline->_timeShown._startTime = 0.f;
-				timeline->_timeShown._endTime = timeline->_timeTotal._endTime;
-				// For every channel
-				for (int c = timeline->_channel.size() - 1; c >= 0; --c)
+					text = " Cancel  ";
+				ImGui::SameLine(timelineWidth - 300);
+				if (ImGui::Button(text.c_str()))
 				{
-					// For every block in channel
-					for (int b = timeline->_channel[c]->_data.size() - 1; b >= 0; --b)
-					{
-						Block* block = timeline->_channel[c]->_data[b];
+					if (_addingNewBlock == i)
+						_addingNewBlock = -1;
+					else
+						_addingNewBlock = i;
+				}
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+					ImGui::TextUnformatted("Add new block to the timeline");
+					ImGui::PopTextWrapPos();
+					ImGui::EndTooltip();
+				}
+			}
 
-						// Block is no longer within timeline
-						if (block->_time._startTime > timeline->_timeTotal._endTime)
+
+			if (_addingNewBlock != i && timeline->_movingBlock == nullptr)
+			{
+				// Set timeline duration
+				ImGui::SameLine(timelineWidth - 180);
+				ImGui::Text("Time:");
+				ImGui::PushItemWidth(50);
+				if (ImGui::InputFloat("", &timeline->_timeTotal._endTime, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue))
+				{
+					timeline->_timeShown._startTime = 0.f;
+					timeline->_timeShown._endTime = timeline->_timeTotal._endTime;
+					// For every channel
+					for (int c = timeline->_channel.size() - 1; c >= 0; --c)
+					{
+						// For every block in channel
+						for (int b = timeline->_channel[c]->_data.size() - 1; b >= 0; --b)
 						{
-							timeline->_channel[c]->_data.erase(timeline->_channel[c]->_data.begin() + b);
-						}
-						else
-						{
-							block->_time._endTime = std::min(block->_time._endTime, timeline->_timeTotal._endTime);
+							Block* block = timeline->_channel[c]->_data[b];
+
+							// Block is no longer within timeline
+							if (block->_time._startTime > timeline->_timeTotal._endTime)
+								timeline->_channel[c]->_data.erase(timeline->_channel[c]->_data.begin() + b);
+							else
+								block->_time._endTime = std::min(block->_time._endTime, timeline->_timeTotal._endTime);
 						}
 					}
 				}
-			}
-			ImGui::PopItemWidth();
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::BeginTooltip();
-				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-				ImGui::TextUnformatted("Set the duration of the timeline");
-				ImGui::PopTextWrapPos();
-				ImGui::EndTooltip();
-			}
+				ImGui::PopItemWidth();
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+					ImGui::TextUnformatted("Set the duration of the timeline");
+					ImGui::PopTextWrapPos();
+					ImGui::EndTooltip();
+				}
 
-			// Button for closing the timeline
-			if (_addingNewBlock != i)
-			{
+				// Button for closing the timeline
 				ImGui::SameLine(timelineWidth - 40);
 				if (ImGui::Button("X", ImVec2(40, 0)))
 				{
@@ -549,7 +556,7 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 	// Get mouse position relative to window and clamp it to within timeline channels
 	ImVec2 mouseWindowPos = ImVec2(io.MousePos.x - ImGui::GetWindowPos().x, io.MousePos.y - ImGui::GetWindowPos().y);
 	mouseWindowPos.x = std::min(std::max(mouseWindowPos.x, 0.0f), ImGui::GetWindowWidth());
-	mouseWindowPos.y = std::min(std::max(mouseWindowPos.y, menubarHeight), ImGui::GetWindowHeight());
+	mouseWindowPos.y = std::min(std::max(mouseWindowPos.y, 0.f), ImGui::GetWindowHeight());
 	float hoveredChannel = ((mouseWindowPos.y - menubarHeight) / (ImGui::GetWindowHeight() - menubarHeight)) * timeline->_channel.size();
 	if (((unsigned int)hoveredChannel) >= timeline->_channel.size())
 		hoveredChannel = (float)(timeline->_channel.size() - 1);
@@ -577,8 +584,13 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 	// If mouse button is not held
 	if (timeline->_movingBlock && io.MouseDownDuration[0] < 0.0f)
 	{
+		// Delete block if the mouse cursor is on the menu bar
+		if (_onMenuBar)
+		{
+			delete timeline->_movingBlock;
+		}
 		// Place block. If placement fails, restore its position
-		if (!timeline->addBlock(timeline->_movingBlock, (int)hoveredChannel, insertChannel))
+		else if (!timeline->addBlock(timeline->_movingBlock, (int)hoveredChannel, insertChannel))
 		{
 			float timelineDuration = timeline->_timeTotal.duration();
 			TimeInterval* movingBlockTime = &(timeline->_movingBlock->_time);
@@ -630,6 +642,18 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 		// Draw block
 		float cursorY = std::min(std::max(mouseWindowPos.y - timeline->_movingBlock->dragBodyYOffset, menubarHeight), ImGui::GetWindowHeight() - channelHeight * blockHeightRatio);
 		ImGui::SetCursorPos(ImVec2(blockStartPos, cursorY));
-		if (ImGui::Button(timeline->_movingBlock->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
+		//ImGui::Text("%3.f  %3.f", io.MousePos.y, ImGui::GetWindowPos().y);
+		if (mouseWindowPos.y < 21)
+		{
+			_onMenuBar = true;
+			ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, ImVec4(1, 0, 0, 1));
+			if (ImGui::Button(timeline->_movingBlock->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
+			ImGui::PopStyleColor();
+		}
+		else
+		{
+			_onMenuBar = false;
+			if (ImGui::Button(timeline->_movingBlock->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
+		}
 	}
 }
