@@ -24,9 +24,9 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 		winSize = size;
 	}
 
-	if(currBlock){
+	if(data->_selectedBlock){
 		//show block properties
-		currBlock->DrawProperties();
+		data->_selectedBlock->DrawProperties();
 	}
 	else{
 		//show help prompt
