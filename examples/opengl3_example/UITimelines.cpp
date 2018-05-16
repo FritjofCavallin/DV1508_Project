@@ -157,9 +157,9 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			// Button for adding block
 			if (timeline->_movingBlock == nullptr)
 			{
-				text = " Add new ";
+				text = " Add block ";
 				if (_addingNewBlock == i)
-					text = " Cancel  ";
+					text = "  Cancel   ";
 				ImGui::SameLine(timelineWidth - 300);
 				if (ImGui::Button(text.c_str()))
 				{
@@ -444,7 +444,10 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					// Block main body
 					ImGui::PushID(b);
 					ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * c));
-					if (ImGui::Button(block->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
+					if (ImGui::Button(block->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) 
+					{
+						data->_selectedBlock = block;
+					}
 					if (ImGui::IsItemActive() && !timeline->_movingBlock)
 					{
 						if (dragDistance.x != 0.0f || dragDistance.y != 0.0f)
@@ -513,7 +516,7 @@ void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int ch
 	float blockStart = (block->_time._startTime - timeline->_timeTotal._startTime) - timeline->_timeShown._startTime;
 	float blockEnd = block->_time._endTime - timeline->_timeShown._startTime;
 
-	float blockStartPos = ImGui::GetContentRegionAvail().x * (blockStart) / timelineShownDuration;// + timeline->_timeShown._startTime * 2;
+	float blockStartPos = ImGui::GetContentRegionAvail().x * (blockStart) / timelineShownDuration;
 	float blockWidth = ImGui::GetContentRegionAvail().x * (blockEnd - blockStart) / timelineShownDuration;
 
 	dragDistance = ImGui::GetMouseDragDelta(0);
