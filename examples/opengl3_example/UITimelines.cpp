@@ -151,13 +151,59 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			text = " Add new ";
 			if (_addingNewBlock == i)
 				text = " Cancel  ";
-			ImGui::SameLine(timelineWidth - 200);
+			ImGui::SameLine(timelineWidth - 300);
 			if (ImGui::Button(text.c_str()))
 			{
 				if (_addingNewBlock == i)
 					_addingNewBlock = -1;
-				else 
+				else
 					_addingNewBlock = i;
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+				ImGui::TextUnformatted("Add new block to the timeline");
+				ImGui::PopTextWrapPos();
+				ImGui::EndTooltip();
+			}
+
+			// Set timeline duration
+			ImGui::SameLine(timelineWidth - 180);
+			ImGui::Text("Time:");
+			ImGui::PushItemWidth(50);
+			if (ImGui::InputFloat("", &timeline->_timeTotal._endTime, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue))
+			{
+				timeline->_timeShown._startTime = 0.f;
+				timeline->_timeShown._endTime = timeline->_timeTotal._endTime;
+				// For every channel
+				for (int c = timeline->_channel.size() - 1; c >= 0; --c)
+				{
+					// For every block in channel
+					for (int b = timeline->_channel[c]->_data.size() - 1; b >= 0; --b)
+					{
+						Block* block = timeline->_channel[c]->_data[b];
+
+						// Block is no longer within timeline
+						if (block->_time._startTime > timeline->_timeTotal._endTime)
+						{
+							timeline->_channel[c]->_data.erase(timeline->_channel[c]->_data.begin() + b);
+						}
+						else
+						{
+							block->_time._endTime = std::min(block->_time._endTime, timeline->_timeTotal._endTime);
+						}
+					}
+				}
+			}
+			ImGui::PopItemWidth();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+				ImGui::TextUnformatted("Set the duration of the timeline");
+				ImGui::PopTextWrapPos();
+				ImGui::EndTooltip();
 			}
 
 			// Button for closing the timeline
@@ -337,7 +383,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				else
 				{
 					// Panning
-					float speed = half / 12.f;
+					float speed = half / 9.f;
 					if (io.MouseWheel > 0)
 					{
 						end += speed;
