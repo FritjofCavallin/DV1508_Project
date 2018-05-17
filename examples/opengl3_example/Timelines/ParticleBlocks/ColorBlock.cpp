@@ -40,7 +40,7 @@ void ColorBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	ImGuiColorEditFlags flags = ImGuiColorEditFlags_Float | ImGuiColorEditFlags_RGB | 
 		ImGuiColorEditFlags_PickerHueBar | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_AlphaBar;
 	ImGui::PushItemWidth(-1);	//fking BS solution!
-	ImGui::ColorPicker4(" ", (float*)&color, flags, NULL);
+	ImGui::ColorPicker4("   ", (float*)&color, flags, NULL);
 
 	if(time){
 		_colorEnd.x = color.x;
