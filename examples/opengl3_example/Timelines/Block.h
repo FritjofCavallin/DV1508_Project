@@ -4,6 +4,7 @@
 #include "TimelineType.h"
 #include "../Particles/Particle.h"
 #include "TimeInterval.h"
+#include "imgui.h"
 
 /* Block in the timeline that affects a certain param in the effect. 
 */
@@ -29,7 +30,8 @@ public:
 	virtual void applyEmitter(Particle &part, GPUParticle &gpuPart) {};
 
 	//should be pure virtual
-	virtual void DrawProperties(){};
+	virtual void DrawProperties(ImVec2 pos, ImVec2 size){};
+	void DrawPropertiesHeader(ImVec2 pos, ImVec2 size);
 
 	// Used by UI
 	bool draggingLeft = false;

@@ -19,6 +19,7 @@ void RotationBlock::applyParticle(float emittTime, Particle &part, GPUParticle &
 	gpuPart._rotation += glm::mix(_angVelocityBegin, _angVelocityEnd, _time.toRelativeNor(emittTime)) * EMIT_STEP;
 }
 
-void RotationBlock::DrawProperties(){
+void RotationBlock::DrawProperties(ImVec2 pos, ImVec2 size){
+	DrawPropertiesHeader(pos, size);
 
 }

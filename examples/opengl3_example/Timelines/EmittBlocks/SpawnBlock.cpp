@@ -29,6 +29,7 @@ SpawnBlock::~SpawnBlock()
 {
 }
 
-void SpawnBlock::DrawProperties(){
+void SpawnBlock::DrawProperties(ImVec2 pos, ImVec2 size){
+	DrawPropertiesHeader(pos, size);
 
 }

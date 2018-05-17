@@ -21,6 +21,7 @@ void BoxVolumeBlock::applyEmitter(Particle &part, GPUParticle &gpuPart)
 	gpuPart._position.z += randomFloat(-1, 1) * _volumeSize.z;
 }
 
-void BoxVolumeBlock::DrawProperties(){
+void BoxVolumeBlock::DrawProperties(ImVec2 pos, ImVec2 size){
+	DrawPropertiesHeader(pos, size);
 
 }

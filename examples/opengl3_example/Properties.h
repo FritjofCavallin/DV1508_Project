@@ -10,9 +10,6 @@ public:
 	virtual ~Properties();
 	virtual void draw(ImVec2 pos, ImVec2 size);
 
-	void SelectBlock(Block* block);
-	void DeselectBlock();
-
 private:
 	ImVec2 winPos, winSize;
 	Block* currBlock;

@@ -17,6 +17,7 @@ TextureBlock::~TextureBlock()
 {
 }
 
-void TextureBlock::DrawProperties(){
+void TextureBlock::DrawProperties(ImVec2 pos, ImVec2 size){
+	DrawPropertiesHeader(pos, size);
 
 }
