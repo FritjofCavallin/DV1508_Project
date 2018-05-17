@@ -29,4 +29,18 @@ void GravityBlock::applyParticle(float emitterTime, Particle &part, GPUParticle 
 void GravityBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	DrawPropertiesHeader(pos, size);
 
+	ImGui::Text("\n    Point of gravity:");
+	ImGui::PushItemWidth(45);
+	ImGui::InputFloat("x", &_gravityPoint.x, 0, 0, 3);
+	ImGui::SameLine();
+	ImGui::InputFloat("y", &_gravityPoint.y, 0, 0, 3);
+	ImGui::SameLine();
+	ImGui::InputFloat("z", &_gravityPoint.z, 0, 0, 3);
+	ImGui::PopItemWidth();
+
+	ImGui::Text("\n   Gravitational pull:");
+	ImGui::PushItemWidth(45);
+	ImGui::Text("        ");
+	ImGui::SameLine();
+	ImGui::InputFloat(" ", &_gravity, 0, 0, 3);
 }
