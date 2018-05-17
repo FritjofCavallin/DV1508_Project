@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 
+#include "imgui.h"
 #include "Channel.h"
 
 bool Channel::isEmpty()
@@ -27,6 +28,8 @@ void Channel::correctBlockDuration(Block* draggedBlock, TimeInterval timelineExt
 		std::cerr << "Attempted to call correctBlockDuration() with a block not contained in the channel called";
 	}
 
+	ImGuiIO& io = ImGui::GetIO();
+
 	for (unsigned int i = 0; i < _data.size(); ++i)
 	{
 		if (_data[i] == draggedBlock)
@@ -36,7 +39,8 @@ void Channel::correctBlockDuration(Block* draggedBlock, TimeInterval timelineExt
 		{
 			if (draggedBlock->_time._startTime < _data[i]->_time._endTime && draggedBlock->_time._endTime >= _data[i]->_time._endTime)
 			{
-				_data[i]->_time._endTime = std::fmaxf(draggedBlock->_time._startTime, _data[i]->_time._startTime + minBlockDuration);
+				if (io.KeyCtrl)
+					_data[i]->_time._endTime = std::fmaxf(draggedBlock->_time._startTime, _data[i]->_time._startTime + minBlockDuration);
 				draggedBlock->_time._startTime = _data[i]->_time._endTime;
 			}
 		}
@@ -44,7 +48,8 @@ void Channel::correctBlockDuration(Block* draggedBlock, TimeInterval timelineExt
 		{
 			if (draggedBlock->_time._endTime > _data[i]->_time._startTime && draggedBlock->_time._startTime <= _data[i]->_time._startTime)
 			{
-				_data[i]->_time._startTime = std::fminf(draggedBlock->_time._endTime, _data[i]->_time._endTime - minBlockDuration);
+				if (io.KeyCtrl)
+					_data[i]->_time._startTime = std::fminf(draggedBlock->_time._endTime, _data[i]->_time._endTime - minBlockDuration);
 				draggedBlock->_time._endTime = _data[i]->_time._startTime;
 			}
 		}
