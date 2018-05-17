@@ -42,7 +42,7 @@ void Emission::render()
 		glActiveTexture(GL_TEXTURE0 + i);
 		GLuint texInd = _texActive[i] ? _texSlots[i] : _shader->defaultTex;
 		glBindTexture(GL_TEXTURE_2D, texInd);
-		_texActive[i] = false;
+		//_texActive[i] = false;
 	}
 	
 	
