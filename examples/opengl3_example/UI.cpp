@@ -60,6 +60,11 @@ void UI::draw(ImVec2 windowSize)
 		ImGui::MenuItem("lmnopqrstuvwxyz", nullptr, nullptr);
 		ImGui::EndMenu();
 	}
+	if (ImGui::BeginMenu("Colors"))
+	{
+
+		ImGui::EndMenu();
+	}
 	ImGui::EndMainMenuBar();
 
 	for (auto& c : _containers)

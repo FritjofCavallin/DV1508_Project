@@ -5,17 +5,10 @@
 class UITimelines : public UIContainer
 {
 private:
-	struct BlockInfo
-	{
-		std::string _name;
-		std::string _desc;
-	};
 
 	int						_addingNewBlock;
 	int						_holdingBlockId;
 	ImVec2					_moveDist;
-	std::vector<BlockInfo>*	_blockInfos[3];
-
 	bool					_onMenuBar = false;
 
 public:
@@ -41,5 +34,11 @@ private:
 
 	void drawHandle(bool left, Block* block, Timeline* timeline, int channelIndex, float channelHeight);
 	void drawDraggedBlock(Timeline* timeline, float channelHeight);
+
+	// Modifies the given color based on the modifier
+	ImVec4 MC(ImVec4 in, float mod)
+	{
+		return ImVec4(std::min(in.x + mod, 1.f), std::min(in.y + mod, 1.f), std::min(in.z + mod, 1.f), 0.7);
+	}
 };
 

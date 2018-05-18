@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
 #include <list>
+#include <algorithm>
 
+#include "imgui.h"
 #include "Timeline.h"
 
 class ParticleManager;
@@ -20,6 +22,15 @@ public:
 	int getOpenCount();
 
 	Block* _selectedBlock = nullptr;
+
+	struct BlockInfo
+	{
+		Block* _type;
+		std::string _name;
+		std::string _desc;
+		ImVec4 _color = ImVec4(1, 1, 1, 1);
+	};
+	std::vector<BlockInfo>*	_blockInfos[3];
 
 	// Add a particle timeline. If index >= 0, insert at specified index and push existing timelines back. If index < 0, insert at end.
 	void addParticleTimeline(Timeline* particleTimeline, int index = -1);
@@ -60,4 +71,9 @@ private:
 	void addTimeline(Timeline* particleTimeline, int index, std::list<Timeline*>& list, type::Timeline type);
 	void removeTimeline(int index, std::list<Timeline*>& list);
 
+	// Creates a color based on rgb
+	ImVec4 C(int r, int g, int b)
+	{
+		return ImVec4(r / 255.f, g / 255.f, b / 255.f, 0.7);
+	}
 };
