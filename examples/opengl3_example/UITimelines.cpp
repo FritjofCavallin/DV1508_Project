@@ -76,12 +76,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 		ImGuiIO& io = ImGui::GetIO();
 
-		ImVec4 color = ImVec4(0.1f, 0, 0.2f, 1);
-		if (timeline->_type == type::Emitter)
-			color = ImVec4(0, 0.2f, 0.3f, 1);
-		else if (timeline->_type == type::Effect)
-			color = ImVec4(0, 0, 0.3f, 1);
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, color);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, data->_bgColors[timeline->_type]);
 
 		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(timelineWidth, timelineHeight + (i == 0 ? 3.0f : 0.0f)), true, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar);
 

@@ -31,6 +31,7 @@ public:
 		ImVec4 _color = ImVec4(1, 1, 1, 1);
 	};
 	std::vector<BlockInfo>*	_blockInfos[3];
+	ImVec4					_bgColors[3];
 
 	// Add a particle timeline. If index >= 0, insert at specified index and push existing timelines back. If index < 0, insert at end.
 	void addParticleTimeline(Timeline* particleTimeline, int index = -1);

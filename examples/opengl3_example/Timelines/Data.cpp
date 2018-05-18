@@ -60,6 +60,10 @@ Data::Data()
 		_blockInfos[2]->push_back({ temp[i], temp[i]->visualName, temp[i]->desc, colors2[i] });
 	}
 	temp.clear();
+	
+	_bgColors[0] = ImVec4(0, 0, 0.3f, 1);
+	_bgColors[1] = ImVec4(0, 0.2f, 0.3f, 1);
+	_bgColors[2] = ImVec4(0.1f, 0, 0.2f, 1);
 }
 
 Data::~Data()

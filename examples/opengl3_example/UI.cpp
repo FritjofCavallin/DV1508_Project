@@ -62,9 +62,71 @@ void UI::draw(ImVec2 windowSize)
 	}
 	if (ImGui::BeginMenu("Colors"))
 	{
+		ImGui::Text("CONFIGURE COLORS");
+		ImGui::Separator();
+		ImGui::Separator();
+		ImGui::Text("***** Effect *****");
+		ImGui::Separator();
+		ImGui::Text("Blocks");
+		int count = 1;
+		for (auto& e : data->getEmitterTimelines())
+		{
+			ImVec4 color = ImVec4(1, 70 * count / 255.f, 0, 1);
+			ImGui::ColorEdit3(e->_name.c_str(), (float*)&color);
+			++count;
+		}
+		ImGui::Text("Background");
+		ImGui::ColorEdit3("##0", (float*)&data->_bgColors[0]);
+		ImGui::Separator();
+		ImGui::Separator();
+		ImGui::Text("***** Emitters *****");
+		ImGui::Separator();
+		ImGui::Text("Blocks");
+		for (unsigned int j = 0; j < data->_blockInfos[1]->size(); ++j)
+		{
+			std::string name = data->_blockInfos[1]->at(j)._name;
+			for (int i = name.length() - 1; i >= 0; --i)
+			{
+				if (name[i] == ' ')
+					name.erase(i, 1);
+				else if (name[i] == '\n')
+				{
+					name.erase(i, 1);
+					name.insert(name.begin() + i, ' ');
+				}
+			}
+			ImGui::ColorEdit3(name.c_str(), (float*)&data->_blockInfos[1]->at(j)._color);
+		}
+		ImGui::Text("Background");
+		ImGui::ColorEdit3("##1", (float*)&data->_bgColors[1]);
+		ImGui::Separator();
+		ImGui::Separator();
+		ImGui::Text("***** Particles *****");
+		ImGui::Separator();
+		ImGui::Text("Blocks");
+		for (unsigned int j = 0; j < data->_blockInfos[2]->size(); ++j)
+		{
+			std::string name = data->_blockInfos[2]->at(j)._name;
+			for (int i = name.length() - 1; i >= 0; --i)
+			{
+				if (name[i] == ' ')
+					name.erase(i, 1);
+				else if (name[i] == '\n')
+				{
+					name.erase(i, 1);
+					name.insert(name.begin() + i, ' ');
+				}
+			}
+			ImGui::ColorEdit3(name.c_str(), (float*)&data->_blockInfos[2]->at(j)._color);
+		}
+		ImGui::Text("Background");
+		ImGui::ColorEdit3("##2", (float*)&data->_bgColors[2]);
+		ImGui::Separator();
+		ImGui::Separator();
 
 		ImGui::EndMenu();
 	}
+	
 	ImGui::EndMainMenuBar();
 
 	for (auto& c : _containers)
