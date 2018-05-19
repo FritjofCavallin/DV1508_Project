@@ -4,6 +4,7 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 #include <typeinfo>
 
 #include "UITimelines.h"
@@ -40,7 +41,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 	// Common stuff
 	ImGui::Begin("Timelines", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar /*| ImGuiWindowFlags_NoTitleBar*/);
+		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse/*| ImGuiWindowFlags_NoTitleBar*/);
 	ImGui::SetWindowPos(pos);
 	ImGui::SetWindowSize(size);
 
@@ -340,7 +341,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		else  // Showing the timeline as usual
 		{
 			// Check if the mouse if above the timeline
-			if (ImGui::IsWindowHovered())
+			if (ImGui::IsWindowHovered() || timeline->_movingBlock)
 			{
 				float& start = timeline->_timeShown._startTime;
 				float& end = timeline->_timeShown._endTime;
@@ -384,11 +385,29 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				{
 					if (io.MouseWheel > 0)
 					{
+						float startScroll = ImGui::GetScrollY();
 						ImGui::SetScrollY(ImGui::GetScrollY() - channelHeight * 2.0f);
+						float scroll = startScroll - channelHeight * 2.0f;
+						if (scroll < 0) scroll = 0;
+						if (scroll > ImGui::GetScrollMaxY()) scroll = ImGui::GetScrollMaxY();
+
+						if (timeline->_movingBlock)
+						{
+							timeline->_movingBlock->dragBodyYOffset -= scroll - startScroll;
+						}
 					}
 					else if (io.MouseWheel < 0)
 					{
+						float startScroll = ImGui::GetScrollY();
 						ImGui::SetScrollY(ImGui::GetScrollY() + channelHeight * 2.0f);
+						float scroll = startScroll + channelHeight * 2.0f;
+						if (scroll < 0) scroll = 0;
+						if (scroll > ImGui::GetScrollMaxY()) scroll = ImGui::GetScrollMaxY();
+
+						if (timeline->_movingBlock)
+						{
+							timeline->_movingBlock->dragBodyYOffset -= scroll - startScroll;
+						}
 					}
 				}
 			}
@@ -404,6 +423,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				for (size_t b = 0; b < timeline->_channel[c]->_data.size(); ++b)
 				{
 					Block* block = timeline->_channel[c]->_data[b];
+
 
 					float blockStart = (block->_time._startTime - timeline->_timeTotal._startTime) - timeline->_timeShown._startTime;
 					float blockEnd = block->_time._endTime - timeline->_timeShown._startTime;
@@ -573,7 +593,7 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 	ImVec2 mouseWindowPos = ImVec2(io.MousePos.x - ImGui::GetWindowPos().x, io.MousePos.y - ImGui::GetWindowPos().y);
 	mouseWindowPos.x = std::min(std::max(mouseWindowPos.x, 0.0f), ImGui::GetWindowWidth());
 	mouseWindowPos.y = std::min(std::max(mouseWindowPos.y, 0.f), ImGui::GetWindowHeight());
-	float hoveredChannel = ((mouseWindowPos.y - menubarHeight) / (timeline->_channel.size() * channelHeight - menubarHeight)) * timeline->_channel.size();
+	float hoveredChannel = ((mouseWindowPos.y - menubarHeight + ImGui::GetScrollY()) / (timeline->_channel.size() * channelHeight - menubarHeight)) * timeline->_channel.size();
 	if (((unsigned int)hoveredChannel) >= timeline->_channel.size())
 		hoveredChannel = (float)(timeline->_channel.size() - 1);
 
@@ -586,14 +606,14 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 	// Draw a line between channels to signify insertion
 	if (insertChannel && timeline->_movingBlock && mouseWindowPos.y < ImGui::GetWindowPos().y + ImGui::GetWindowHeight())
 	{
-		draw_list->AddLine(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel)),
-			ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel)), ImGui::GetColorU32(ImGuiCol_Button), 4.0f);
+		draw_list->AddLine(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel) - ImGui::GetScrollY()),
+			ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel) - ImGui::GetScrollY()), ImGui::GetColorU32(ImGuiCol_Button), 4.0f);
 	}
 	// Draw a line over the channel being inserted into
 	else if (timeline->_movingBlock)
 	{
-		draw_list->AddLine(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel) + channelHeight * 0.5f),
-			ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel) + channelHeight * 0.5f), ImGui::GetColorU32(ImGuiCol_Button), channelHeight);
+		draw_list->AddLine(ImVec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel) + channelHeight * 0.5f - ImGui::GetScrollY()),
+			ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + menubarHeight + channelHeight * ((int)hoveredChannel) + channelHeight * 0.5f - ImGui::GetScrollY()), ImGui::GetColorU32(ImGuiCol_Button), channelHeight);
 	}
 	draw_list->PopClipRect();
 
