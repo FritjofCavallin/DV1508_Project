@@ -448,7 +448,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, MC(color, 0.15));
 					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, MC(color, 0.3));
 					ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * c));
-					if (ImGui::Button(block->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) 
+					if (ImGui::Button(block->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio)))
 					{
 						data->_selectedBlock = block;
 					}
@@ -604,6 +604,7 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 		if (_onMenuBar)
 		{
 			delete timeline->_movingBlock;
+			timeline->channelCleanup();
 		}
 		// Place block. If placement fails, restore its position
 		else if (!timeline->addBlock(timeline->_movingBlock, (int)hoveredChannel, insertChannel))
