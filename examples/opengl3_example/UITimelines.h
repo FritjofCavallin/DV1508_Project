@@ -30,6 +30,9 @@ private:
 	// Ratio of a channel taken up by the blocks
 	float blockHeightRatio = 0.8f;
 
+	int minChannelHeight = 30;
+	int maxChannelHeight = 100;
+
 	ImVec2 dragDistance;
 
 	void drawHandle(bool left, Block* block, Timeline* timeline, int channelIndex, float channelHeight);

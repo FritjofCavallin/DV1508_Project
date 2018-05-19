@@ -78,7 +78,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, data->_bgColors[timeline->_type]);
 
-		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(timelineWidth, timelineHeight + (i == 0 ? 3.0f : 0.0f)), true, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar);
+		ImGui::BeginChild(timeline->_name.c_str(), ImVec2(timelineWidth, timelineHeight + (i == 0 ? 3.0f : 0.0f)), true, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollWithMouse);
 
 		if (ImGui::BeginMenuBar())
 		{
@@ -199,7 +199,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		}
 		
 		float chCount = (float)(timeline ? timeline->_channel.size() : 1);
-		float channelHeight = (int)ImGui::GetContentRegionAvail().y / chCount;
+		float channelHeight = std::min(std::max((int)(ImGui::GetContentRegionAvail().y / chCount), minChannelHeight), maxChannelHeight);
 
 		// If the user has clicked to start adding a new block
 		if (_addingNewBlock == i)
@@ -363,7 +363,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 						end = std::min(center + half, timeline->_timeTotal._endTime);
 					}
 				}
-				else
+				else if (io.KeyShift && !io.KeyCtrl)
 				{
 					// Panning
 					float speed = half / 9.f;
@@ -378,6 +378,17 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 						start -= speed;
 						start = std::max(start, 0.f);
 						end = start + 2 * half;
+					}
+				}
+				else
+				{
+					if (io.MouseWheel > 0)
+					{
+						ImGui::SetScrollY(ImGui::GetScrollY() - channelHeight * 2.0f);
+					}
+					else if (io.MouseWheel < 0)
+					{
+						ImGui::SetScrollY(ImGui::GetScrollY() + channelHeight * 2.0f);
 					}
 				}
 			}
@@ -456,6 +467,14 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					ImGui::PopID();
 					ImGui::PopID();
 				}
+
+				// For the last timeline, if it is empty, draw a dummy to ensure that it shows up in a timeline with vertical scrolling
+				if (timeline->_channel[c]->_data.size() == 0 && c == timeline->_channel.size() - 1)
+				{
+					ImGui::SetCursorPos(ImVec2(0, menubarHeight + channelHeight * c));
+					ImGui::Dummy(ImVec2(0, channelHeight));
+				}
+
 				ImGui::PopID();
 			}
 
@@ -470,7 +489,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			{
 				float x = pos.x + 3 + (curr) / duration * timelineWidth;
 				float y = pos.y + 19 + (timelineHeight + 3) * (i + 1);
-				ImGui::SetCursorPos(ImVec2(x - pos.x - 5, timelineHeight - 15 - i));
+				ImGui::SetCursorPos(ImVec2(x - pos.x - 5, timelineHeight - 15 - i + ImGui::GetScrollY()));
 				ImGui::Text("%d", (int)(curr + timeStart + 0.9));
 				draw_list->AddLine(ImVec2(x, y), ImVec2(x, y - 5), ImGui::GetColorU32(ImGuiCol_ButtonActive), 1.f);
 				// 1/10
@@ -554,7 +573,7 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 	ImVec2 mouseWindowPos = ImVec2(io.MousePos.x - ImGui::GetWindowPos().x, io.MousePos.y - ImGui::GetWindowPos().y);
 	mouseWindowPos.x = std::min(std::max(mouseWindowPos.x, 0.0f), ImGui::GetWindowWidth());
 	mouseWindowPos.y = std::min(std::max(mouseWindowPos.y, 0.f), ImGui::GetWindowHeight());
-	float hoveredChannel = ((mouseWindowPos.y - menubarHeight) / (ImGui::GetWindowHeight() - menubarHeight)) * timeline->_channel.size();
+	float hoveredChannel = ((mouseWindowPos.y - menubarHeight) / (timeline->_channel.size() * channelHeight - menubarHeight)) * timeline->_channel.size();
 	if (((unsigned int)hoveredChannel) >= timeline->_channel.size())
 		hoveredChannel = (float)(timeline->_channel.size() - 1);
 
@@ -635,7 +654,7 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 		}
 
 		// Draw block
-		float cursorY = std::min(std::max(mouseWindowPos.y - timeline->_movingBlock->dragBodyYOffset, 0.f), ImGui::GetWindowHeight() - channelHeight * blockHeightRatio);
+		float cursorY = std::min(std::max(mouseWindowPos.y - timeline->_movingBlock->dragBodyYOffset, 0.f), ImGui::GetWindowHeight() + ImGui::GetScrollMaxY() - channelHeight * blockHeightRatio - 3);
 		ImGui::SetCursorPos(ImVec2(blockStartPos, cursorY));
 		if (mouseWindowPos.y < 21)
 		{
