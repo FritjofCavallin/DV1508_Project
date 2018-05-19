@@ -47,10 +47,9 @@ bool Timeline::addBlock(Block *b, unsigned int channel, bool insertChannel)
 		auto it = _channel.begin();
 		for (unsigned int i = 0; i < channel; ++i)
 			++it;
-		++it;	// One extra step, to add the new channel after the desired one, not before
 		_channel.insert(it, new Channel());
 
-		_channel[channel + 1]->_data.push_back(b);
+		_channel[channel]->_data.push_back(b);
 	}
 	else
 	{
