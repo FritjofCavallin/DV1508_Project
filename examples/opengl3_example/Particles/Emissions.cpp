@@ -21,6 +21,16 @@ Emission::~Emission()
 	_shadeBuffers[1].destroy();
 }
 
+void Emission::bindTextures()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		GLuint texInd = _texActive[i] ? _texSlots[i] : _shader->defaultTex;
+		glBindTexture(GL_TEXTURE_2D, texInd);
+		//_texActive[i] = false;
+	}
+}
 void Emission::render()
 {
 	//Buffer data
@@ -34,17 +44,10 @@ void Emission::render()
 		_shadeBuffers[_bufCycle].buffer(_cycleEnd - _cycleBegin, _data.data() + _cycleBegin, 0);
 	// Swap buf and draw
 	_bufCycle = !_bufCycle;
-		//Bind textures:
+	//Bind textures:
 	checkGLError();
 	
-	for (int i = 0; i < 4; i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i);
-		GLuint texInd = _texActive[i] ? _texSlots[i] : _shader->defaultTex;
-		glBindTexture(GL_TEXTURE_2D, texInd);
-		//_texActive[i] = false;
-	}
-	
+	bindTextures();
 	
 	checkGLError();
 	
@@ -58,6 +61,9 @@ void Emission::stepParticle(unsigned int index, float timeStep)
 	_data[index]._position += timeStep * _particleInfo[index]._velocity;
 }
 
+bool Emission::isLooped() { return _cycleEnd < _cycleBegin; }
+void Emission::incrementCycleEnd() { _cycleEnd++; if (_cycleEnd == _particleInfo.size()) _cycleEnd = 0; }
+void Emission::incrementCycleBegin() { _cycleBegin++; if (_cycleBegin == _particleInfo.size()) _cycleBegin = 0; }
 
 size_t Emission::numActive()
 {
@@ -66,13 +72,20 @@ size_t Emission::numActive()
 		_cycleEnd - _cycleBegin;
 }
 
+bool Emission::alive(float particleTime) 
+{
+	return particleTime >= (_emitter->_particleLink ? _emitter->_particleLink->_timeTotal.duration() : 5.f);
+}
+bool Emission::active(unsigned int index) { return alive(_effect->elapsedSince(_particleInfo[index]._spawnTime)); }
+
+
 void Emission::updateParticle(unsigned int index)
 {
 	Timeline *ref = _emitter->_particleLink;
 	float particleTime = _effect->elapsedSince(_particleInfo[index]._spawnTime);
 
 	//Kill particle
-	if (particleTime >= (ref ? ref->_timeTotal.duration() : 5.f))
+	if (alive(particleTime))
 	{
 		incrementCycleBegin();
 		return;
@@ -186,4 +199,12 @@ void Emission::spawnParticles(float emitterTime, float deltaT)
 		spawnParticle(b, list, b->_time.toRelative(emitterTime), deltaT);
 	}
 }
+
+
+
+
+Timeline* Emission::getEmitter() { return _emitter; }
+GPUParticle& Emission::operator[](unsigned int index) { return _data[index]; }
+/* Get the index of the last particle. */
+unsigned int Emission::last() { return _cycleEnd + (_cycleEnd > 0 ? -1 : _data.size() - 1); }
 

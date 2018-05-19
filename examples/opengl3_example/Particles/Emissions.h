@@ -15,6 +15,31 @@ class Emission
 public:
 	Emission(ParticleEffect* effect, Timeline *emitter, ParticleShader *shader);
 	~Emission();
+	
+	void spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime, float deltaT);
+	void spawnParticles(float emitterTime, float deltaT);
+
+	void updateParticle(unsigned int index);
+	void updateParticles();
+
+	/* Draw effect. */
+	void render();
+	void bindTextures();
+
+	/*Get number of active particles */
+	size_t numActive();
+	/* If effect is wrapped around the circular buffer. */
+	bool isLooped();
+	
+	Timeline* getEmitter();
+	GPUParticle& operator[](unsigned int index);
+	/* Get the index of the last particle. */
+	unsigned int last();
+	/* Check if the particle at the index is alive. */
+	bool active(unsigned int index);
+
+private:
+	ParticleEffect *_effect;
 
 	/* Timeline containing emitter blocks */
 	Timeline *_emitter;
@@ -23,21 +48,6 @@ public:
 	std::vector<Particle> _particleInfo;
 	std::vector<GPUParticle> _data;
 
-	void spawnParticle(SpawnBlock *spawner, BlockList &active, float blockTime, float deltaT);
-	void spawnParticles(float emitterTime, float deltaT);
-
-	void updateParticle(unsigned int index);
-	void updateParticles();
-
-
-	void render();
-
-	/*Get number of active particles */
-	size_t numActive();
-	bool isLooped() {	return _cycleEnd < _cycleBegin; }
-
-private:
-	ParticleEffect *_effect;
 	size_t _cycleBegin, _cycleEnd;
 
 	/* Store how many (more) particles the */
@@ -49,9 +59,11 @@ private:
 	GLuint _texSlots[4];
 	bool _texActive[4];
 
-	void incrementCycleEnd() { _cycleEnd++; if (_cycleEnd == _particleInfo.size()) _cycleEnd = 0; }
-	void incrementCycleBegin() { _cycleBegin++; if (_cycleBegin == _particleInfo.size()) _cycleBegin = 0; }
+	/* Check if particle with elapsed time is dead.	*/
+	bool alive(float elapsedTime);
 
+	void incrementCycleEnd();
+	void incrementCycleBegin();
 
 
 	void stepParticle(unsigned int index, float timeStep);

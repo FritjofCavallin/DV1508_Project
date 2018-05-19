@@ -78,7 +78,7 @@ std::string ParticleEffect::getStatus()
 	ss << "-----------\n";
 	for (auto e : _emitters)
 	{
-		ss << e.second->_emitter->_name << '\n';
+		ss << e.second->getEmitter()->_name << '\n';
 		ss << "Particles: \t\t" << e.second->numActive() << '\n';
 	}
 	ss << '\n';
