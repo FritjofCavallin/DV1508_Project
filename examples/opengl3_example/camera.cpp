@@ -1,6 +1,6 @@
 #include "camera.h"
 #include <windows.h>
-
+#include <iostream>
 Camera::Camera()
 {
 	projMat = glm::perspective(
@@ -28,32 +28,36 @@ glm::mat4 Camera::getViewMat()
 	SHORT S = GetAsyncKeyState('S');
 	SHORT Space = GetAsyncKeyState(VK_SPACE);
 	SHORT LShift = GetAsyncKeyState(VK_LSHIFT);
-
-	if (A)
+	POINT NewMouseposition;
+	GetCursorPos(&NewMouseposition);
+//	std::cout << NewMouseposition.x << " " << NewMouseposition.y << std::endl;
+	if(NewMouseposition.x <861 && NewMouseposition.y <674 && NewMouseposition.x >5 && NewMouseposition.y >40)
 	{
-		 yaw += (rotSpeed * spinvalue); //-17.6
+		if (A)
+		{
+			 yaw += (rotSpeed * spinvalue); //-17.6
+		}
+		if (D)
+		{
+			yaw -= (rotSpeed *spinvalue);
+		}
+		if (W)
+		{
+			pitch += (rotSpeed * spinvalue);
+		}
+		if (S)
+		{
+			pitch -= (rotSpeed * spinvalue);
+		}
+		if (Space)
+		{
+			camY += -rotSpeed * radius*0.1;
+		}
+		if (LShift)
+		{
+			camY += rotSpeed * radius*0.1;
+		}
 	}
-	if (D)
-	{
-		yaw -= (rotSpeed *spinvalue);
-	}
-	if (W)
-	{
-		pitch += (rotSpeed * spinvalue);
-	}
-	if (S)
-	{
-		pitch -= (rotSpeed * spinvalue);
-	}
-	if (Space)
-	{
-		camY += -rotSpeed * radius*0.1;
-	}
-	if (LShift)
-	{
-		camY += rotSpeed * radius*0.1;
-	}
-
 	if (pitch > 89.0f)
 		pitch = 89.0f;
 	if (pitch < -89.0f)
