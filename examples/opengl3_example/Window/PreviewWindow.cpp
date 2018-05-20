@@ -64,8 +64,8 @@ PreviewWindow::~PreviewWindow()
 
 void PreviewWindow::render()
 {
-	checkGLError();
-
+	if (_display_h == 0 || _display_w == 0)
+		return;
 	//Draw 3D
 	glm::mat4 VP = camera.getVPMat();
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
@@ -79,7 +79,7 @@ void PreviewWindow::render()
 	glBindVertexArray(gVertexAttribute);
 	glLineWidth(1);
 	glDrawArrays(GL_LINES, 0, gridVertCount);
-	
+
 	// Render Particles
 	glEnablei(GL_BLEND, 0);
 	glBlendFunci(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
