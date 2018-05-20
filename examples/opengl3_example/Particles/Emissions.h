@@ -60,7 +60,7 @@ private:
 	bool _texActive[4];
 
 	/* Check if particle with elapsed time is dead.	*/
-	bool alive(float elapsedTime);
+	bool dead(float elapsedTime);
 
 	void incrementCycleEnd();
 	void incrementCycleBegin();

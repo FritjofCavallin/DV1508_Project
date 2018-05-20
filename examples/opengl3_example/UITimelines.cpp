@@ -200,7 +200,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 		}
 		
 		float chCount = (float)(timeline ? timeline->_channel.size() : 1);
-		float channelHeight = std::min(std::max((int)(ImGui::GetContentRegionAvail().y / chCount), minChannelHeight), maxChannelHeight);
+		float channelHeight = std::fminf(std::max((int)(ImGui::GetContentRegionAvail().y / chCount), minChannelHeight), maxChannelHeight);
 
 		// If the user has clicked to start adding a new block
 		if (_addingNewBlock == i)
@@ -228,8 +228,8 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					++count;
 
 				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, color);
-				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, MC(color, 0.1));
-				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, MC(color, 0.2));
+				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, MC(color, 0.1f));
+				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, MC(color, 0.2f));
 				ImGui::Button(data->_blockInfos[timeline->_type]->at(b)._name.c_str(), ImVec2(BUTTON_WIDTH, BUTTON_WIDTH));
 				ImGui::PopStyleColor(3);
 
@@ -455,7 +455,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					
 					if (timeline->_type != type::Effect)
 					{
-						for (int n = 0; n < data->_blockInfos[timeline->_type]->size(); ++n)
+						for (unsigned int n = 0; n < data->_blockInfos[timeline->_type]->size(); ++n)
 						{
 							if (typeid(*block) == typeid(*data->_blockInfos[timeline->_type]->at(n)._type))
 								color = data->_blockInfos[timeline->_type]->at(n)._color;
@@ -465,8 +465,8 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 						++count;
 
 					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, color);
-					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, MC(color, 0.15));
-					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, MC(color, 0.3));
+					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, MC(color, 0.15f));
+					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, MC(color, 0.3f));
 					ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * c));
 					if (ImGui::Button(block->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio)))
 					{

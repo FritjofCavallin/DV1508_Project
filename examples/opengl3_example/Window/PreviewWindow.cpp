@@ -1,44 +1,56 @@
 #include "PreviewWindow.h"
 #include "../Other/GLFuncs.h"
+#include "../Other/RandFunction.h"
 #include "../Particles/ParticleManager.h"
+#include "../Particles/Emissions.h"
+#include "../Timelines/EmittBlocks/SpawnBlock.h"
+#include "../Timelines/EffectBlock.h"
 
-
+const int preview2DDim = 200;
 
 PreviewWindow::PreviewWindow(Data* data)
-	: _data(data), camera()
+	: _display_w(0), _display_h(0), _data(data), camera(), _previewEff(NULL), _previewTime(0.f)
 {
 	CreateShaders();
 	CreateTriangleData();
 	glGenFramebuffers(1, &frameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-	
-	//Gen. and bind color tex
 	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, display_w, display_h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
-
-
-	//Gen. and bind depth tex
 	glGenTextures(1, &depthTex);
-	glBindTexture(GL_TEXTURE_2D, depthTex);
-	//Bind it to frame buffer.
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, display_w, display_h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//Clamp to edge
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTex, 0);
-
+	_part2D.load();
 
 	clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	mvpMatrixID = glGetUniformLocation(gShaderProgram, "MVP");
 }
 
+void PreviewWindow::resize(unsigned int width, unsigned int height)
+{
+	if (_display_w == width && _display_h == height)
+		return;
+	_display_w = width; 
+	_display_h = height;
+
+	//Gen. and bind color tex
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _display_w, _display_h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
+	/*
+	//Gen. and bind depth tex
+	glBindTexture(GL_TEXTURE_2D, depthTex);
+	//Bind it to frame buffer.
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, _display_w, _display_h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//Clamp to edge
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTex, 0);
+	*/
+}
 
 ImTextureID PreviewWindow::getWindowTex() { return reinterpret_cast<ImTextureID> (texture); }
 
@@ -57,24 +69,87 @@ void PreviewWindow::render()
 	//Draw 3D
 	glm::mat4 VP = camera.getVPMat();
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-	glViewport(0, 0, display_w, display_h);
+	glViewport(0, 0, _display_w, _display_h);
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Render grid
 	glUseProgram(gShaderProgram);
 	glUniformMatrix4fv(mvpMatrixID, 1, GL_FALSE, &VP[0][0]);
 	glBindVertexArray(gVertexAttribute);
 	glLineWidth(1);
 	glDrawArrays(GL_LINES, 0, gridVertCount);
 	
+	// Render Particles
 	glEnablei(GL_BLEND, 0);
 	glBlendFunci(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	_data->getPlayer()->render(&camera);
+
+	drawParticle();
 	glDisablei(GL_BLEND, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	checkGLError();
 }
 
+void PreviewWindow::drawParticle()
+{
+	SpawnBlock* spw = dynamic_cast<SpawnBlock*>(_data->_selectedBlock);
+	EffectBlock* eff = dynamic_cast<EffectBlock*>(_data->_selectedBlock);
+	if (spw)
+	{
+		if (spw != _previewSpw)
+		{
+			_previewSpw = spw;
+			resetPart();
+		}
+	}
+	else if (eff)
+	{
+		if (eff != _previewEff)
+		{
+			_previewSpw = NULL;
+			_previewEff = eff;
+			resetPart();
+		}
+	}
+	else if (_data->_selectedBlock && _data->_selectedBlock->_type != type::Particle)
+	{
+		_previewSpw = NULL;
+		_previewEff = NULL;
+	}
+	// Render particle window
+	if (_previewEff && _previewEff->_emitter->_particleLink)
+	{
+		_previewTime += EMIT_STEP;
+		if (_part.update(_partData, _previewTime, _previewEff->_emitter->_particleLink))
+		{
+			resetPart();
+			// Update again (to not get empty particle)
+			_part.update(_partData, _previewTime, _previewEff->_emitter->_particleLink);
+		}
+		Emission* e = _data->getPlayer()->getRenderer()->getEmission(_previewEff);
+		if(e)
+			e->bindTextures();
+		_part2D.render(_partData, _display_w - preview2DDim, 0, preview2DDim, preview2DDim);
+	}
+}
+
+void PreviewWindow::resetPart()
+{
+	_previewTime = 0.f;
+	if (_previewSpw)
+	{
+		_part.init(_previewSpw->_params, 0.f);
+		_partData = GPUParticle();
+		_partData._rotation = glm::mix(_previewSpw->_params._minRotation, _previewSpw->_params._maxRotation, randomFloat());
+	}
+	else
+	{
+		_part = Particle();
+		_partData = GPUParticle();
+	}
+}
 
 void PreviewWindow::CreateShaders()
 {

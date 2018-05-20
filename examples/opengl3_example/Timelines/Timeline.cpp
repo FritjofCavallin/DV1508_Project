@@ -55,7 +55,7 @@ bool Timeline::addBlock(Block *b, unsigned int channel, bool insertChannel)
 	{
 		// Make space for the placed block
 		std::vector<Block*> displacedBlocks;
-		for (int i = 0; i < _channel[channel]->_data.size(); ++i)
+		for (unsigned int i = 0; i < _channel[channel]->_data.size(); ++i)
 		{
 			Block* other = _channel[channel]->_data[i];
 			if (b->contains(other) || other->contains(b))
@@ -123,7 +123,7 @@ bool Timeline::addBlock(Block *b, unsigned int channel, bool insertChannel)
 				{
 					// Check if all blocks fit in next channel
 					bool allFit = true;
-					for (int i = 0; i < displacedBlocks.size(); ++i)
+					for (unsigned int i = 0; i < displacedBlocks.size(); ++i)
 					{
 						if (!_channel[channel + 1]->blockFits(displacedBlocks[i]))
 						{

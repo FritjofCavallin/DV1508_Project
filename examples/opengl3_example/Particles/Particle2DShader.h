@@ -7,20 +7,27 @@
 class Particle2DShader
 {
 public:
+	
+	Particle2DShader();
+	~Particle2DShader();
 
+	void render(GPUParticle &part, GLint x, GLint y, GLuint w, GLuint h);
+	void load();
+
+private:
 	GLuint gShaderProgram;
+	GLuint gShaderClear;
+	GLint gClearColor;
 
-	GLint  gViewMat, gProjMat, gArea;
+	GLint  gRot, gSize, gSizeMax;
+	GLint gColor, gTex_Blend, gTex_Area, gArea;
 
 
 	/* Loaded texture for default behavior
 	*/
-	GLuint defaultTex;
+	GLuint defaultTex, quadVAO, quadVBO;
 
-	Particle2DShader();
-	~Particle2DShader();
-
-	void assignGlobalUniforms(GPUParticle &part);
-	void load();
+	glm::vec4 bgColor, borderColor;
+	void genBuffer();
 };
 

@@ -4,8 +4,7 @@ in vec2 UV;
 
 uniform float Rotation;
 uniform vec2 Size;
-
-uniform mat4 viewMat;
+uniform vec2 SizeMax;
 
 out vec2 Vertex_UV;
 
@@ -23,7 +22,7 @@ vec2 rotate(in float theta, in vec2 v)
 
 void main()
 {
-  vec2 P = rotate(Rotation, Position.xy * Size);
-  gl_Position = P;
+  vec2 p = (Position.xy) * (Size/SizeMax);
+  gl_Position = vec4(rotate(Rotation, p), Position.z, 1.f);
   Vertex_UV = UV;
 }

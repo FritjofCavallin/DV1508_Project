@@ -72,41 +72,16 @@ size_t Emission::numActive()
 		_cycleEnd - _cycleBegin;
 }
 
-bool Emission::alive(float particleTime) 
-{
-	return particleTime >= (_emitter->_particleLink ? _emitter->_particleLink->_timeTotal.duration() : 5.f);
-}
-bool Emission::active(unsigned int index) { return alive(_effect->elapsedSince(_particleInfo[index]._spawnTime)); }
+bool Emission::active(unsigned int index) { return _particleInfo[index].dead(_effect->elapsedSince(_particleInfo[index]._spawnTime), _emitter->_particleLink); }
 
 
 void Emission::updateParticle(unsigned int index)
 {
-	Timeline *ref = _emitter->_particleLink;
-	float particleTime = _effect->elapsedSince(_particleInfo[index]._spawnTime);
-
-	//Kill particle
-	if (alive(particleTime))
-	{
+	float pTime = _effect->elapsedSince(_particleInfo[index]._spawnTime);
+	if (_particleInfo[index].update(_data[index], pTime, _emitter->_particleLink))
 		incrementCycleBegin();
-		return;
-	}
-
-
-	// Fetch relevant blocks and apply
-	BlockList active = ref ?
-		ref->fetchBlocks(_effect->elapsedSince(_particleInfo[index]._spawnTime)) :
-		BlockList();
-	
-	// Reset data that is applied relative to initial data
-	_data[index]._color = glm::vec4(1.f);
-	_data[index]._size = _particleInfo[index]._initSize;
-	_data[index]._texBlend = glm::vec4(0.f);
-
-	for (unsigned int i = 0; i < active._size; i++)
-		active._blocks[i]->applyParticle(particleTime, _particleInfo[index], _data[index]);
-
-	stepParticle(index, EMIT_STEP);
-	// Do some more calcs (e.g. texture assignments)..
+	else
+		stepParticle(index, EMIT_STEP);
 }
 
 void Emission::updateParticles()
@@ -145,9 +120,7 @@ void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float block
 		InitialEmissionParams &param = spawner->_params;
 		Particle p;
 		float timeOffset = dTime * (N - i);
-		p._spawnTime = _effect->_time - timeOffset;
-		p._initSize = glm::mix(param._minSize, param._maxSize, randomFloat());
-		p._initDir = param._emitDir;
+		p.init(param, _effect->_time - timeOffset);
 
 		// Lerp initial position depending on initial velocity
 		GPUParticle gpuP;

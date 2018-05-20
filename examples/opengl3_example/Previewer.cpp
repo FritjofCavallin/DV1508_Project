@@ -16,6 +16,7 @@ Previewer::~Previewer()
 void Previewer::draw(ImVec2 pos, ImVec2 size)
 {
 
+	data->getPreview()->resize(size.x, size.y);
 	// Draw 2D
 	ImGui::Begin("Previewer", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);

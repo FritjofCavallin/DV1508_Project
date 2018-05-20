@@ -41,7 +41,7 @@ private:
 	// Modifies the given color based on the modifier
 	ImVec4 MC(ImVec4 in, float mod)
 	{
-		return ImVec4(std::min(in.x + mod, 1.f), std::min(in.y + mod, 1.f), std::min(in.z + mod, 1.f), 0.7);
+		return ImVec4(std::min(in.x + mod, 1.f), std::min(in.y + mod, 1.f), std::min(in.z + mod, 1.f), 0.7f);
 	}
 };
 

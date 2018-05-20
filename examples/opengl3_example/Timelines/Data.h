@@ -75,6 +75,6 @@ private:
 	// Creates a color based on rgb
 	ImVec4 C(int r, int g, int b)
 	{
-		return ImVec4(r / 255.f, g / 255.f, b / 255.f, 0.7);
+		return ImVec4(r / 255.f, g / 255.f, b / 255.f, 0.7f);
 	}
 };
