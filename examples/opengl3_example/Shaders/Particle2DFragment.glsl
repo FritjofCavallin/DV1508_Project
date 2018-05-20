@@ -9,8 +9,8 @@ uniform sampler2D textures2;
 uniform sampler2D textures3;
 
 uniform vec4 Color;
-uniform in vec4 Tex_Blend;
-uniform in uvec4 Tex_Area;
+uniform vec4 Tex_Blend;
+uniform uvec4 Tex_Area;
 uniform vec4 Area[8];
 
 //uniform sampler2D tex0;

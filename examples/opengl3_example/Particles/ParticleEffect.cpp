@@ -70,6 +70,14 @@ void ParticleEffect::render(Camera *cam)
 		e.second->render();
 }
 
+Emission* ParticleEffect::getEmission(EffectBlock *block)
+{
+	auto it = _emitters.find(block);
+	if (it != _emitters.end())
+		return it->second;
+	return NULL;
+}
+
 std::string ParticleEffect::getStatus()
 {
 	std::stringstream ss;

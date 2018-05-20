@@ -17,6 +17,8 @@ public:
 	void runEffect(Timeline *t);
 	void stopEffect(Timeline *t);
 
+	ParticleEffect* getRenderer() { return _effects[0]; }
+
 	void printInfo();
 
 private:

@@ -74,16 +74,14 @@ ParticleBuffer ParticleShader::genBuffer(size_t nVerts)
 	// Vertex Array Object (VAO) 
 	ParticleBuffer buff;
 	glGenVertexArrays(1, &buff.gVAO);
-	// bind == enable
 	glBindVertexArray(buff.gVAO);
-	// this activates the first and second attributes of this VAO
+	// Enable attributes
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 	glEnableVertexAttribArray(3);
 	glEnableVertexAttribArray(4);
 	glEnableVertexAttribArray(5);
-	//96
 	// create a vertex buffer object (VBO) id
 	glGenBuffers(1, &buff.gVertBuf);
 	// Bind the buffer ID as an ARRAY_BUFFER
@@ -126,8 +124,10 @@ ParticleBuffer::~ParticleBuffer()
 
 void ParticleBuffer::destroy()
 {
-	glDeleteVertexArrays(1, &gVAO);
+	checkGLError();
 	glDeleteBuffers(1, &gVertBuf);
+	checkGLError();
+	glDeleteVertexArrays(1, &gVAO);
 	checkGLError();
 }
 
