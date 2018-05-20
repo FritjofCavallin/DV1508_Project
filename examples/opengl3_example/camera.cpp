@@ -1,5 +1,5 @@
 #include "camera.h"
-
+#include <windows.h>
 
 Camera::Camera()
 {
@@ -9,16 +9,91 @@ Camera::Camera()
 		0.1f,              // Near clipping plane. Keep as big as possible, or you'll get precision issues.
 		100.0f             // Far clipping plane. Keep as little as possible.
 	);
+	cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+	cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
 glm::mat4 Camera::getViewMat()
 {
+	
 	float radius = 10.0f;
 	float rotSpeed = 0.15f;
-	float camX = sin(glfwGetTime() * rotSpeed) * radius;
-	float camZ = cos(glfwGetTime() * rotSpeed) * radius;
+	
+	SHORT A = GetAsyncKeyState('A');
+	SHORT D = GetAsyncKeyState('D');
+	SHORT W = GetAsyncKeyState('W');
+	SHORT S = GetAsyncKeyState('S');
+	SHORT O = GetAsyncKeyState('O');
+	SHORT L = GetAsyncKeyState('L');
+	SHORT P = GetAsyncKeyState('P');
+	SHORT I = GetAsyncKeyState('I');
+
+	SHORT Space = GetAsyncKeyState(VK_SPACE);
+	SHORT LShift = GetAsyncKeyState(VK_LSHIFT);
+	if (A)
+	{
+		 camX +=-rotSpeed * radius;
+		 cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * -rotSpeed;
+	}
+	if (D)
+	{
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * rotSpeed;
+		camX += rotSpeed * radius;
+	}
+	if (W)
+	{
+		cameraPos += rotSpeed * cameraFront;
+		camZ += rotSpeed * radius;
+	}
+	if (S)
+	{
+		cameraPos += -rotSpeed * cameraFront;
+		camZ += -rotSpeed * radius;
+	}
+	if (Space)
+	{
+		camY += rotSpeed * radius;
+	}
+	if (LShift)
+	{
+		camY += -rotSpeed * radius;
+	}
+	
+	if (O)
+	{
+		pitch += 0.1;
+	}
+	if (L)
+	{
+		pitch -= 0.1;
+	}
+	if (I)
+	{
+		yaw += 0.1;
+	}
+	if (P)
+	{
+		yaw -= 0.1;
+	}
+
+
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	front.y = sin(glm::radians(pitch));
+	front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	cameraFront = glm::normalize(front);
+
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+
+	
 	glm::mat4 view;
-	view = glm::lookAt(glm::vec3(camX, 1.f, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	//	view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 	return view;
 }
 
