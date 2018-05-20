@@ -18,6 +18,6 @@ public:
 
 	virtual void applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart) {}
 
-	virtual void DrawProperties();
+	virtual void DrawProperties(ImVec2 pos, ImVec2 size);
 };
 

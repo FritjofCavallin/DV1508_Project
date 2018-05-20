@@ -24,9 +24,9 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 		winSize = size;
 	}
 
-	if(currBlock){
+	if(data->_selectedBlock){
 		//show block properties
-		currBlock->DrawProperties();
+		data->_selectedBlock->DrawProperties(pos, size);
 	}
 	else{
 		//show help prompt
@@ -34,18 +34,8 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 		ImGui::Text(CenterString("Select timeline block to display its properties").c_str());
 	}
 
-	firstDraw = false;
+	if(firstDraw) firstDraw = false;
 	ImGui::End();
-}
-
-void Properties::SelectBlock(Block* block){
-	//fast pop-upp effect?
-	currBlock = block;
-}
-
-void Properties::DeselectBlock(){
-	//fade effect?
-	currBlock = nullptr;
 }
 
 std::string Properties::AddSpace(std::string base, int comp){

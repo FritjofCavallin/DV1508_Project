@@ -27,6 +27,6 @@ public:
 	SpawnBlock(TimeInterval t, InitialEmissionParams &p);
 	virtual ~SpawnBlock();
 
-	virtual void DrawProperties();
+	virtual void DrawProperties(ImVec2 pos, ImVec2 size);
 };
 

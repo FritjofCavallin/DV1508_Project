@@ -20,6 +20,7 @@ void TextureFadeBlock::applyParticle(float emittTime, Particle &part, GPUParticl
 	gpuPart._texArea[_texSlot] = _texArea;
 }
 
-void TextureFadeBlock::DrawProperties(){
+void TextureFadeBlock::DrawProperties(ImVec2 pos, ImVec2 size){
+	DrawPropertiesHeader(pos, size);
 
 }
