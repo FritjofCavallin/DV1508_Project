@@ -9,9 +9,10 @@ Camera::Camera()
 		0.1f,              // Near clipping plane. Keep as big as possible, or you'll get precision issues.
 		100.0f             // Far clipping plane. Keep as little as possible.
 	);
-	cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+	cameraPos = glm::vec3(-9.6,   4.7 ,  10.3);
 	cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	
 }
 
 glm::mat4 Camera::getViewMat()
@@ -28,41 +29,51 @@ glm::mat4 Camera::getViewMat()
 	SHORT L = GetAsyncKeyState('L');
 	SHORT P = GetAsyncKeyState('P');
 	SHORT I = GetAsyncKeyState('I');
-
+//	float length = glm::vec3(cameraPos - glm::vec3(0, 0, -2)).length();
+	float length = cameraPos.length();
+	
 	SHORT Space = GetAsyncKeyState(VK_SPACE);
 	SHORT LShift = GetAsyncKeyState(VK_LSHIFT);
 	if (A)
 	{
-		 camX +=-rotSpeed * radius;
+		
+		 camX +=(-rotSpeed * radius);
 		 cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * -rotSpeed;
+		 yaw += (rotSpeed * spinvalue); //-17.6
 	}
 	if (D)
 	{
+		
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * rotSpeed;
-		camX += rotSpeed * radius;
+		yaw -= (rotSpeed *spinvalue);
+		camX += rotSpeed * 4;
 	}
 	if (W)
 	{
+		spinvalue += rotSpeed;
 		cameraPos += rotSpeed * cameraFront;
 		camZ += rotSpeed * radius;
 	}
 	if (S)
 	{
+		spinvalue -= rotSpeed;
 		cameraPos += -rotSpeed * cameraFront;
 		camZ += -rotSpeed * radius;
 	}
 	if (Space)
 	{
+		cameraPos += rotSpeed * cameraFront.y;
 		camY += rotSpeed * radius;
 	}
 	if (LShift)
 	{
+		cameraPos += -rotSpeed * cameraFront.y;
 		camY += -rotSpeed * radius;
 	}
 	
 	if (O)
 	{
-		pitch += 0.1;
+		pitch += 0.1; //-17.6
 	}
 	if (L)
 	{
@@ -70,7 +81,7 @@ glm::mat4 Camera::getViewMat()
 	}
 	if (I)
 	{
-		yaw += 0.1;
+		yaw += 0.1; //-48
 	}
 	if (P)
 	{
