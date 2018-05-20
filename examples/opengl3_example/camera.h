@@ -17,8 +17,8 @@ private:
 	float spinvalue = 4;
 	float camX = 0;
 	float camZ = 10;
-	float camY = 1;
-	
+	float camY = 10;
+	glm::vec3 cameraPospos = glm::vec3(0,0,0);
 	float pitch = -17.6;
 	float yaw = -48;
 public:
