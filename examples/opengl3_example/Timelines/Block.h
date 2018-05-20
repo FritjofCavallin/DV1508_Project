@@ -42,5 +42,6 @@ public:
 	float dragBodyYOffset = 0.0f;
 	std::string visualName = "CHANGE THIS!";
 	std::string desc = "CHANGE THIS!";
+	std::string iconName = "testicon.png";
 };
 

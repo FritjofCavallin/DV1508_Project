@@ -1,6 +1,9 @@
 #pragma once
+#include <unordered_map>
 
 #include "UIContainer.h"
+#undef STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 class UITimelines : public UIContainer
 {
@@ -43,5 +46,9 @@ private:
 	{
 		return ImVec4(std::min(in.x + mod, 1.f), std::min(in.y + mod, 1.f), std::min(in.z + mod, 1.f), 0.7);
 	}
+
+	std::unordered_map<std::string, unsigned> iconTextures;
+
+	void createIconTexture(std::string iconName);
 };
 

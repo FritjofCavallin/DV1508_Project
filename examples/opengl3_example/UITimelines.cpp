@@ -472,6 +472,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					{
 						data->_selectedBlock = block;
 					}
+
 					ImGui::PopStyleColor(3);
 					if (ImGui::IsItemActive() && !timeline->_movingBlock)
 					{
@@ -482,6 +483,13 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 							block->dragBodyYOffset = io.MousePos.y - ImGui::GetWindowPos().y - (menubarHeight + channelHeight * c);
 						}
 					}
+
+					// Icon
+					if (iconTextures.find(block->iconName) == iconTextures.end())
+						createIconTexture(block->iconName);
+
+					ImGui::SetCursorPos(ImVec2(blockStartPos + blockHandleWidth, menubarHeight + channelHeight * c));
+					ImGui::Image(reinterpret_cast<ImTextureID>(iconTextures[block->iconName]), ImVec2(channelHeight * blockHeightRatio, channelHeight * blockHeightRatio), ImVec2(0, 0), ImVec2(1, 1));
 
 					ImGui::PopID();
 					ImGui::PopID();
@@ -689,5 +697,42 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 			_onMenuBar = false;
 			if (ImGui::Button(timeline->_movingBlock->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio))) {}
 		}
+
+		// Icon
+		if (iconTextures.find(timeline->_movingBlock->iconName) == iconTextures.end())
+			createIconTexture(timeline->_movingBlock->iconName);
+
+		ImGui::SetCursorPos(ImVec2(blockStartPos + blockHandleWidth, cursorY));
+		ImGui::Image(reinterpret_cast<ImTextureID>(iconTextures[timeline->_movingBlock->iconName]), ImVec2(channelHeight * blockHeightRatio, channelHeight * blockHeightRatio), ImVec2(0, 0), ImVec2(1, 1));
 	}
+}
+
+void UITimelines::createIconTexture(std::string iconName)
+{
+	std::string path("Icons\\");
+	path += iconName;
+	unsigned texture;
+
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load and generate the texture
+	int width, height, nrChannels;
+	unsigned char *data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+
+	}
+	stbi_image_free(data);
+
+	iconTextures[iconName] = texture;
 }
