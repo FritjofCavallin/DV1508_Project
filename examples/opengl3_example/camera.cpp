@@ -9,16 +9,12 @@ Camera::Camera()
 		0.1f,              // Near clipping plane. Keep as big as possible, or you'll get precision issues.
 		100.0f             // Far clipping plane. Keep as little as possible.
 	);
-<<<<<<< HEAD
+
 	cameraPos = glm::vec3(-9.6,   4.7 ,  10.3);
 	cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	
-=======
-	cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-	cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
->>>>>>> master
+
 }
 
 glm::mat4 Camera::getViewMat()
@@ -35,18 +31,16 @@ glm::mat4 Camera::getViewMat()
 	SHORT L = GetAsyncKeyState('L');
 	SHORT P = GetAsyncKeyState('P');
 	SHORT I = GetAsyncKeyState('I');
-<<<<<<< HEAD
+
 //	float length = glm::vec3(cameraPos - glm::vec3(0, 0, -2)).length();
 	float length = cameraPos.length();
 	
-=======
 
->>>>>>> master
 	SHORT Space = GetAsyncKeyState(VK_SPACE);
 	SHORT LShift = GetAsyncKeyState(VK_LSHIFT);
 	if (A)
 	{
-<<<<<<< HEAD
+
 		
 	//	 camX +=(-rotSpeed * radius);
 	//	 cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * -rotSpeed;
@@ -84,7 +78,6 @@ glm::mat4 Camera::getViewMat()
 	//	cameraPos += -rotSpeed * cameraFront.y;
 		
 		camY += rotSpeed * radius*0.1;
-=======
 		 camX +=-rotSpeed * radius;
 		 cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * -rotSpeed;
 	}
@@ -110,16 +103,12 @@ glm::mat4 Camera::getViewMat()
 	if (LShift)
 	{
 		camY += -rotSpeed * radius;
->>>>>>> master
+
 	}
 	
 	if (O)
 	{
-<<<<<<< HEAD
 		pitch += 0.1; //-17.6
-=======
-		pitch += 0.1;
->>>>>>> master
 	}
 	if (L)
 	{
@@ -127,11 +116,7 @@ glm::mat4 Camera::getViewMat()
 	}
 	if (I)
 	{
-<<<<<<< HEAD
 		yaw += 0.1; //-48
-=======
-		yaw += 0.1;
->>>>>>> master
 	}
 	if (P)
 	{
@@ -151,9 +136,6 @@ glm::mat4 Camera::getViewMat()
 	if (pitch < -89.0f)
 		pitch = -89.0f;
 
-<<<<<<< HEAD
-
-	//testing some new stuff
 	
 
 
@@ -167,11 +149,9 @@ glm::mat4 Camera::getViewMat()
 	glm::mat4 view;
 //	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 	view = glm::lookAt(cameraPos, glm::vec3(0,0,0), cameraUp);
-=======
 	
-	glm::mat4 view;
-	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
->>>>>>> master
+//	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
 	//	view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 	return view;
 }

@@ -11,7 +11,7 @@ class Camera
 {
 private:
 	glm::vec3 camera;
-<<<<<<< HEAD
+
 	glm::vec3 cameraPos; //-9.6   4.7   10.3
 	glm::vec3 cameraFront;
 	glm::vec3 cameraUp;
@@ -22,18 +22,7 @@ private:
 	glm::vec3 cameraPospos = glm::vec3(0,0,0);
 	float pitch = -17.6;
 	float yaw = -48;
-=======
-	glm::vec3 cameraPos;
-	glm::vec3 cameraFront;
-	glm::vec3 cameraUp;
 
-	float camX = 0;
-	float camZ = 10;
-	float camY = 1;
-	
-	float pitch = 0;
-	float yaw = 0;
->>>>>>> master
 public:
 	Camera();
 	~Camera(){}
