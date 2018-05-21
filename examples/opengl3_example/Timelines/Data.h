@@ -47,6 +47,7 @@ public:
 	std::list<Timeline*>& getEmitterTimelines();
 	Timeline* getEffectTimeline();
 	Timeline* getOpenTimeline(int index);
+	Timeline* getTimelineOfSelectedBlock();
 	ParticleManager *getPlayer();
 	PreviewWindow *getPreview();
 
@@ -63,7 +64,7 @@ private:
 	Timeline* effectTimeline;
 
 	// List of timelines open in the UI
-	std::list<Timeline*> openTimelines;
+	std::vector<Timeline*> openTimelines;
 	/* Effect player
 	*/
 	ParticleManager * effectPlayer;

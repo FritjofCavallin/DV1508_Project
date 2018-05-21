@@ -20,8 +20,6 @@ void RotationBlock::applyParticle(float emittTime, Particle &part, GPUParticle &
 }
 
 void RotationBlock::DrawProperties(ImVec2 pos, ImVec2 size){
-	DrawPropertiesHeader(pos, size);
-
 	static ImGuiComboFlags link = 0;
 	
 	ImGui::Text("\n  Rotation speed:");

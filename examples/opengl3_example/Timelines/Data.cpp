@@ -164,6 +164,25 @@ Timeline* Data::getOpenTimeline(int index)
 	return *it;
 }
 
+Timeline* Data::getTimelineOfSelectedBlock(){
+	for(int i = 0; i < openTimelines.size(); ++i){
+		Timeline* currT = openTimelines.at(i);
+		for(int j = 0; j < currT->_channel.size(); ++j){
+			Channel* currC = currT->_channel.at(j);
+			for(int k = 0; k < currC->_data.size(); ++k){
+				Block* currB = currC->_data.at(k);
+
+				if(currB == _selectedBlock){
+					return currT;
+				}
+			}
+		}
+	}
+
+	std::cout << "If you see this, the program will crash shortly" << std::endl;
+	return nullptr;
+}
+
 void Data::openTimeline(Timeline* timeline)
 {
 	if (timeline == effectTimeline ||

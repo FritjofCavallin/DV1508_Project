@@ -20,8 +20,6 @@ void ConstantForce::applyParticle(float emitterTime, Particle &part, GPUParticle
 }
 
 void ConstantForce::DrawProperties(ImVec2 pos, ImVec2 size){
-	DrawPropertiesHeader(pos, size);
-
 	ImGui::Text(" ");
 	ImGui::Text("Force direction: ");
 	ImGui::SameLine();
