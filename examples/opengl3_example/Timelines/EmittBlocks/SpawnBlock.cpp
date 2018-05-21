@@ -43,6 +43,7 @@ void SpawnBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	ImGui::SameLine();
 	ImGui::PushItemWidth(45);
 	ImGui::InputFloat("   ", &_params._endAmount, 0, 0, 3);
+	ImGui::PopItemWidth();
 
 	//---
 	ImGui::Text("Size");
@@ -57,9 +58,9 @@ void SpawnBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	ImGui::Text("   Maxumum:");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(45);
-	ImGui::InputFloat("x ", &_params._maxSize.x, 0, 0, 3);
+	ImGui::InputFloat("x##1", &_params._maxSize.x, 0, 0, 3);
 	ImGui::SameLine(155);
-	ImGui::InputFloat("y ", &_params._maxSize.y, 0, 0, 3);
+	ImGui::InputFloat("y##1", &_params._maxSize.y, 0, 0, 3);
 	ImGui::PopItemWidth();
 
 	//---
@@ -67,11 +68,11 @@ void SpawnBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	ImGui::Text("  ");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(45);
-	ImGui::InputFloat("x  ", &_params._emitOrigin.x, 0, 0, 3);
+	ImGui::InputFloat("x##2", &_params._emitOrigin.x, 0, 0, 3);
 	ImGui::SameLine(90);
-	ImGui::InputFloat("y  ", &_params._emitOrigin.y, 0, 0, 3);
+	ImGui::InputFloat("y##2", &_params._emitOrigin.y, 0, 0, 3);
 	ImGui::SameLine(153);
-	ImGui::InputFloat("z  ", &_params._emitOrigin.z, 0, 0, 3);
+	ImGui::InputFloat("z##2", &_params._emitOrigin.z, 0, 0, 3);
 	ImGui::PopItemWidth();
 
 	//---
@@ -79,11 +80,11 @@ void SpawnBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	ImGui::Text("  ");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(45);
-	ImGui::InputFloat("x  ", &_params._emitDir.x, 0, 0, 3);
-	ImGui::SameLine(90);
-	ImGui::InputFloat("y  ", &_params._emitDir.y, 0, 0, 3);
-	ImGui::SameLine(153);
-	ImGui::InputFloat("z  ", &_params._emitDir.z, 0, 0, 3);
+	ImGui::InputFloat("x##3", &_params._emitDir.x, 0, 0, 3);
+	ImGui::SameLine(/*90*/);
+	ImGui::InputFloat("y##3", &_params._emitDir.y, 0, 0, 3);
+	ImGui::SameLine(/*153*/);
+	ImGui::InputFloat("z##3", &_params._emitDir.z, 0, 0, 3);
 	ImGui::PopItemWidth();
 
 	//---
@@ -91,22 +92,24 @@ void SpawnBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	ImGui::Text("   Min:");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(45);
-	ImGui::InputFloat("    ", &_params._minRotation, 0, 0, 3);
+	ImGui::InputFloat("##4", &_params._minRotation, 0, 0, 3);
 	ImGui::SameLine(100);
 	ImGui::Text("   Max:");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(45);
-	ImGui::InputFloat("     ", &_params._maxRotation, 0, 0, 3);
+	ImGui::InputFloat("##5", &_params._maxRotation, 0, 0, 3);
+	ImGui::PopItemWidth();
 
 	//---
 	ImGui::Text("Force");
 	ImGui::Text("   Min:");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(45);
-	ImGui::InputFloat("    ", &_params._minForce, 0, 0, 3);
-	ImGui::SameLine(100);
-	ImGui::Text("   Max:");
+	ImGui::InputFloat("##6", &_params._minForce, 0, 0, 3);
+	ImGui::SameLine(/*100*/);
+	ImGui::Text(" Max:");
 	ImGui::SameLine();
-	ImGui::PushItemWidth(45);
-	ImGui::InputFloat("     ", &_params._maxForce, 0, 0, 3);
+	//ImGui::PushItemWidth(45);
+	ImGui::InputFloat("##7", &_params._maxForce, 0, 0, 3);
+	ImGui::PopItemWidth();
 }

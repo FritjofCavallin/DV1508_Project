@@ -28,4 +28,20 @@ void ForceBlock::applyParticle(float emitterTime, Particle &part, GPUParticle &g
 void ForceBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	DrawPropertiesHeader(pos, size);
 
+	ImGui::Text(" ");
+	ImGui::Text("Force Centerpoint: ");
+	ImGui::SameLine();
+	ImGui::PushItemWidth(45);
+	ImGui::InputFloat("x", &_gravityPoint.x, 0, 0, 3);
+	ImGui::SameLine();
+	ImGui::InputFloat("y", &_gravityPoint.y, 0, 0, 3);
+	ImGui::SameLine();
+	ImGui::InputFloat("z", &_gravityPoint.z, 0, 0, 3);
+	ImGui::PopItemWidth();
+
+	ImGui::Text("            Force: ");
+	ImGui::SameLine();
+	ImGui::PushItemWidth(45);
+	ImGui::InputFloat("", &_force, 0, 0, 3);
+	ImGui::PopItemWidth();
 }
