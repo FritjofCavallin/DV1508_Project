@@ -326,7 +326,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 						timeline->_movingBlock = new ScaleBlock(time);
 						break;
 					case 6:
-						timeline->_movingBlock = new TextureFadeBlock(time, -1);
+						timeline->_movingBlock = new TextureFadeBlock(time, 0);
 						break;
 					}
 				}

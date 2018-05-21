@@ -12,6 +12,10 @@ Emission::Emission(ParticleEffect* effect, Timeline *emitter, ParticleShader *sh
 {
 	_shadeBuffers[0] = shader->genBuffer(PARTICLES_EMITTED_MAX);
 	_shadeBuffers[1] = shader->genBuffer(PARTICLES_EMITTED_MAX);
+	for(int i = 0; i < 4; i++){
+		_texActive[i] = 0;
+		_texSlots[i] = 0;
+	}
 }
 
 
