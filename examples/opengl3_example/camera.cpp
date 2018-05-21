@@ -12,8 +12,9 @@ Camera::Camera()
 
 	cameraPos = glm::vec3(-9.6,   4.7 ,  10.3);
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	pitch = 26.6;
 	
-
+	fakescreenlock = false;
 }
 
 glm::mat4 Camera::getViewMat()
@@ -28,10 +29,25 @@ glm::mat4 Camera::getViewMat()
 	SHORT S = GetAsyncKeyState('S');
 	SHORT Space = GetAsyncKeyState(VK_SPACE);
 	SHORT LShift = GetAsyncKeyState(VK_LSHIFT);
-	POINT NewMouseposition;
-	GetCursorPos(&NewMouseposition);
+	SHORT ctrl = GetAsyncKeyState(VK_CONTROL);
+	SHORT alt = GetAsyncKeyState(VK_MENU);
+//	POINT NewMouseposition;
+//	POINT screenpos;
+//	GetCursorPos(&NewMouseposition);
 //	std::cout << NewMouseposition.x << " " << NewMouseposition.y << std::endl;
-	if(NewMouseposition.x <861 && NewMouseposition.y <674 && NewMouseposition.x >5 && NewMouseposition.y >40)
+//	std::cout << yaw << " " << pitch << std::endl;
+	if (ctrl)
+	{
+			fakescreenlock = true;
+	}
+	if (alt)
+	{
+		fakescreenlock = false;
+	}
+		
+	
+
+	if(fakescreenlock)
 	{
 		if (A)
 		{
