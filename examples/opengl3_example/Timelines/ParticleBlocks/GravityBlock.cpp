@@ -29,8 +29,6 @@ void GravityBlock::applyParticle(float emitterTime, Particle &part, GPUParticle 
 }
 
 void GravityBlock::DrawProperties(ImVec2 pos, ImVec2 size){
-	DrawPropertiesHeader(pos, size);
-
 	ImGui::Text(" ");
 	ImGui::Text("  Point of gravity:");
 	ImGui::SameLine();

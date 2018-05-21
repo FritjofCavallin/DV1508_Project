@@ -22,8 +22,6 @@ void ColorBlock::applyParticle(float emittTime, Particle &part, GPUParticle &gpu
 }
 
 void ColorBlock::DrawProperties(ImVec2 pos, ImVec2 size){
-	DrawPropertiesHeader(pos, size);
-
 	ImGui::Text(" ");
 
 	static ImVec4 color;

@@ -22,7 +22,6 @@ void BoxVolumeBlock::applyEmitter(Particle &part, GPUParticle &gpuPart)
 }
 
 void BoxVolumeBlock::DrawProperties(ImVec2 pos, ImVec2 size){
-	DrawPropertiesHeader(pos, size);
 
 	ImGui::Text(" ");
 	ImGui::Text("Volume size:");

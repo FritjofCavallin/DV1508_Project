@@ -26,7 +26,15 @@ void Properties::draw(ImVec2 pos, ImVec2 size){
 
 	if(data->_selectedBlock){
 		//show block properties
+		if(data->_selectedBlock->DrawPropertiesHeader(pos, size)){
+			Timeline* currT = data->getTimelineOfSelectedBlock();
+			if(data->_selectedBlock->_time._endTime > currT->_timeTotal._endTime){
+				currT->_timeTotal._endTime = data->_selectedBlock->_time._endTime;
+				currT->_timeShown._endTime = data->_selectedBlock->_time._endTime;
+			}
+		}
 		data->_selectedBlock->DrawProperties(pos, size);
+		data->_selectedBlock->DrawPropertiesFooter(pos,size);
 	}
 	else{
 		//show help prompt

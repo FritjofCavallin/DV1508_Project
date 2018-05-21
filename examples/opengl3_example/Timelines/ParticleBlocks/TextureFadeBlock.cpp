@@ -21,6 +21,5 @@ void TextureFadeBlock::applyParticle(float emittTime, Particle &part, GPUParticl
 }
 
 void TextureFadeBlock::DrawProperties(ImVec2 pos, ImVec2 size){
-	DrawPropertiesHeader(pos, size);
 
 }

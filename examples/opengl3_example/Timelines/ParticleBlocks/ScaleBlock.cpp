@@ -21,7 +21,6 @@ void ScaleBlock::applyParticle(float emittTime, Particle &part, GPUParticle &gpu
 }
 
 void ScaleBlock::DrawProperties(ImVec2 pos, ImVec2 size){
-	DrawPropertiesHeader(pos, size);
 
 	static ImGuiComboFlags link = 0;
 

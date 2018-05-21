@@ -30,7 +30,6 @@ SpawnBlock::~SpawnBlock()
 }
 
 void SpawnBlock::DrawProperties(ImVec2 pos, ImVec2 size){
-	DrawPropertiesHeader(pos, size);
 
 	//---
 	ImGui::Text("Amount");

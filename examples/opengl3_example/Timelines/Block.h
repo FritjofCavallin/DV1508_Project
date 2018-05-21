@@ -34,7 +34,8 @@ public:
 
 	//should be pure virtual
 	virtual void DrawProperties(ImVec2 pos, ImVec2 size){};
-	void DrawPropertiesHeader(ImVec2 pos, ImVec2 size);
+	bool DrawPropertiesHeader(ImVec2 pos, ImVec2 size);
+	void DrawPropertiesFooter(ImVec2 pos, ImVec2 size);
 
 	// Used by UI
 	bool draggingLeft = false;
