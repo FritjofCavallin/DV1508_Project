@@ -1,5 +1,5 @@
 #include "ColorBlock.h"
-
+#include "imgui_internal.h"
 
 
 ColorBlock::ColorBlock(TimeInterval t)
@@ -24,48 +24,73 @@ void ColorBlock::applyParticle(float emittTime, Particle &part, GPUParticle &gpu
 void ColorBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	DrawPropertiesHeader(pos, size);
 
-	static ImVec4 color;
-	static int time = 0;
-	if(time){
-		color.x = _colorEnd.x;
-		color.y = _colorEnd.y;
-		color.z = _colorEnd.z;
-	}
-	else{
-		color.x = _colorBegin.x;
-		color.y = _colorBegin.y;
-		color.z = _colorBegin.z;
-	}
+	ImGui::Text(" ");
 
-	ImGui::Columns(2, "", false);
+	static ImVec4 color;
+	static int link = 0;
+
 	ImGuiColorEditFlags flags = ImGuiColorEditFlags_Float | ImGuiColorEditFlags_RGB | 
 		ImGuiColorEditFlags_PickerHueBar | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_AlphaBar;
+
+	color.x = _colorBegin.x;
+	color.y = _colorBegin.y;
+	color.z = _colorBegin.z;
+	color.w = _colorBegin.w;
+
+	ImGui::Columns(3, "", false);
 	ImGui::PushItemWidth(-1);	//fking BS solution!
 	ImGui::ColorPicker4("   ", (float*)&color, flags, NULL);
 
-	if(time){
-		_colorEnd.x = color.x;
-		_colorEnd.y = color.y;
-		_colorEnd.z = color.z;
-	}
-	else{
-		_colorBegin.x = color.x;
-		_colorBegin.y = color.y;
-		_colorBegin.z = color.z;
+	_colorBegin.x = color.x;
+	_colorBegin.y = color.y;
+	_colorBegin.z = color.z;
+	_colorBegin.w = color.w;
 
-	}
+	ImGui::NextColumn();	//COLUMN
 
-	ImGui::NextColumn();
-	ImGui::Text("\n\n\n");
-	ImGui::RadioButton("Start Color", &time, 0);
-	ImGui::RadioButton("End Color", &time, 1);
+	ImGui::Text("\n\n");
+	ImGui::Text("         ");
+	ImGui::SameLine();
+	ImGui::CheckboxFlags("link", (unsigned int*)&link, ImGuiComboFlags_NoArrowButton);
 
-
-	//ImGui::Separator();	//doesnt work in a column
 	ImGui::Text("\n\n\n");
 
 	ImGui::Text("Interpolation type:");
-	static int interpolation = 0;
-	ImGui::RadioButton("some stuff", &interpolation, 0);
-	ImGui::RadioButton("some other stuff", &interpolation, 1);
+	static int interpol = 0;
+	ImGui::RadioButton("##1", &interpol, 0);
+	ImGui::RadioButton("##2", &interpol, 1);
+	ImGui::RadioButton("##3", &interpol, 2);
+	ImGui::RadioButton("##4", &interpol, 3);
+
+	if(interpol == 0) interpolation = linear;
+	if(interpol == 1) interpolation = linearInv;
+	if(interpol == 2) interpolation = exponential;
+	if(interpol == 3) interpolation = exponentialInv;
+
+	ImGui::NextColumn();	//COLUMN
+
+	if(link){
+		ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.3f);
+	}
+
+	color.x = _colorEnd.x;
+	color.y = _colorEnd.y;
+	color.z = _colorEnd.z;
+	color.w = _colorEnd.w;
+
+	ImGui::PushItemWidth(-1);
+	ImGui::ColorPicker4("    ", (float*)&color, flags, NULL);
+
+	if(link){
+		ImGui::PopItemFlag();
+		ImGui::PopStyleVar();
+		_colorEnd = _colorBegin;
+	}
+	else{
+		_colorEnd.x = color.x;
+		_colorEnd.y = color.y;
+		_colorEnd.z = color.z;
+		_colorEnd.w = color.w;
+	}
 }

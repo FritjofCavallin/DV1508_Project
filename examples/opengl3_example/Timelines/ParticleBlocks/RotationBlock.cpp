@@ -24,21 +24,21 @@ void RotationBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 
 	static ImGuiComboFlags link = 0;
 	
-	ImGui::Text("\n  Angle of velocity:");
-	ImGui::Text("   Start:");
+	ImGui::Text("\n  Rotation speed:");
+	ImGui::Text("   Initial:");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(45);
 	ImGui::InputFloat("   ", &_angVelocityBegin, 0, 0, 3);
 	ImGui::PopItemWidth();
 
 
-	ImGui::Text("    End: ");
+	ImGui::Text("    Final: ");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(45);
 	ImGui::InputFloat("    ", &_angVelocityEnd, 0, 0, 3);
 	ImGui::PopItemWidth();
 
-	ImVec2 asd = {135, 76};
+	ImVec2 asd = {145, 76};
 	ImGui::SetCursorPos(asd);
 	ImGui::CheckboxFlags("link", (unsigned int*)&link, ImGuiComboFlags_NoArrowButton);
 
