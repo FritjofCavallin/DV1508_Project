@@ -464,9 +464,18 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					else
 						++count;
 
-					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, color);
-					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, MC(color, 0.15f));
-					ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, MC(color, 0.3f));
+					if (data->_selectedBlock == block)
+					{
+						ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, ImVec4(0.9, 0.9, 0.9, 1));
+						ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, ImVec4(0.9, 0.9, 0.9, 1));
+						ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, ImVec4(0.9, 0.9, 0.9, 1));
+					}
+					else
+					{
+						ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, color);
+						ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, MC(color, 0.15f));
+						ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, MC(color, 0.3f));
+					}
 					ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * c));
 					if (ImGui::Button(block->visualName.c_str(), ImVec2(std::max(blockWidth, minBlockWidth), channelHeight * blockHeightRatio)))
 					{
