@@ -4,6 +4,9 @@
 #include "glm/geometric.hpp"
 #include "GL/gl3w.h"
 #include "../Other/Constants.h"
+
+class Timeline; struct InitialEmissionParams;
+
 /* Data sent to the GPU
 */
 struct GPUParticle
@@ -15,7 +18,9 @@ struct GPUParticle
 	glm::vec4 _texBlend;
 	/* Indices to area arrays:
 	*/
-	glm::ivec4 _texArea;
+	unsigned char _texArea[4];
+
+	GPUParticle();
 };
 
 /* Container for particle info
@@ -27,7 +32,13 @@ public:
 	glm::vec2 _initSize;
 	glm::vec3 _initDir;
 	glm::vec3 _velocity;
+
+	Particle();
+	~Particle() {}
 	
 	//float texBlend[];
 
+	bool dead(float particleTime, Timeline *particle);
+	bool update(GPUParticle &data, float particleTime, Timeline *particle);
+	void init(InitialEmissionParams &param, float spawnTime);
 };

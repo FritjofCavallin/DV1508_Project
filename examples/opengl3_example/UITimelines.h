@@ -1,21 +1,17 @@
 #pragma once
+#include <unordered_map>
 
 #include "UIContainer.h"
+#undef STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 class UITimelines : public UIContainer
 {
 private:
-	struct BlockInfo
-	{
-		std::string _name;
-		std::string _desc;
-	};
 
 	int						_addingNewBlock;
 	int						_holdingBlockId;
 	ImVec2					_moveDist;
-	std::vector<BlockInfo>*	_blockInfos[3];
-
 	bool					_onMenuBar = false;
 
 public:
@@ -37,9 +33,22 @@ private:
 	// Ratio of a channel taken up by the blocks
 	float blockHeightRatio = 0.8f;
 
+	int minChannelHeight = 30;
+	int maxChannelHeight = 100;
+
 	ImVec2 dragDistance;
 
 	void drawHandle(bool left, Block* block, Timeline* timeline, int channelIndex, float channelHeight);
 	void drawDraggedBlock(Timeline* timeline, float channelHeight);
+
+	// Modifies the given color based on the modifier
+	ImVec4 MC(ImVec4 in, float mod)
+	{
+		return ImVec4(std::min(in.x + mod, 1.f), std::min(in.y + mod, 1.f), std::min(in.z + mod, 1.f), 0.7f);
+	}
+
+	std::unordered_map<std::string, unsigned> iconTextures;
+
+	void createIconTexture(std::string iconName);
 };
 

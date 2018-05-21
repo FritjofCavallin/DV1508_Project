@@ -70,7 +70,11 @@ void simpleEffect(Data &data)
 	p2->addBlock(f1, 2);
 	p2->addBlock(f2, 2);
 
-	TextureFadeBlock *texFade = new TextureFadeBlock(time, 0);
+	TextureFadeBlock *texFade = new TextureFadeBlock(TimeInterval(0,0.33f), 0);
+	texFade->_texArea = 2;
+	p2->addBlock(texFade, 3);
+	texFade = new TextureFadeBlock(TimeInterval(0.33f, 3.f), 0);
+	texFade->_texArea = 0;
 	p2->addBlock(texFade, 3);
 
 	Timeline *e2 = new Timeline(type::Emitter, "Emitter1", time);

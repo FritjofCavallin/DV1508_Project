@@ -4,7 +4,7 @@ in vec4 Color;
 in vec2 Size;
 in float Rotation;
 in vec4 TexBlend;
-in ivec4 TexArea;
+in uvec4 TexArea;
 
 uniform mat4 viewMat;
 
@@ -14,7 +14,7 @@ out Vertex
   vec2 size;
   float rot;
   vec4 texBlend;
-  ivec4 texArea;
+  uvec4 texArea;
 } vertex;
 
 void main()

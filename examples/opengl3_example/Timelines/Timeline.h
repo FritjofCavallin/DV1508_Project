@@ -72,8 +72,11 @@ public:
 	*/
 	BlockList fetchBlocks(float relativeTime);
 
-private:
-	// Ensures there is an empty channel at the end of the _channel vector, and removes other empty channels
+	// Ensures there is an empty channel in the _channel vector, and removes other empty channels
 	void channelCleanup();
+
+private:
+	// Places a vector of blocks in any channel that can fit them. Blocks that can't fit are deleted
+	void fitDisplacedBlocks(std::vector<Block*>& displacedBlocks);
 };
 

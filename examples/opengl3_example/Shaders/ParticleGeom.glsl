@@ -13,14 +13,14 @@ in Vertex
   vec2 size;
   float rot;
   vec4 texBlend;
-  ivec4 texArea;
+  uvec4 texArea;
 } vertex[];
 
 
 out vec2 Vertex_UV;
 flat out vec4 Vertex_Color;
 flat out vec4 Tex_Blend;
-flat out ivec4 Tex_Area;
+flat out uvec4 Tex_Area;
 
 vec2 rotate(in float theta, in vec2 v)
 {

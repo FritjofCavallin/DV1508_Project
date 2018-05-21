@@ -9,7 +9,7 @@ TextureBlock::TextureBlock(TimeInterval t, const char* fileName, unsigned int te
 {
 	if (!loadTexture(fileName, gTextureID))
 		loadTexture(DEFAULT_TEX, gTextureID);
-	visualName = "Texture";
+	visualName = "Texture\n Slot";
 	desc = "Block setting a specific texture slot for the particles";
 }
 

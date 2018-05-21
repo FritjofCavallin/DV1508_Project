@@ -38,3 +38,8 @@ void Block::DrawPropertiesHeader(ImVec2 pos, ImVec2 size){
 	ImGui::PopItemWidth();
 	ImGui::Separator();
 }
+
+bool Block::contains(Block* other)
+{
+	return _time._startTime <= other->_time._startTime && _time._endTime >= other->_time._endTime;
+}

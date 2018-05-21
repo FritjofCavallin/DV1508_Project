@@ -19,7 +19,7 @@ Timeline::~Timeline()
 
 bool Timeline::addBlock(Block *b, unsigned int channel, bool insertChannel)
 {
-	if (channel >= _channel.size()) // Channel index to large (see MAX_CHANNEL const)
+	if (channel >= MAX_CHANNELS) // Channel index to large (see MAX_CHANNEL const)
 	{
 		std::cerr << "Tried to add a block to a channel index greater than MAX_CHANNELS\n";
 		return false; 
@@ -36,80 +36,138 @@ bool Timeline::addBlock(Block *b, unsigned int channel, bool insertChannel)
 		return false;
 	}
 
-	//if (channel >= _channel.size())
-	//	_channel.push_back(new Channel());
-
-	// If at max channels, but the last channel is empty, remove it to allow reordering of blocks
-	if (insertChannel && _channel.size() >= MAX_CHANNELS && _channel[MAX_CHANNELS - 1]->_data.size() == 0)
+	if (channel >= _channel.size())
 	{
-		auto it = _channel.end();
-		--it;
-
-		_channel.erase(it);
+		channel = _channel.size();
+		_channel.push_back(new Channel());
 	}
 
-	bool success = false;
 	if (insertChannel && _channel.size() < MAX_CHANNELS)
 	{
 		auto it = _channel.begin();
 		for (unsigned int i = 0; i < channel; ++i)
 			++it;
-
 		_channel.insert(it, new Channel());
 
-		// Insert block
 		_channel[channel]->_data.push_back(b);
-		success = true;
 	}
 	else
 	{
-		// Check for overlapping blocks in same channel
-		if (_channel[channel]->blockFits(b))
+		// Make space for the placed block
+		std::vector<Block*> displacedBlocks;
+		for (unsigned int i = 0; i < _channel[channel]->_data.size(); ++i)
 		{
-			_channel[channel]->_data.push_back(b);
-			success = true;
-		}
-		else
-		{
-			// First, try to add block to the next channel
-			if (channel < _channel.size() - 1 && _channel[channel + 1]->blockFits(b))
+			Block* other = _channel[channel]->_data[i];
+			if (b->contains(other) || other->contains(b))
 			{
-				_channel[channel + 1]->_data.push_back(b);
-				success = true;
+				// Displace other
+				displacedBlocks.push_back(other);
 			}
-			// Then, try to create a new channel after the desired one
-			else if (_channel.size() < MAX_CHANNELS)
+			// If the blocks are partially overlapping, cut the other blocks to make space for b
+			else if (b->overlaps(other))
 			{
-				auto it = _channel.begin();
-				for (unsigned int i = 0; i < channel; ++i)
-					++it;
-				++it;	// One extra step, to add the new channel after the desired one, not before
-
-				_channel.insert(it, new Channel());
-
-				// Insert block
-				_channel[channel + 1]->_data.push_back(b);
-				success = true;
-			}
-			// Lastly, check if block fits within other existing channels
-			else
-			{
-				for (Channel* c : _channel)
+				if (other->_time._startTime < b->_time._startTime && other->_time._endTime > b->_time._startTime)
 				{
-					if (c->blockFits(b))
+					// If correcting other block width would make it shorter than allowed
+					if (b->_time._startTime - other->_time._startTime < _channel[channel]->minBlockDuration)
 					{
-						c->_data.push_back(b);
-						success = true;
-						break;
+						// Displace other
+						displacedBlocks.push_back(other);
+					}
+					else
+					{
+						other->_time._endTime = b->_time._startTime;
+					}
+				}
+				if (other->_time._endTime > b->_time._endTime && other->_time._startTime < b->_time._endTime)
+				{
+					// If correcting other block width would make it shorter than allowed
+					if (other->_time._endTime - b->_time._endTime < _channel[channel]->minBlockDuration)
+					{
+						// Displace other
+						displacedBlocks.push_back(other);
+					}
+					else
+					{
+						other->_time._startTime = b->_time._endTime;
 					}
 				}
 			}
+		}
+
+		// Remove displaced blocks from channel
+		for (Block* d : displacedBlocks)
+		{
+			removeBlock(d, false);
+		}
+
+		// Insert b
+		_channel[channel]->_data.push_back(b);
+
+		// Handle displaced blocks
+		if (displacedBlocks.size() > 0)
+		{
+			if (_channel.size() < MAX_CHANNELS)
+			{
+				if (channel == _channel.size() - 1)
+				{
+					_channel.push_back(new Channel());
+
+					// Place in next channel
+					for (Block* b : displacedBlocks)
+					{
+						_channel[channel + 1]->_data.push_back(b);
+					}
+				}
+				else
+				{
+					// Check if all blocks fit in next channel
+					bool allFit = true;
+					for (unsigned int i = 0; i < displacedBlocks.size(); ++i)
+					{
+						if (!_channel[channel + 1]->blockFits(displacedBlocks[i]))
+						{
+							allFit = false;
+							break;
+						}
+					}
+
+					// If all blocks fit in next channel, place them there
+					if (allFit)
+					{
+						for (Block* b : displacedBlocks)
+						{
+							_channel[channel + 1]->_data.push_back(b);
+						}
+					}
+					// Else, create new channel and place the blocks there
+					else
+					{
+						auto it = _channel.begin();
+						for (unsigned int i = 0; i < channel; ++i)
+							++it;
+						++it;	// One extra step, to add the new channel after the desired one, not before
+						_channel.insert(it, new Channel());
+
+						// Place in next channel
+						for (Block* b : displacedBlocks)
+						{
+							_channel[channel + 1]->_data.push_back(b);
+						}
+					}
+				}
+			}
+			else
+			{
+				fitDisplacedBlocks(displacedBlocks);
+			}
+
 		}
 	}
 
 	channelCleanup();
 
-	return success;
+	return true;
 }
 
 Block* Timeline::removeBlock(int channelIndex, int blockIndex, bool doCleanup)
@@ -161,22 +219,54 @@ BlockList Timeline::fetchBlocks(float relativeTime)
 
 void Timeline::channelCleanup()
 {
-	// Remove empty channels in the middle of the vector
-	for (unsigned int c = 0; c < _channel.size() - 1; ++c)
+	// Count empty channels
+	int emptyChannels = 0;
+	for (unsigned int c = 0; c < _channel.size(); ++c)
 	{
 		if (_channel[c]->isEmpty())
 		{
-			auto it = _channel.begin();
-			for (unsigned int i = 0; i < c; ++i)
-				++it;
-
-			_channel.erase(it);
+			emptyChannels++;
 		}
 	}
 
-	// Ensure there is an empty channel at the end of the vector, as long as there is space
-	if (!_channel[_channel.size() - 1]->isEmpty() && _channel.size() < MAX_CHANNELS)
+	if (emptyChannels == 0 && _channel.size() < MAX_CHANNELS)
 	{
 		_channel.push_back(new Channel());
+	}
+	else
+	{
+		for (int i = 0; i < emptyChannels - 1; ++i)
+		{
+			auto it = _channel.begin();
+			while (it != _channel.end())
+			{
+				if ((*it)->isEmpty())
+				{
+					_channel.erase(it);
+					break;
+				}
+
+				++it;
+			}
+		}
+	}
+}
+
+void Timeline::fitDisplacedBlocks(std::vector<Block*>& displacedBlocks)
+{
+	for (Block* b : displacedBlocks)
+	{
+		bool inserted = false;
+		for (Channel* c : _channel)
+		{
+			if (c->blockFits(b))
+			{
+				c->_data.push_back(b);
+				inserted = true;
+				break;
+			}
+		}
+		if (!inserted)
+			delete b;
 	}
 }

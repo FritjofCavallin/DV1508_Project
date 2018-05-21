@@ -22,6 +22,9 @@ public:
 	// Returns true if the time intervals of the two blocks overlap.
 	bool overlaps(Block* other);
 
+	// Returns true if the time interval of this contains the time interval of other.
+	bool contains(Block* other);
+
 	/* The timeline type the block is associated with
 	*/
 	type::Timeline typeFit() { return _type; };
@@ -41,5 +44,6 @@ public:
 	float dragBodyYOffset = 0.0f;
 	std::string visualName = "CHANGE THIS!";
 	std::string desc = "CHANGE THIS!";
+	std::string iconName = "testicon.png";
 };
 

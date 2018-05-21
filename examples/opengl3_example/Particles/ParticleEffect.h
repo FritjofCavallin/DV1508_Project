@@ -32,6 +32,8 @@ public:
 	void render(Camera *cam);
 	
 	std::string getStatus();
+
+	Emission* getEmission(EffectBlock *block);
 	
 private:
 

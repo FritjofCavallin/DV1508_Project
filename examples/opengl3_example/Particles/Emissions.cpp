@@ -12,6 +12,10 @@ Emission::Emission(ParticleEffect* effect, Timeline *emitter, ParticleShader *sh
 {
 	_shadeBuffers[0] = shader->genBuffer(PARTICLES_EMITTED_MAX);
 	_shadeBuffers[1] = shader->genBuffer(PARTICLES_EMITTED_MAX);
+	for(int i = 0; i < 4; i++){
+		_texActive[i] = 0;
+		_texSlots[i] = 0;
+	}
 }
 
 
@@ -21,6 +25,16 @@ Emission::~Emission()
 	_shadeBuffers[1].destroy();
 }
 
+void Emission::bindTextures()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		GLuint texInd = _texActive[i] ? _texSlots[i] : _shader->defaultTex;
+		glBindTexture(GL_TEXTURE_2D, texInd);
+		//_texActive[i] = false;
+	}
+}
 void Emission::render()
 {
 	//Buffer data
@@ -34,17 +48,10 @@ void Emission::render()
 		_shadeBuffers[_bufCycle].buffer(_cycleEnd - _cycleBegin, _data.data() + _cycleBegin, 0);
 	// Swap buf and draw
 	_bufCycle = !_bufCycle;
-		//Bind textures:
+	//Bind textures:
 	checkGLError();
 	
-	for (int i = 0; i < 4; i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i);
-		GLuint texInd = _texActive[i] ? _texSlots[i] : _shader->defaultTex;
-		glBindTexture(GL_TEXTURE_2D, texInd);
-		_texActive[i] = false;
-	}
-	
+	bindTextures();
 	
 	checkGLError();
 	
@@ -58,6 +65,9 @@ void Emission::stepParticle(unsigned int index, float timeStep)
 	_data[index]._position += timeStep * _particleInfo[index]._velocity;
 }
 
+bool Emission::isLooped() { return _cycleEnd < _cycleBegin; }
+void Emission::incrementCycleEnd() { _cycleEnd++; if (_cycleEnd == _particleInfo.size()) _cycleEnd = 0; }
+void Emission::incrementCycleBegin() { _cycleBegin++; if (_cycleBegin == _particleInfo.size()) _cycleBegin = 0; }
 
 size_t Emission::numActive()
 {
@@ -66,34 +76,16 @@ size_t Emission::numActive()
 		_cycleEnd - _cycleBegin;
 }
 
+bool Emission::active(unsigned int index) { return _particleInfo[index].dead(_effect->elapsedSince(_particleInfo[index]._spawnTime), _emitter->_particleLink); }
+
+
 void Emission::updateParticle(unsigned int index)
 {
-	Timeline *ref = _emitter->_particleLink;
-	float particleTime = _effect->elapsedSince(_particleInfo[index]._spawnTime);
-
-	//Kill particle
-	if (particleTime >= (ref ? ref->_timeTotal.duration() : 5.f))
-	{
+	float pTime = _effect->elapsedSince(_particleInfo[index]._spawnTime);
+	if (_particleInfo[index].update(_data[index], pTime, _emitter->_particleLink))
 		incrementCycleBegin();
-		return;
-	}
-
-
-	// Fetch relevant blocks and apply
-	BlockList active = ref ?
-		ref->fetchBlocks(_effect->elapsedSince(_particleInfo[index]._spawnTime)) :
-		BlockList();
-	
-	// Reset data that is applied relative to initial data
-	_data[index]._color = glm::vec4(1.f);
-	_data[index]._size = _particleInfo[index]._initSize;
-	_data[index]._texBlend = glm::vec4(0.f);
-
-	for (unsigned int i = 0; i < active._size; i++)
-		active._blocks[i]->applyParticle(particleTime, _particleInfo[index], _data[index]);
-
-	stepParticle(index, EMIT_STEP);
-	// Do some more calcs (e.g. texture assignments)..
+	else
+		stepParticle(index, EMIT_STEP);
 }
 
 void Emission::updateParticles()
@@ -132,9 +124,7 @@ void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float block
 		InitialEmissionParams &param = spawner->_params;
 		Particle p;
 		float timeOffset = dTime * (N - i);
-		p._spawnTime = _effect->_time - timeOffset;
-		p._initSize = glm::mix(param._minSize, param._maxSize, randomFloat());
-		p._initDir = param._emitDir;
+		p.init(param, _effect->_time - timeOffset);
 
 		// Lerp initial position depending on initial velocity
 		GPUParticle gpuP;
@@ -143,7 +133,10 @@ void Emission::spawnParticle(SpawnBlock *spawner, BlockList &active, float block
 
 		gpuP._rotation = glm::mix(param._minRotation, param._maxRotation, randomFloat());
 
-		gpuP._texArea = glm::ivec4(0);
+		gpuP._texArea[0] = 0;
+		gpuP._texArea[1] = 0;
+		gpuP._texArea[2] = 0;
+		gpuP._texArea[3] = 0;
 
 		// Apply emitter blocks
 		for (unsigned int ii = 0; ii < active._size; ii++)
@@ -183,4 +176,12 @@ void Emission::spawnParticles(float emitterTime, float deltaT)
 		spawnParticle(b, list, b->_time.toRelative(emitterTime), deltaT);
 	}
 }
+
+
+
+
+Timeline* Emission::getEmitter() { return _emitter; }
+GPUParticle& Emission::operator[](unsigned int index) { return _data[index]; }
+/* Get the index of the last particle. */
+unsigned int Emission::last() { return _cycleEnd + (_cycleEnd > 0 ? -1 : _data.size() - 1); }
 
