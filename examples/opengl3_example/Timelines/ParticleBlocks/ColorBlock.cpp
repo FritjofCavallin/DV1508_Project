@@ -56,11 +56,16 @@ void ColorBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	ImGui::Text("\n\n\n");
 
 	ImGui::Text("Interpolation type:");
-	static int interpolation = 0;
-	ImGui::RadioButton("##1", &interpolation, 0);
-	ImGui::RadioButton("##2", &interpolation, 1);
-	ImGui::RadioButton("##3", &interpolation, 2);
-	ImGui::RadioButton("##4", &interpolation, 3);
+	static int interpol = 0;
+	ImGui::RadioButton("##1", &interpol, 0);
+	ImGui::RadioButton("##2", &interpol, 1);
+	ImGui::RadioButton("##3", &interpol, 2);
+	ImGui::RadioButton("##4", &interpol, 3);
+
+	if(interpol == 0) interpolation = linear;
+	if(interpol == 1) interpolation = linearInv;
+	if(interpol == 2) interpolation = exponential;
+	if(interpol == 3) interpolation = exponentialInv;
 
 	ImGui::NextColumn();	//COLUMN
 
