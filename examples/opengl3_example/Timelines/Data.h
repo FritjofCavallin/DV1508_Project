@@ -8,6 +8,7 @@
 
 class ParticleManager;
 class PreviewWindow;
+class UITimelines;
 
 /* Database containing timelines in the project
 */
@@ -22,6 +23,8 @@ public:
 	int getOpenCount();
 
 	Block* _selectedBlock = nullptr;
+	UITimelines* uiImg = nullptr;
+
 
 	struct BlockInfo
 	{

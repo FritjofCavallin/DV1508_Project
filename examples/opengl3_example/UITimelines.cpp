@@ -28,6 +28,7 @@ UITimelines::UITimelines(Data* data)
 	this->data = data;
 	_addingNewBlock = -1;
 	_holdingBlockId = -1;
+	data->uiImg = this;
 }
 
 
@@ -308,7 +309,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					switch (_holdingBlockId)
 					{
 					case 0:
-						timeline->_movingBlock = new ColorBlock(time);
+						timeline->_movingBlock = new ColorBlock(time, *data);
 						break;
 					case 1:
 						timeline->_movingBlock = new ConstantForce(time);
@@ -716,11 +717,11 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 	}
 }
 
-void UITimelines::createIconTexture(std::string iconName)
+unsigned UITimelines::createIconTexture(std::string iconName)
 {
 	std::string path("Icons\\");
 	path += iconName;
-	unsigned texture;
+	unsigned texture = 0;
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -744,4 +745,5 @@ void UITimelines::createIconTexture(std::string iconName)
 	stbi_image_free(data);
 
 	iconTextures[iconName] = texture;
+	return texture;
 }

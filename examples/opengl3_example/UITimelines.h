@@ -19,6 +19,8 @@ public:
 	virtual ~UITimelines();
 	virtual void draw(ImVec2 pos, ImVec2 size);
 
+	unsigned int createIconTexture(std::string iconName);
+
 private:
 	float minBlockWidth = 50.0f;
 	ImVec4 handleLeftColor = ImVec4(0.2f, 0.2f, 0.6f, 0.6f);
@@ -44,11 +46,10 @@ private:
 	// Modifies the given color based on the modifier
 	ImVec4 MC(ImVec4 in, float mod)
 	{
-		return ImVec4(std::min(in.x + mod, 1.f), std::min(in.y + mod, 1.f), std::min(in.z + mod, 1.f), 0.7f);
+		return ImVec4(std::fminf(in.x + mod, 1.f), std::fminf(in.y + mod, 1.f), std::fminf(in.z + mod, 1.f), 0.7f);
 	}
 
 	std::unordered_map<std::string, unsigned> iconTextures;
 
-	void createIconTexture(std::string iconName);
 };
 

@@ -2,9 +2,11 @@
 #include "../Block.h"
 #include "glm/vec3.hpp"
 
+class Data;
+
 enum interpolationType{
 	linear = 0,
-	linearInv = 1,
+	linearDecrease = 1,
 	exponential = 2,
 	exponentialInv = 3
 };
@@ -18,12 +20,16 @@ public:
 	*/
 	glm::vec4 _colorBegin, _colorEnd;
 	interpolationType interpolation;
+	
 
-	ColorBlock(TimeInterval t);
+	ColorBlock(TimeInterval t, Data &data);
 	virtual ~ColorBlock();
 
 	virtual void applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart);
 
 	virtual void DrawProperties(ImVec2 pos, ImVec2 size);
+
+private:
+
 };
 

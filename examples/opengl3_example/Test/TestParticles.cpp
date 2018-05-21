@@ -24,7 +24,7 @@ void simpleEffect(Data &data)
 	scale->_scaleEnd = glm::vec2(1.f, 1.f);
 	p->addBlock(scale, 0);
 
-	ColorBlock *color = new ColorBlock(time);
+	ColorBlock *color = new ColorBlock(time, data);
 	color->_colorBegin = glm::vec4(0.f, 0, 0, 1);
 	color->_colorEnd = glm::vec4(1.f, 0.f, 0.5f, 0.5f);
 	p->addBlock(color, 1);

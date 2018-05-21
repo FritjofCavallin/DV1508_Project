@@ -40,7 +40,7 @@ Data::Data()
 
 	// Particle blocks
 	_blockInfos[2] = new std::vector<BlockInfo>();
-	temp.push_back(new ColorBlock({ 0, 0 }));
+	temp.push_back(new ColorBlock({ 0, 0 }, *this));
 	temp.push_back(new ConstantForce({ 0, 0 }));
 	temp.push_back(new ForceBlock({ 0, 0 }));
 	temp.push_back(new GravityBlock({ 0, 0 }));

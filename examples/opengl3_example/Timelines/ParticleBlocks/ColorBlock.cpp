@@ -1,13 +1,25 @@
 #include "ColorBlock.h"
 #include "imgui_internal.h"
+#include "../Data.h"
+#include "../../Other/GLFuncs.h"
 
 
-ColorBlock::ColorBlock(TimeInterval t)
+static GLuint lin = 0, linInv, expVal, expInv;
+
+ColorBlock::ColorBlock(TimeInterval t, Data &data)
 	: Block(t, type::Particle), _colorBegin(1.f), _colorEnd(1.f)
 {
 	visualName = "Color";
 	desc = "Change color of the texture and particle";
 	iconName = "Color.png";
+
+	if (!lin)
+	{
+		loadTexture("Linear.png", lin);
+		loadTexture("LinearDecr.png", linInv);
+		loadTexture("Exp.png", expVal);
+		loadTexture("ExpInv.png", expInv);
+	}
 }
 
 
@@ -17,7 +29,23 @@ ColorBlock::~ColorBlock()
 
 void ColorBlock::applyParticle(float emittTime, Particle &part, GPUParticle &gpuPart)
 {
+	const float c = 100.f;
 	float tRel = _time.toRelativeNor(emittTime);
+	switch (interpolation)
+	{
+	case linearDecrease:
+		tRel = 1.f - tRel;
+		break;
+	case exponential:
+		tRel = 1/c * std::pow(c, tRel);
+		break;
+	case exponentialInv:
+		tRel = std::log(c * tRel) / std::log(c);
+		break;
+	case linear:
+	default:
+		break;
+	}
 	gpuPart._color *= glm::mix(_colorBegin, _colorEnd, tRel);
 }
 
@@ -54,17 +82,16 @@ void ColorBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 	ImGui::Text("\n\n\n");
 
 	ImGui::Text("Interpolation type:");
-	static int interpol = 0;
-	ImGui::RadioButton("##1", &interpol, 0);
-	ImGui::RadioButton("##2", &interpol, 1);
-	ImGui::RadioButton("##3", &interpol, 2);
-	ImGui::RadioButton("##4", &interpol, 3);
-
-	if(interpol == 0) interpolation = linear;
-	if(interpol == 1) interpolation = linearInv;
-	if(interpol == 2) interpolation = exponential;
-	if(interpol == 3) interpolation = exponentialInv;
-
+	const ImVec2 s(40, 40);
+	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(lin), s))
+		interpolation =  linear;
+	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(linInv), s))
+		interpolation = linearDecrease;
+	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(expVal), s))
+		interpolation = exponential;
+	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(expInv), s))
+		interpolation = exponentialInv;
+		
 	ImGui::NextColumn();	//COLUMN
 
 	if(link){
