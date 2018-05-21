@@ -7,6 +7,7 @@ ScaleBlock::ScaleBlock(TimeInterval t)
 {
 	visualName = "Scale";
 	desc = "Change size of the particle";
+	iconName = "Scale.png";
 }
 
 

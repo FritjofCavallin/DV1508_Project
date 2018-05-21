@@ -7,12 +7,14 @@ GravityBlock::GravityBlock(TimeInterval t)
 {
 	visualName = "Gravity";
 	desc = "Accelerate toward a point";
+	iconName = "Gravity.png";
 }
 GravityBlock::GravityBlock(TimeInterval t, glm::vec3 gravityPoint, float constantForce)
 	: Block(t, type::Particle), _gravityPoint(gravityPoint), _gravity(constantForce)
 {
 	visualName = "Gravity";
 	desc = "Accelerate toward a point";
+	iconName = "Gravity.png";
 }
 
 

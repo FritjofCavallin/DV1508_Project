@@ -7,7 +7,7 @@ ColorBlock::ColorBlock(TimeInterval t)
 {
 	visualName = "Color";
 	desc = "Change color of the texture and particle";
-	iconName = "testicon2.png";
+	iconName = "Color.png";
 }
 
 
