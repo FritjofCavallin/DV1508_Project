@@ -19,6 +19,7 @@ private:
 	float camY = 10;
 	float pitch = 0;
 	float yaw = 0;
+	bool fakescreenlock;
 
 public:
 	Camera();
