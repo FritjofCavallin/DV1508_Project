@@ -17,8 +17,8 @@ private:
 	float camX = 0;
 	float camZ = 10;
 	float camY = 10;
-	float pitch = -17.6;
-	float yaw = -48;
+	float pitch = 0;
+	float yaw = 0;
 
 public:
 	Camera();

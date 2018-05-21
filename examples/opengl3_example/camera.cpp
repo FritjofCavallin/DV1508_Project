@@ -12,6 +12,7 @@ Camera::Camera()
 
 	cameraPos = glm::vec3(-9.6,   4.7 ,  10.3);
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	pitch = 26.6;
 	
 
 }
@@ -31,6 +32,7 @@ glm::mat4 Camera::getViewMat()
 	POINT NewMouseposition;
 	GetCursorPos(&NewMouseposition);
 //	std::cout << NewMouseposition.x << " " << NewMouseposition.y << std::endl;
+	std::cout << yaw << " " << pitch << std::endl;
 	if(NewMouseposition.x <861 && NewMouseposition.y <674 && NewMouseposition.x >5 && NewMouseposition.y >40)
 	{
 		if (A)
