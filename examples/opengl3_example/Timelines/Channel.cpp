@@ -6,6 +6,7 @@
 
 #include "imgui.h"
 #include "Channel.h"
+#include "Timeline.h"
 
 bool Channel::isEmpty()
 {
@@ -21,7 +22,7 @@ bool Channel::blockFits(Block* block)
 	return true;
 }
 
-void Channel::correctBlockDuration(Block* draggedBlock, TimeInterval timelineExtent, bool left)
+void Channel::correctBlockDuration(Block* draggedBlock, Timeline* timeline, bool left)
 {
 	if (std::find(_data.begin(), _data.end(), draggedBlock) == _data.end())
 	{
@@ -55,11 +56,20 @@ void Channel::correctBlockDuration(Block* draggedBlock, TimeInterval timelineExt
 		}
 	}
 
-	if (draggedBlock->_time._startTime < timelineExtent._startTime)
-		draggedBlock->_time._startTime = timelineExtent._startTime;
+	// Left
+	if (draggedBlock->_time._startTime < 0.f)
+		draggedBlock->_time._startTime = 0.f;
 
-	if (draggedBlock->_time._endTime > timelineExtent._endTime)
-		draggedBlock->_time._endTime = timelineExtent._endTime;
+	// Right
+	if (draggedBlock->_time._endTime > timeline->_timeTotal._endTime)
+	{
+		if (io.KeyCtrl)
+		{
+			timeline->_timeTotal._endTime = draggedBlock->_time._endTime;
+			timeline->_timeShown._endTime = draggedBlock->_time._endTime;
+		}
+		draggedBlock->_time._endTime = timeline->_timeTotal._endTime;
+	}
 
 	if (left)
 	{

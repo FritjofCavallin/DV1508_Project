@@ -573,7 +573,7 @@ void UITimelines::drawHandle(bool left, Block* block, Timeline* timeline, int ch
 
 		// Update start time
 		*editedTimeValue = (((block->dragHandleStart + dragDistance.x) * timelineShownDuration)) / ImGui::GetContentRegionAvail().x + timeline->_timeShown._startTime;
-		timeline->_channel[channelIndex]->correctBlockDuration(block, timeline->_timeTotal, left);
+		timeline->_channel[channelIndex]->correctBlockDuration(block, timeline, left);
 	}
 	if (left)
 		ImGui::SetCursorPos(ImVec2(blockStartPos, menubarHeight + channelHeight * channelIndex));
