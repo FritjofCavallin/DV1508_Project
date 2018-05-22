@@ -7,6 +7,7 @@ ForceBlock::ForceBlock(TimeInterval t)
 {
 	visualName = "Force";
 	desc = "A force applied over time";
+	iconName = "Force.png";
 }
 
 ForceBlock::ForceBlock(TimeInterval t, glm::vec3 forceDir, float force)
@@ -14,6 +15,7 @@ ForceBlock::ForceBlock(TimeInterval t, glm::vec3 forceDir, float force)
 {
 	visualName = "Force";
 	desc = "A force applied over time";
+	iconName = "Force.png";
 }
 
 ForceBlock::~ForceBlock()

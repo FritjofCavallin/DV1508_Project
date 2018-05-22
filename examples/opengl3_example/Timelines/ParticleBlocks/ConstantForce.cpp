@@ -7,6 +7,7 @@ ConstantForce::ConstantForce(TimeInterval t)
 {
 	visualName = "Constant\n Force";
 	desc = "Apply a constant force";
+	iconName = "ConstantForce.png";
 }
 
 

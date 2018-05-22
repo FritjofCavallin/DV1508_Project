@@ -11,6 +11,7 @@ TextureBlock::TextureBlock(TimeInterval t, const char* fileName, unsigned int te
 		loadTexture(DEFAULT_TEX, gTextureID);
 	visualName = "Texture\n Slot";
 	desc = "Block setting a specific texture slot for the particles";
+	iconName = "Texture.png";
 }
 
 TextureBlock::~TextureBlock()

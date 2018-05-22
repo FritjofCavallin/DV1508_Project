@@ -8,6 +8,7 @@ TextureFadeBlock::TextureFadeBlock(TimeInterval t, unsigned int texSlot)
 {
 	visualName = "Texture";
 	desc = "Fade factor value for a texture";
+	iconName = "TextureFade.png";
 }
 
 TextureFadeBlock::~TextureFadeBlock()

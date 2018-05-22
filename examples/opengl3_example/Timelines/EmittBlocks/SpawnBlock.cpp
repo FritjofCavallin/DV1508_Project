@@ -16,6 +16,7 @@ SpawnBlock::SpawnBlock(TimeInterval t)
 {
 	visualName = "Amount";
 	desc = "The amount of particles to spawn";
+	iconName = "Spawn.png";
 }
 
 SpawnBlock::SpawnBlock(TimeInterval t, InitialEmissionParams &p) 
@@ -23,6 +24,7 @@ SpawnBlock::SpawnBlock(TimeInterval t, InitialEmissionParams &p)
 {
 	visualName = "Amount";
 	desc = "The amount of particles to spawn";
+	iconName = "Spawn.png";
 }
 
 SpawnBlock::~SpawnBlock()
