@@ -1,6 +1,6 @@
 #include "ParticleManager.h"
 #include <iostream>
-
+#include "../Timelines/EffectBlock.h"
 
 ParticleManager::ParticleManager()
 {
@@ -35,6 +35,15 @@ void ParticleManager::printInfo()
 	for (ParticleEffect *e : _effects)
 		std::cout << e->getStatus();
 
+}
+void ParticleManager::deleteBlock(Block * b)
+{
+	EffectBlock * eB = dynamic_cast<EffectBlock*>(b);
+	if (eB)
+	{
+		for (ParticleEffect *e : _effects)
+			e->remove(eB);
+	}
 }
 
 

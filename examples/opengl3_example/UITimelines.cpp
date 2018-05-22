@@ -20,6 +20,7 @@
 #include "Timelines/ParticleBlocks/ScaleBlock.h"
 #include "Timelines/ParticleBlocks/TextureFadeBlock.h"
 #include "Timelines/EffectBlock.h"
+#include "Particles/ParticleManager.h"
 #include "Window/PreviewWindow.h"
 
 #define BUTTON_WIDTH 70
@@ -251,7 +252,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				ImGui::PopStyleColor(3);
 
 				// Add click effect
-				if (ImGui::IsItemActive())
+				if (ImGui::IsItemHovered() && ImGui::IsItemActive())
 				{
 					_moveDist = ImGui::GetMouseDragDelta(0);
 					_holdingBlockId = b;
@@ -300,14 +301,9 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				{
 					auto& ets = data->getEmitterTimelines();
 					int index = 0;
-					for (auto& et : ets)
-					{
-						if (index++ == _holdingBlockId)
-						{
-							timeline->_movingBlock = new EffectBlock(et, time);
-							break;
-						}
-					}
+					auto it = ets.begin();
+					it = std::next(it, _holdingBlockId);
+					timeline->_movingBlock = new EffectBlock(*it, time);
 					break;
 				}
 				case type::Emitter:
@@ -663,7 +659,10 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 			if (data->_selectedBlock == timeline->_movingBlock)
 				data->_selectedBlock = nullptr;
 			if (timeline->_movingBlock->_type == type::Effect)
+			{
 				data->getPreview()->deletedEffect(timeline->_movingBlock);
+				data->getPlayer()->deleteBlock(timeline->_movingBlock);
+			}
 			delete timeline->_movingBlock;
 			timeline->channelCleanup();
 

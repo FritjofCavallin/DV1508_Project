@@ -21,6 +21,8 @@ public:
 
 	void printInfo();
 
+	void deleteBlock(Block * b);
+
 private:
 
 	std::vector<ParticleEffect*> _effects;

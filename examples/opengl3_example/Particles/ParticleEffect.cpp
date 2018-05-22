@@ -63,6 +63,13 @@ void ParticleEffect::update()
 		e.second->updateParticles();
 }
 
+void ParticleEffect::remove(EffectBlock *eBlock)
+{
+	auto it = _emitters.find(eBlock);
+	if (it != _emitters.end())
+		_emitters.erase(it);
+}
+
 void ParticleEffect::render(Camera *cam)
 {
 	_shader.assignGlobalUniforms(cam);

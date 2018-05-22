@@ -34,6 +34,8 @@ public:
 	std::string getStatus();
 
 	Emission* getEmission(EffectBlock *block);
+
+	void remove(EffectBlock *eblock);
 	
 private:
 

@@ -92,7 +92,7 @@ int main(int, char**)
         glfwPollEvents();
 
 		data.getPlayer()->update();
-		if (glfwGetTime() > statusTick) //Print status every second
+		if (glfwGetTime() > statusTick * 5) //Print status every second
 		{
 			data.getPlayer()->printInfo();
 			statusTick++;
