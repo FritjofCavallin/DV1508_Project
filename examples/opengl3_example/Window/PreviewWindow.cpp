@@ -135,6 +135,15 @@ void PreviewWindow::drawParticle()
 	}
 }
 
+void PreviewWindow::deletedEffect(Block * t)
+{
+	if (_previewEff == t)
+	{
+		_previewEff = NULL;
+		_previewSpw = NULL;
+	}
+}
+
 void PreviewWindow::resetPart()
 {
 	_previewTime = 0.f;

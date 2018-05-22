@@ -18,6 +18,9 @@ public:
 	void resize(unsigned int w, unsigned int h);
 
 	ImTextureID getWindowTex();
+
+	void deletedEffect(Block * t);
+
 private:
 
 	unsigned int _display_w, _display_h;

@@ -20,6 +20,7 @@
 #include "Timelines/ParticleBlocks/ScaleBlock.h"
 #include "Timelines/ParticleBlocks/TextureFadeBlock.h"
 #include "Timelines/EffectBlock.h"
+#include "Window/PreviewWindow.h"
 
 #define BUTTON_WIDTH 70
 
@@ -301,7 +302,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					int index = 0;
 					for (auto& et : ets)
 					{
-						if (index == _holdingBlockId)
+						if (index++ == _holdingBlockId)
 						{
 							timeline->_movingBlock = new EffectBlock(et, time);
 							break;
@@ -661,7 +662,8 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 		{
 			if (data->_selectedBlock == timeline->_movingBlock)
 				data->_selectedBlock = nullptr;
-
+			if (timeline->_movingBlock->_type == type::Effect)
+				data->getPreview()->deletedEffect(timeline->_movingBlock);
 			delete timeline->_movingBlock;
 			timeline->channelCleanup();
 
