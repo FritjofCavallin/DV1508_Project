@@ -643,6 +643,7 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 		{
 			delete timeline->_movingBlock;
 			timeline->channelCleanup();
+			data->_selectedBlock = nullptr;
 		}
 		// Place block. If placement fails, restore its position
 		else if (!timeline->addBlock(timeline->_movingBlock, (int)hoveredChannel, insertChannel))
