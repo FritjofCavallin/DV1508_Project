@@ -7,7 +7,7 @@
 static GLuint lin = 0, linInv, expVal, expInv;
 
 ColorBlock::ColorBlock(TimeInterval t, Data &data)
-	: Block(t, type::Particle), _colorBegin(1.f), _colorEnd(1.f)
+	: Block(t, type::Particle), _colorBegin(1.f), _colorEnd(1.f), interpolation(linear)
 {
 	visualName = "Color";
 	desc = "Change color of the texture and particle";
@@ -81,16 +81,23 @@ void ColorBlock::DrawProperties(ImVec2 pos, ImVec2 size){
 
 	ImGui::Text("\n\n\n");
 
-	ImGui::Text("Interpolation type:");
+	ImGui::Text("Interpolation:");
 	const ImVec2 s(40, 40);
-	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(lin), s))
+	const ImVec4 tC(0.55, 0.55, 0.55, 1), tNor(1,1,1,1);
+	ImGui::BeginChild("");
+	ImGui::Columns(2, "", false);
+	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(lin), s, ImVec2(0, 0), ImVec2(1, 1), 1, ImVec4(0, 0, 0, 0), interpolation == linear ? tC : tNor))
 		interpolation =  linear;
-	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(linInv), s))
-		interpolation = linearDecrease;
-	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(expVal), s))
+	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(expVal), s, ImVec2(0, 0), ImVec2(1, 1), 1, ImVec4(0, 0, 0, 0), interpolation == exponential ? tC : tNor))
 		interpolation = exponential;
-	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(expInv), s))
+
+	ImGui::NextColumn();	//CCOLUMN
+	
+	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(linInv), s, ImVec2(0, 0), ImVec2(1, 1), 1, ImVec4(0, 0, 0, 0), interpolation == linearDecrease ? tC : tNor))
+		interpolation = linearDecrease;
+	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(expInv), s,ImVec2(0,0), ImVec2(1, 1),1,ImVec4(0,0,0,0), interpolation == exponentialInv ? tC : tNor))
 		interpolation = exponentialInv;
+	ImGui::EndChild();
 		
 	ImGui::NextColumn();	//COLUMN
 
