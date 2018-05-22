@@ -56,7 +56,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			info += e->_particleLink->_name;
 		else
 			info += "None";
-		data->_blockInfos[0]->push_back({ nullptr, e->_name, info, ImVec4() });
+		data->_blockInfos[0]->push_back({ nullptr, e->_name, info, "Effect.png", ImVec4() });
 	}
 
 	if (ImGui::BeginMenuBar())
@@ -223,11 +223,11 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 			for (unsigned int b = 0; b < blockTypes; ++b)
 			{
 				// Choose start pos
-				float startX = timelineWidth / 2 - (BUTTON_WIDTH + 15) * blockTypes / 2;
+				float startX = timelineWidth / 2 - (BUTTON_WIDTH + 15) * blockTypes / 2 + (BUTTON_WIDTH + 15) * b;
+				ImVec2 pos = ImVec2(startX, startY);
 				if (_holdingBlockId == b)
-					ImGui::SetCursorPos(ImVec2(startX + (BUTTON_WIDTH + 15) * b + _moveDist.x, startY + _moveDist.y));
-				else
-					ImGui::SetCursorPos(ImVec2(startX + (BUTTON_WIDTH + 15) * b, startY));
+					pos = ImVec2(startX + _moveDist.x, startY + _moveDist.y);
+				ImGui::SetCursorPos(pos);
 
 				// Create button
 				ImVec4 color = ImVec4(1, 70 * count / 255.f, 0, 1);
@@ -238,9 +238,15 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					++count;
 
 				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_Button, color);
-				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, MC(color, 0.1f));
-				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, MC(color, 0.2f));
-				ImGui::Button(data->_blockInfos[timeline->_type]->at(b)._name.c_str(), ImVec2(BUTTON_WIDTH, BUTTON_WIDTH));
+				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonActive, MC(color, 0.15f));
+				ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ButtonHovered, MC(color, 0.3f));
+
+				if (iconTextures.find(data->_blockInfos[timeline->_type]->at(b)._iconName) == iconTextures.end())
+					createIconTexture(data->_blockInfos[timeline->_type]->at(b)._iconName);
+
+				ImGui::ImageButton(reinterpret_cast<ImTextureID>(iconTextures[data->_blockInfos[timeline->_type]->at(b)._iconName]),
+					ImVec2(BUTTON_WIDTH, BUTTON_WIDTH), ImVec2(0, 0), ImVec2(1, 1), 0);
+
 				ImGui::PopStyleColor(3);
 
 				// Add click effect
@@ -261,6 +267,9 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 					ImGui::PopTextWrapPos();
 					ImGui::EndTooltip();
 				}
+
+				ImGui::SetCursorPos(ImVec2(startX, startY + BUTTON_WIDTH + 7));
+				ImGui::Text(data->_blockInfos[timeline->_type]->at(b)._name.c_str());
 
 				if (b != blockTypes - 1)
 					ImGui::SameLine();

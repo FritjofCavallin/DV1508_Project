@@ -7,7 +7,7 @@ RotationBlock::RotationBlock(TimeInterval t)
 {
 	visualName = "Rotation";
 	desc = "Rotate the particle quad";
-	iconName = "rotation.png";
+	iconName = "Rotation.png";
 }
 
 

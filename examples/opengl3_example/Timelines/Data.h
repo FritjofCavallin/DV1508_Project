@@ -31,6 +31,7 @@ public:
 		Block* _type;
 		std::string _name;
 		std::string _desc;
+		std::string _iconName;
 		ImVec4 _color = ImVec4(1, 1, 1, 1);
 	};
 	std::vector<BlockInfo>*	_blockInfos[3];

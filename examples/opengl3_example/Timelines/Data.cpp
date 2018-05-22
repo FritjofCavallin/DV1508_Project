@@ -34,7 +34,7 @@ Data::Data()
 	ImVec4 colors[] = { C(102, 255, 204), C(0, 204, 153), C(0, 153, 153) };
 	for (unsigned int i = 0; i < temp.size(); ++i)
 	{
-		_blockInfos[1]->push_back({ temp[i], temp[i]->visualName, temp[i]->desc, colors[i] });
+		_blockInfos[1]->push_back({ temp[i], temp[i]->visualName, temp[i]->desc, temp[i]->iconName, colors[i] });
 	}
 	temp.clear();
 
@@ -57,7 +57,7 @@ Data::Data()
 		C(204, 153, 255) };
 	for (unsigned int i = 0; i < temp.size(); ++i)
 	{
-		_blockInfos[2]->push_back({ temp[i], temp[i]->visualName, temp[i]->desc, colors2[i] });
+		_blockInfos[2]->push_back({ temp[i], temp[i]->visualName, temp[i]->desc, temp[i]->iconName, colors2[i] });
 	}
 	temp.clear();
 	
