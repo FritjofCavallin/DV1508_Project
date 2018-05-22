@@ -301,7 +301,7 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 						timeline->_movingBlock = new SpawnBlock(time);
 						break;
 					case 2:
-						timeline->_movingBlock = new TextureBlock(time, "", -1);
+						timeline->_movingBlock = new TextureBlock(time, "", 0);
 						break;
 					}
 					break;
