@@ -151,24 +151,33 @@ void UITimelines::draw(ImVec2 pos, ImVec2 size)
 				ImGui::SameLine(timelineWidth - 180);
 				ImGui::Text("Time:");
 				ImGui::PushItemWidth(50);
+
+				float startEndTime = timeline->_timeTotal._endTime;
 				if (ImGui::InputFloat("", &timeline->_timeTotal._endTime, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue))
 				{
-					timeline->_timeShown._startTime = 0.f;
-					timeline->_timeShown._endTime = timeline->_timeTotal._endTime;
-					// For every channel
-					for (int c = timeline->_channel.size() - 1; c >= 0; --c)
+					if (timeline->_timeTotal._endTime > timeline->_channel[0]->minBlockDuration)
 					{
-						// For every block in channel
-						for (int b = timeline->_channel[c]->_data.size() - 1; b >= 0; --b)
+						timeline->_timeShown._startTime = 0.f;
+						timeline->_timeShown._endTime = timeline->_timeTotal._endTime;
+						// For every channel
+						for (int c = timeline->_channel.size() - 1; c >= 0; --c)
 						{
-							Block* block = timeline->_channel[c]->_data[b];
+							// For every block in channel
+							for (int b = timeline->_channel[c]->_data.size() - 1; b >= 0; --b)
+							{
+								Block* block = timeline->_channel[c]->_data[b];
 
-							// Block is no longer within timeline
-							if (block->_time._startTime > timeline->_timeTotal._endTime)
-								timeline->_channel[c]->_data.erase(timeline->_channel[c]->_data.begin() + b);
-							else
-								block->_time._endTime = std::min(block->_time._endTime, timeline->_timeTotal._endTime);
+								// Block is no longer within timeline
+								if (block->_time._startTime > timeline->_timeTotal._endTime)
+									timeline->_channel[c]->_data.erase(timeline->_channel[c]->_data.begin() + b);
+								else
+									block->_time._endTime = std::min(block->_time._endTime, timeline->_timeTotal._endTime);
+							}
 						}
+					}
+					else
+					{
+						timeline->_timeTotal._endTime = startEndTime;
 					}
 				}
 				ImGui::PopItemWidth();
