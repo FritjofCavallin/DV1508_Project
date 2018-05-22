@@ -13,7 +13,7 @@ Camera::Camera()
 	cameraPos = glm::vec3(-9.6,   4.7 ,  10.3);
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	pitch = 26.6;
-	
+	timer = 100;
 	fakescreenlock = false;
 }
 
@@ -36,16 +36,22 @@ glm::mat4 Camera::getViewMat()
 //	GetCursorPos(&NewMouseposition);
 //	std::cout << NewMouseposition.x << " " << NewMouseposition.y << std::endl;
 //	std::cout << yaw << " " << pitch << std::endl;
-	if (ctrl)
+
+
+	if (alt && timer >= 20)
 	{
+		if (fakescreenlock == true)
+			fakescreenlock = false;
+		else
 			fakescreenlock = true;
+
+		timer = 0;
 	}
-	if (alt)
-	{
-		fakescreenlock = false;
-	}
-		
-	
+	timer++;
+
+	if (timer > 20)
+		timer = 20;
+
 
 	if(fakescreenlock)
 	{
