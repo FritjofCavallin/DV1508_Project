@@ -641,9 +641,12 @@ void UITimelines::drawDraggedBlock(Timeline* timeline, float channelHeight)
 		// Delete block if the mouse cursor is on the menu bar
 		if (_onMenuBar)
 		{
+			if (data->_selectedBlock == timeline->_movingBlock)
+				data->_selectedBlock = nullptr;
+
 			delete timeline->_movingBlock;
 			timeline->channelCleanup();
-			data->_selectedBlock = nullptr;
+
 		}
 		// Place block. If placement fails, restore its position
 		else if (!timeline->addBlock(timeline->_movingBlock, (int)hoveredChannel, insertChannel))
